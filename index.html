@@ -22,7 +22,10 @@
       --glass-b:     rgba(255,255,255,0.1);
     }
 
-    html, body { height: 100%; overflow: hidden; }
+    html, body {
+  height: 100%;
+  margin: 0;
+}
 
     body {
       font-family: 'Raleway', sans-serif;
@@ -30,23 +33,27 @@
       color: var(--white);
     }
 
-    .scroll-wrap {
-      height: 100vh;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
-    }
+.scroll-wrap {
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
 
-    .page {
-      height: 100vh;
-      scroll-snap-align: start;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+.page {
+  min-height: 100dvh;
+  height: auto;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6.5rem 0 2.5rem;
+}
 
     .topnav {
       position: fixed;
@@ -200,23 +207,265 @@
     @keyframes pulse     { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(.68)} }
     @keyframes spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
-    @media (max-width: 900px) {
-      .topnav { padding: 1.1rem 1.5rem; }
-      .nav-links, .nav-cta { display: none; }
-      .hamburger { display: flex; }
-      .side-dots { display: none; }
-      .nos-grid  { grid-template-columns: 1fr; padding: 4.5rem 1.6rem 1.6rem; gap: 2rem; }
-      .nos-visual { display: none; }
-      .cultos-wrap { padding: 4.5rem 1.4rem 1.4rem; }
-      .culto-cards { grid-template-columns: 1fr; gap: .9rem; margin-top: 1.75rem; }
-      .culto-hora { font-size: 1.7rem; }
-      .sermon-row { flex-wrap: wrap; gap: 1rem; }
-      .envivo-wrap { padding: 4.5rem 1.4rem 1.4rem; }
-      .cont-grid { grid-template-columns: 1fr; padding: 4.5rem 1.6rem 1.6rem; gap: 2rem; }
-      .cont-map { min-height: 180px; }
-      .ofr-wrap { padding: 4.5rem 1.4rem 1.4rem; }
-      .ofr-cards { grid-template-columns: 1fr; }
-    }
+@media (max-width: 900px) {
+  html, body {
+    overflow: auto;
+  }
+
+  .scroll-wrap {
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+    scroll-snap-type: none;
+  }
+
+  .page {
+    min-height: auto;
+    height: auto;
+    overflow: visible;
+    justify-content: flex-start;
+    padding: 5.8rem 0 2.2rem;
+  }
+
+  .page-num {
+    display: none;
+  }
+
+  .topnav {
+    padding: 1rem 1.1rem;
+  }
+
+  .nav-links,
+  .nav-cta {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .side-dots {
+    display: none;
+  }
+
+  #inicio {
+    min-height: 100dvh;
+    justify-content: center;
+    padding-top: 5.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .hero-content {
+    width: 100%;
+    padding: 0 1.2rem;
+  }
+
+  .hero-logo {
+    width: min(58vw, 220px);
+    height: min(58vw, 220px);
+    margin-bottom: 1.1rem;
+  }
+
+  .hero-name {
+    font-size: clamp(1.35rem, 7vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: .08em;
+  }
+
+  .hero-sub {
+    font-size: .72rem;
+    letter-spacing: .16em;
+    line-height: 1.7;
+    margin-top: .8rem;
+    text-align: center;
+  }
+
+  .hero-verse {
+    font-size: .82rem;
+    line-height: 1.7;
+    max-width: 92%;
+    margin-top: 1.35rem;
+  }
+
+  .scroll-cue {
+    bottom: 1rem;
+  }
+
+  .nos-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1.2rem;
+    gap: 1.7rem;
+    max-width: 100%;
+  }
+
+  .nos-visual {
+    display: none;
+  }
+
+  .section-title {
+    font-size: clamp(1.6rem, 7vw, 2.3rem);
+    line-height: 1.15;
+  }
+
+  .nos-body {
+    font-size: .9rem;
+    line-height: 1.8;
+  }
+
+  .nos-list li span {
+    font-size: .86rem;
+  }
+
+  .cultos-wrap {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1.2rem;
+  }
+
+  .culto-cards {
+    grid-template-columns: 1fr;
+    gap: .9rem;
+    margin-top: 1.6rem;
+  }
+
+  .culto-card {
+    padding: 1.3rem 1rem;
+  }
+
+  .culto-hora {
+    font-size: 1.7rem;
+  }
+
+  .sermon-row {
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: .9rem;
+    padding: 1rem;
+  }
+
+  .sermon-badge {
+    order: 1;
+  }
+
+  .sermon-row > div:not(.play-btn) {
+    order: 2;
+    width: calc(100% - 56px);
+    min-width: 0;
+  }
+
+  .sermon-title {
+    font-size: .9rem;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  .sermon-meta {
+    font-size: .74rem;
+    line-height: 1.5;
+  }
+
+  .play-btn {
+    order: 3;
+    margin-left: auto;
+    width: 40px;
+    height: 40px;
+  }
+
+  #sermonPlayerWrap {
+    margin-top: .9rem;
+  }
+
+  .envivo-wrap {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1.2rem;
+  }
+
+  .stream-box {
+    margin-top: 1.3rem;
+    max-height: none;
+    min-height: 220px;
+  }
+
+  .next-txt {
+    font-size: .8rem;
+    line-height: 1.6;
+  }
+
+  .cont-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1.2rem;
+    gap: 1.6rem;
+    max-width: 100%;
+  }
+
+  .cont-items {
+    gap: 1.2rem;
+  }
+
+  .cont-item {
+    gap: .9rem;
+  }
+
+  .cont-val {
+    font-size: .86rem;
+  }
+
+  .cont-map {
+    min-height: 220px;
+  }
+
+  .ofr-wrap {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1.2rem;
+  }
+
+  .ofr-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .ofr-card {
+    padding: 1.3rem 1rem;
+  }
+
+  .ofr-verse {
+    font-size: .82rem;
+    line-height: 1.75;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-name {
+    font-size: clamp(1.2rem, 8vw, 1.7rem);
+  }
+
+  .hero-sub {
+    font-size: .66rem;
+    letter-spacing: .12em;
+  }
+
+  .section-title {
+    font-size: clamp(1.4rem, 8vw, 2rem);
+  }
+
+  .culto-card,
+  .ofr-card {
+    padding: 1.1rem .9rem;
+  }
+
+  .sermon-row {
+    padding: .9rem;
+  }
+
+  .topnav {
+    padding: .9rem 1rem;
+  }
+}
+    
   </style>
 </head>
 <body>
