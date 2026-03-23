@@ -109,14 +109,13 @@
     .page-num { position: absolute; bottom: 1.75rem; right: 2.5rem; font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .3em; color: rgba(255,255,255,.18); }
 
     /* ── INICIO ── */
-    #inicio { background: var(--navy-deep); }
     #inicio canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
     .hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 65% 55% at 50% 60%, rgba(15,11,50,.0) 0%, rgba(7,5,30,.9) 100%); pointer-events: none; }
     .hero-content { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .hero-logo { width: 340px; height: 340px; margin-bottom: 1.5rem; animation: fadeDown 1.2s ease both; filter: drop-shadow(0 0 24px rgba(201,169,110,.35)); }
-    .hero-name { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .18em; line-height: 1; animation: fadeUp 1.2s ease .2s both; font-size: clamp(1.2rem, 2.5vw, 2rem); max-width: 600px; }
-    .hero-sub { font-size: clamp(.75rem, 1.2vw, .95rem); font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-top: .7rem; animation: fadeUp 1.2s ease .35s both; }
-    .hero-verse { font-style: italic; font-size: clamp(.78rem, 1vw, .92rem); color: var(--muted); max-width: 420px; margin-top: 1.75rem; line-height: 1.8; animation: fadeUp 1.2s ease .5s both; }
+    .hero-logo { width: 340px; height: 340px; margin-bottom: 1.5rem; filter: drop-shadow(0 0 24px rgba(201,169,110,.35)); }
+    .hero-name { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .18em; line-height: 1; font-size: clamp(1.2rem, 2.5vw, 2rem); max-width: 600px; }
+    .hero-sub { font-size: clamp(.75rem, 1.2vw, .95rem); font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-top: .7rem; }
+    .hero-verse { font-style: italic; font-size: clamp(.78rem, 1vw, .92rem); color: var(--muted); max-width: 420px; margin-top: 1.75rem; line-height: 1.8; }
     .hero-verse cite { color: var(--gold); font-style: normal; font-size: .8em; letter-spacing: .08em; }
     .scroll-cue { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; opacity: .35; animation: cueBounce 2.5s ease infinite; }
     .scroll-cue span { font-size: .6rem; letter-spacing: .25em; text-transform: uppercase; }
@@ -154,164 +153,28 @@
     .culto-hora { font-size: 2.1rem; font-weight: 300; margin-top: .85rem; }
     .culto-desc { font-size: .78rem; color: var(--muted); margin-top: .65rem; line-height: 1.65; }
 
-    /* ─── VIDEO SECTION (nueva) ─── */
+    /* ── VIDEO SECTION ── */
     .video-section { margin-top: 2.25rem; text-align: left; }
-
-    /* Featured card */
-    .video-featured-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-b);
-      border-radius: 3px;
-      padding: 1.75rem 2rem 1.6rem;
-      position: relative;
-      transition: border-color .4s;
-    }
+    .video-featured-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 2rem 1.6rem; position: relative; transition: border-color .4s; }
     .video-featured-card.is-playing { border-color: rgba(201,169,110,.38); }
-    .video-featured-card.is-loading .video-featured-title::after {
-      content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%;
-      background: var(--gold); margin-left: .6rem; vertical-align: middle;
-      animation: pulse 1.2s ease infinite;
-    }
-    .video-featured-eyebrow {
-      display: flex; align-items: center; gap: .75rem; margin-bottom: .9rem; flex-wrap: wrap;
-    }
-    .video-featured-label {
-      font-size: .58rem; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--navy); background: var(--gold); padding: .2rem .6rem; border-radius: 1px;
-      font-weight: 700;
-    }
-    .video-featured-label.cat-Estudios { background: rgba(130,185,255,.85); }
-    .video-featured-label.cat-Jóvenes  { background: rgba(185,130,255,.8); }
-    .video-featured-label.cat-Charlas  { background: rgba(130,230,185,.8); }
-    .video-featured-label.cat-Debates  { background: rgba(255,165,100,.85); }
-    .video-featured-label.cat-Avisos   { background: rgba(255,100,100,.8); color: #fff; }
-    .video-featured-label.cat-Otros    { background: rgba(255,255,255,.18); color: var(--white); }
-    .video-featured-date {
-      font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
-    }
-    .video-featured-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(1rem, 2.2vw, 1.55rem);
-      font-weight: 600; line-height: 1.3; color: var(--white);
-    }
-    .video-featured-desc {
-      margin-top: .6rem; font-size: .79rem; color: var(--muted); line-height: 1.7;
-      max-width: 700px;
-    }
-
-    /* Inline player – expands smoothly */
-    .video-inline-player {
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height .55s cubic-bezier(.4,0,.2,1), margin-top .55s;
-      margin-top: 0;
-    }
-    .video-inline-player.open {
-      max-height: 560px;
-      margin-top: 1.5rem;
-    }
-    .video-inline-player iframe {
-      width: 100%; aspect-ratio: 16/9; display: block; border: 0; border-radius: 2px;
-    }
-
-    /* Play button */
+    .video-featured-eyebrow { display: flex; align-items: center; gap: .75rem; margin-bottom: .9rem; flex-wrap: wrap; }
+    .video-featured-label { font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .2rem .6rem; border-radius: 1px; font-weight: 700; }
+    .video-featured-date { font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+    .video-featured-title { font-family: 'Cinzel', serif; font-size: clamp(1rem, 2.2vw, 1.55rem); font-weight: 600; line-height: 1.3; color: var(--white); }
+    .video-featured-desc { margin-top: .6rem; font-size: .79rem; color: var(--muted); line-height: 1.7; max-width: 700px; }
+    .video-inline-player { overflow: hidden; max-height: 0; transition: max-height .55s cubic-bezier(.4,0,.2,1), margin-top .55s; margin-top: 0; }
+    .video-inline-player.open { max-height: 560px; margin-top: 1.5rem; }
+    .video-inline-player iframe { width: 100%; aspect-ratio: 16/9; display: block; border: 0; border-radius: 2px; }
     .video-featured-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.3rem; flex-wrap: wrap; }
-    .video-play-btn {
-      display: inline-flex; align-items: center; gap: .6rem;
-      background: transparent; border: 1px solid var(--gold);
-      color: var(--gold); padding: .58rem 1.25rem;
-      font-family: 'Raleway', sans-serif;
-      font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
-      cursor: pointer; border-radius: 2px; transition: .22s ease;
-    }
+    .video-play-btn { display: inline-flex; align-items: center; gap: .6rem; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: .58rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: .22s ease; }
     .video-play-btn:hover { background: var(--gold); color: var(--navy); }
-    .video-play-btn.is-playing { background: var(--gold); color: var(--navy); }
-    .video-play-btn svg { flex-shrink: 0; transition: transform .2s; }
-    .video-play-btn:hover svg { transform: scale(1.2); }
-    .video-total-count { font-size: .68rem; color: var(--muted); letter-spacing: .06em; }
-
-    /* Filter chips row */
-    .video-filter-row {
-      display: flex; align-items: center; gap: .45rem; flex-wrap: wrap;
-      margin-top: 1.75rem; padding-bottom: .9rem;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-    }
-    .video-filter-label-sm {
-      font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
-      margin-right: .25rem;
-    }
-    .vchip {
-      background: transparent; border: 1px solid rgba(255,255,255,.1);
-      color: rgba(255,255,255,.45); border-radius: 1px; padding: .34rem .75rem;
-      font-family: 'Raleway', sans-serif;
-      font-size: .6rem; letter-spacing: .12em; text-transform: uppercase;
-      cursor: pointer; transition: .18s ease;
-    }
-    .vchip:hover { border-color: rgba(201,169,110,.5); color: var(--gold); }
+    .video-filter-row { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; margin-top: 1.75rem; padding-bottom: .9rem; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .vchip { background: transparent; border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.45); border-radius: 1px; padding: .34rem .75rem; font-size: .6rem; cursor: pointer; transition: .18s ease; }
     .vchip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.08); }
-
-    /* Month-grouped video rows */
-    .video-month-group { margin-top: 1.4rem; }
-    .video-month-header {
-      font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: var(--gold);
-      display: flex; align-items: center; gap: .75rem; margin-bottom: .2rem;
-    }
-    .video-month-header::after { content: ''; flex: 1; height: 1px; background: rgba(201,169,110,.14); }
-
-    .video-row {
-      display: grid;
-      grid-template-columns: 4.2rem 5.2rem 1fr 2rem;
-      align-items: center; gap: 0 1.1rem;
-      padding: .72rem .3rem .72rem .5rem;
-      border-bottom: 1px solid rgba(255,255,255,.04);
-      cursor: pointer; transition: background .18s;
-      position: relative;
-    }
-    .video-row::before {
-      content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
-      width: 2px; background: var(--gold);
-      transform: scaleY(0); transition: transform .2s; transform-origin: center;
-    }
-    .video-row:hover { background: rgba(255,255,255,.025); }
-    .video-row.vr-active { background: rgba(201,169,110,.04); }
-    .video-row.vr-active::before { transform: scaleY(1); }
-
-    .vr-day {
-      font-size: .66rem; color: var(--muted); letter-spacing: .06em; white-space: nowrap;
-    }
-    .vr-cat {
-      font-size: .55rem; letter-spacing: .14em; text-transform: uppercase;
-      color: var(--navy); background: var(--gold);
-      padding: .16rem .48rem; border-radius: 1px;
-      white-space: nowrap; display: inline-block; font-weight: 700;
-    }
-    .vr-cat.cat-Estudios { background: rgba(130,185,255,.85); }
-    .vr-cat.cat-Jóvenes  { background: rgba(185,130,255,.8); }
-    .vr-cat.cat-Charlas  { background: rgba(130,230,185,.8); }
-    .vr-cat.cat-Debates  { background: rgba(255,165,100,.85); }
-    .vr-cat.cat-Avisos   { background: rgba(255,100,100,.8); color: #fff; }
-    .vr-cat.cat-Otros    { background: rgba(255,255,255,.18); color: var(--white); }
-
-    .vr-title {
-      font-size: .82rem; color: rgba(255,255,255,.8); line-height: 1.35;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      transition: color .18s;
-    }
-    .video-row:hover .vr-title, .video-row.vr-active .vr-title { color: var(--white); }
-
-    .vr-play {
-      width: 26px; height: 26px; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.15);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: .18s ease; color: var(--muted);
-    }
-    .video-row:hover .vr-play { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.1); }
-    .video-row.vr-active .vr-play { border-color: var(--gold); background: var(--gold); color: var(--navy); }
-
-    .video-empty-msg {
-      text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: .8rem;
-      border: 1px dashed rgba(255,255,255,.08); border-radius: 3px; margin-top: 1.25rem;
-    }
+    .video-row { display: grid; grid-template-columns: 4.2rem 5.2rem 1fr 2rem; align-items: center; gap: 0 1.1rem; padding: .72rem .5rem; border-bottom: 1px solid rgba(255,255,255,.04); cursor: pointer; transition: background .18s; }
+    .vr-day { font-size: .66rem; color: var(--muted); }
+    .vr-cat { font-size: .55rem; letter-spacing: .14em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .16rem .48rem; border-radius: 1px; font-weight: 700; }
+    .vr-title { font-size: .82rem; color: rgba(255,255,255,.8); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     /* ── EN VIVO ── */
     #envivo { background: var(--navy-deep); }
@@ -321,10 +184,6 @@
     .stream-box { margin-top: 1.75rem; border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.38); aspect-ratio: 16/9; max-height: 48vh; display: flex; align-items: center; justify-content: center; }
     .stream-ph { display: flex; flex-direction: column; align-items: center; gap: .9rem; color: var(--muted); }
     .stream-icon { width: 68px; height: 68px; border-radius: 50%; background: rgba(255,255,255,.05); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; }
-    .stream-hint { font-size: .68rem; color: var(--gold); letter-spacing: .14em; text-transform: uppercase; }
-    .stream-box iframe { width: 100%; height: 100%; border: none; }
-    .next-txt { margin-top: 1.4rem; font-size: .8rem; color: var(--muted); }
-    .next-txt strong { color: var(--gold); }
 
     /* ── GALERÍA ── */
     #galeria { background: var(--navy); }
@@ -332,36 +191,20 @@
     .album-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
     .album-card { position: relative; cursor: pointer; border-radius: 3px; overflow: hidden; border: 1px solid var(--glass-b); aspect-ratio: 4/3; transition: border-color .3s, transform .3s; }
     .album-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
-    .album-card:hover .album-overlay { opacity: 1; }
-    .album-card:hover .album-cover-img { transform: scale(1.04); }
-    .album-cover-img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; display: block; }
-    .album-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform .5s ease; }
-    .album-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,5,30,.92) 0%, rgba(7,5,30,.25) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem 1rem; opacity: .85; transition: opacity .3s; }
-    .album-count { position: absolute; top: .75rem; right: .75rem; font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .2rem .55rem; border-radius: 2px; }
-    .album-name { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 600; color: var(--white); line-height: 1.3; }
-    .album-date { font-size: .65rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-top: .3rem; }
+    .album-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,5,30,.92) 0%, rgba(7,5,30,.25) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem 1rem; opacity: .85; }
+    .album-name { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 600; color: var(--white); }
 
     /* Lightbox */
     .lightbox { position: fixed; inset: 0; z-index: 300; background: rgba(7,5,30,.97); backdrop-filter: blur(16px); display: none; flex-direction: column; overflow-y: auto; }
     .lightbox.open { display: flex; }
-    .lightbox-header { position: sticky; top: 0; z-index: 10; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(7,5,30,.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--glass-b); }
-    .lightbox-title { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 600; }
-    .lightbox-date { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: .2rem; }
-    .lightbox-close { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--glass-b); background: var(--glass); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 1.2rem; transition: background .3s; flex-shrink: 0; }
-    .lightbox-close:hover { background: var(--gold-dim); }
-    .lightbox-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; padding: 1.5rem 2rem 3rem; max-width: 1100px; width: 100%; margin: 0 auto; }
-    .lightbox-photo { aspect-ratio: 1; background: var(--glass); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: opacity .3s; }
-    .lightbox-photo:hover { opacity: .82; }
-    .lightbox-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .lightbox-photo-ph { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; color: rgba(255,255,255,.15); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; }
-    .lightbox-photo-ph svg { opacity: .2; }
-    .lightbox-empty { grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: .84rem; line-height: 1.8; }
-    .lightbox-empty span { color: var(--gold); }
-    .lb-upload-hint { margin-top: 1.25rem; display: inline-flex; align-items: center; gap: .5rem; border: 1px dashed rgba(201,169,110,.35); padding: .65rem 1.25rem; border-radius: 3px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+    .lightbox-header { position: sticky; top: 0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(7,5,30,.8); border-bottom: 1px solid var(--glass-b); }
+    .lightbox-close { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--glass-b); background: var(--glass); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--white); }
 
-    /* ── EVENTOS (Contentful) ── */
-    .evento-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
-    .evento-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 0; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; }
+    /* ── EVENTOS (DISEÑO ELÁSTICO) ── */
+    #eventos { background: var(--navy-deep); }
+    .eventos-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
+    .evento-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 2.5rem; justify-content: center; }
+    .evento-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; flex: 1 1 320px; max-width: 100%; }
     .evento-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
     .evento-date-bar { background: linear-gradient(90deg, rgba(201,169,110,.15), transparent); border-bottom: 1px solid var(--glass-b); padding: .75rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
     .evento-dia { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); line-height: 1; }
@@ -378,134 +221,44 @@
     #blog { background: var(--navy); }
     .blog-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
     .blog-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
-    .blog-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; cursor: pointer; }
-    .blog-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
-    .blog-cover { width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-    .blog-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .blog-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .blog-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; transition: border-color .3s; text-align: left; }
+    .blog-cover { width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center; background: var(--navy-deep); }
     .blog-card-body { padding: 1.25rem 1.4rem 1.5rem; }
     .blog-cat { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
     .blog-titulo { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; line-height: 1.35; margin-top: .45rem; }
     .blog-excerpt { font-size: .78rem; color: var(--muted); margin-top: .55rem; line-height: 1.7; }
-    .blog-meta { display: flex; align-items: center; gap: .5rem; margin-top: .85rem; font-size: .62rem; color: var(--muted); }
-    .blog-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
-    .blog-side { display: flex; flex-direction: column; gap: 1.25rem; }
-    .blog-card-sm { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; display: flex; gap: .9rem; padding: .9rem; overflow: hidden; transition: border-color .3s; cursor: pointer; text-align: left; flex: 1; }
-    .blog-card-sm:hover { border-color: var(--gold-dim); }
-    .blog-thumb-sm { width: 72px; flex-shrink: 0; border-radius: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .blog-thumb-sm img { width: 100%; height: 100%; object-fit: cover; }
-    .blog-thumb-ph { width: 72px; aspect-ratio: 1; flex-shrink: 0; border-radius: 2px; overflow: hidden; }
-    .blog-sm-body { flex: 1; min-width: 0; }
-    .blog-sm-titulo { font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 600; line-height: 1.35; }
-    .blog-sm-meta { font-size: .62rem; color: var(--muted); margin-top: .4rem; }
 
     /* ── CONTACTO ── */
     #contacto { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
     .cont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 2rem 6rem; max-width: 1100px; width: 100%; }
-    .cont-items { display: flex; flex-direction: column; gap: 1.5rem; }
-    .cont-item { display: flex; align-items: flex-start; gap: 1.1rem; }
-    .cont-ico { width: 40px; height: 40px; flex-shrink: 0; border-radius: 3px; background: var(--gold-dim); border: 1px solid rgba(201,169,110,.4); display: flex; align-items: center; justify-content: center; }
-    .cont-ico svg { fill: var(--gold); }
+    .cont-item { display: flex; align-items: flex-start; gap: 1.1rem; margin-bottom: 1.5rem; }
+    .cont-ico { width: 40px; height: 40px; border-radius: 3px; background: var(--gold-dim); display: flex; align-items: center; justify-content: center; }
     .cont-lbl { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
-    .cont-val { font-size: .88rem; color: var(--muted); margin-top: .22rem; line-height: 1.55; }
-    .social-row { display: flex; gap: .6rem; margin-top: .35rem; }
-    .soc-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; transition: background .3s, border-color .3s; }
-    .soc-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
-    .soc-btn svg { fill: var(--white); }
-    .cont-map { border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.28); min-height: 260px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .65rem; color: var(--muted); font-size: .78rem; }
-    .cont-map iframe { width: 100%; height: 100%; border: none; }
+    .cont-val { font-size: .88rem; color: var(--muted); margin-top: .22rem; }
 
     /* ── OFRENDAR ── */
     #ofrendar { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy-light) 100%); }
     .ofr-wrap { text-align: center; max-width: 680px; width: 100%; padding: 2rem 3rem; }
-    .ofr-verse { font-style: italic; font-size: .84rem; color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.85; }
     .ofr-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.25rem; }
-    .ofr-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; transition: border-color .3s; }
-    .ofr-card:hover { border-color: var(--gold-dim); }
+    .ofr-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; }
     .ofr-card-title { font-family: 'Cinzel', serif; font-size: .95rem; color: var(--gold); margin-bottom: .9rem; }
     .ofr-detail { font-size: .8rem; color: var(--muted); line-height: 2; }
-    .ofr-detail strong { color: var(--white); }
-    .qr-ph { width: 96px; height: 96px; margin: 0 auto 1rem; background: rgba(255,255,255,.07); border: 1px dashed rgba(201,169,110,.3); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
-    .ofr-footnote { font-size: .72rem; color: var(--muted); margin-top: 1.75rem; }
 
     /* ── KEYFRAMES ── */
-    @keyframes fadeDown  { from{opacity:0;transform:translateY(-22px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeUp    { from{opacity:0;transform:translateY(22px)}  to{opacity:1;transform:translateY(0)} }
     @keyframes cueBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(9px)} }
     @keyframes pulse     { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(.68)} }
     @keyframes spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
     /* ── MOBILE ── */
     @media (max-width: 900px) {
-      html, body { overflow: hidden; }
-      .scroll-wrap { height: 100dvh; min-height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
-      .page { min-height: 100dvh; height: auto; overflow: visible; justify-content: flex-start; padding: 5.5rem 0 2.5rem; }
-      .page-num { display: none; }
+      .scroll-wrap { overflow-y: auto; scroll-snap-type: y mandatory; }
+      .page { justify-content: flex-start; padding-top: 5.5rem; }
       .topnav { padding: .9rem 1.1rem; }
-      .nav-links, .nav-cta { display: none; }
+      .nav-links, .nav-cta, .page-num, .side-dots { display: none; }
       .hamburger { display: flex; }
-      .side-dots { display: none; }
-
-      #inicio { min-height: 100dvh; justify-content: center; padding-top: 5rem; padding-bottom: 2rem; }
-      .hero-content { width: 100%; padding: 0 1.2rem; }
-      .hero-logo { width: min(55vw, 200px); height: min(55vw, 200px); margin-bottom: 1rem; }
-      .hero-name { font-size: clamp(1.1rem, 6vw, 1.8rem); letter-spacing: .06em; max-width: 90%; }
-      .hero-sub { font-size: .68rem; letter-spacing: .14em; line-height: 1.7; margin-top: .75rem; }
-      .hero-verse { font-size: .8rem; line-height: 1.7; max-width: 92%; margin-top: 1.2rem; }
-      .scroll-cue { bottom: .8rem; }
-
-      .nos-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; max-width: 100%; }
-      .nos-visual { display: none; }
-      .section-title { font-size: clamp(1.5rem, 7vw, 2.2rem); line-height: 1.15; }
-      .nos-body { font-size: .88rem; }
-      .nos-list li span { font-size: .84rem; }
-
-      /* Mensajes mobile */
-      .mensajes-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .culto-cards { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
-      .culto-card { padding: 1.2rem 1rem; }
-      .culto-hora { font-size: 1.65rem; }
-      .video-section { margin-top: 1.5rem; }
-      .video-featured-card { padding: 1.2rem 1.1rem 1.1rem; }
-      .video-featured-title { font-size: clamp(.9rem, 5vw, 1.2rem); }
-      .video-inline-player.open { max-height: 240px; }
-      .video-row { grid-template-columns: auto 1fr 1.5rem; gap: 0 .65rem; padding: .65rem .3rem; }
-      .vr-day { display: none; }
-
-      .envivo-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .stream-box { margin-top: 1.2rem; max-height: none; min-height: 200px; }
-
-      .galeria-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .album-grid { grid-template-columns: 1fr 1fr; gap: .85rem; margin-top: 1.5rem; }
-      .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: 1rem; gap: 2px; }
-      .lightbox-header { padding: 1rem 1.1rem; }
-      .lightbox-title { font-size: .95rem; }
-
-      .eventos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .evento-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
-
-      .blog-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .blog-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
-      .blog-cover { aspect-ratio: 16/9; }
-      .blog-side { gap: .85rem; }
-      .blog-card-body { padding: 1rem 1.1rem 1.2rem; }
-
-      .cont-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; max-width: 100%; }
-      .cont-map { min-height: 220px; }
-      .cont-items { gap: 1.1rem; }
-
-      .ofr-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .ofr-cards { grid-template-columns: 1fr; gap: .9rem; margin-top: 1.4rem; }
-      .ofr-card { padding: 1.2rem 1rem; }
-    }
-
-    @media (max-width: 480px) {
-      .hero-name { font-size: clamp(1rem, 7.5vw, 1.5rem); }
-      .section-title { font-size: clamp(1.3rem, 8vw, 1.9rem); }
-      .album-grid { grid-template-columns: 1fr 1fr; gap: .6rem; }
-      .album-name { font-size: .78rem; }
-      .blog-titulo { font-size: .88rem; }
-      .evento-titulo { font-size: .9rem; }
+      .nos-grid, .cont-grid, .blog-grid { grid-template-columns: 1fr; padding: 0 1.2rem; }
+      .album-grid, .ofr-cards { grid-template-columns: 1fr 1fr; }
+      .culto-cards { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -513,57 +266,52 @@
 
 <nav class="topnav" id="topnav">
   <a class="nav-logo" href="#inicio" data-target="inicio">
-    <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
-      <path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/>
-    </svg>
+    <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/></svg>
     <span class="nav-logo-text">PIEBA</span>
   </a>
   <ul class="nav-links">
-    <li><a href="#inicio"    data-target="inicio"    data-section="inicio"    class="active">Inicio</a></li>
-    <li><a href="#nosotros"  data-target="nosotros"  data-section="nosotros">Nosotros</a></li>
-    <li><a href="#mensajes"  data-target="mensajes"  data-section="mensajes">Mensajes</a></li>
-    <li><a href="#envivo"    data-target="envivo"    data-section="envivo">En Vivo</a></li>
-    <li><a href="#galeria"   data-target="galeria"   data-section="galeria">Galería</a></li>
-    <li><a href="#eventos"   data-target="eventos"   data-section="eventos">Eventos</a></li>
-    <li><a href="#blog"      data-target="blog"      data-section="blog">Blog</a></li>
-    <li><a href="#contacto"  data-target="contacto"  data-section="contacto">Contacto</a></li>
+    <li><a href="#inicio" data-target="inicio" class="active">Inicio</a></li>
+    <li><a href="#nosotros" data-target="nosotros">Nosotros</a></li>
+    <li><a href="#mensajes" data-target="mensajes">Mensajes</a></li>
+    <li><a href="#envivo" data-target="envivo">En Vivo</a></li>
+    <li><a href="#galeria" data-target="galeria">Galería</a></li>
+    <li><a href="#eventos" data-target="eventos">Eventos</a></li>
+    <li><a href="#blog" data-target="blog">Blog</a></li>
+    <li><a href="#contacto" data-target="contacto">Contacto</a></li>
   </ul>
   <a class="nav-cta" href="#ofrendar" data-target="ofrendar">Ofrendar</a>
-  <button class="hamburger" id="ham" type="button" aria-label="Abrir menú" aria-controls="mobileNav" aria-expanded="false">
+  <button class="hamburger" id="ham" type="button" aria-label="Abrir menú">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
 <div class="mobile-nav" id="mobileNav">
-  <a href="#inicio"    data-target="inicio"    data-section="inicio">Inicio</a>
-  <a href="#nosotros"  data-target="nosotros"  data-section="nosotros">Nosotros</a>
-  <a href="#mensajes"  data-target="mensajes"  data-section="mensajes">Mensajes</a>
-  <a href="#envivo"    data-target="envivo"    data-section="envivo">En Vivo</a>
-  <a href="#galeria"   data-target="galeria"   data-section="galeria">Galería</a>
-  <a href="#eventos"   data-target="eventos"   data-section="eventos">Eventos</a>
-  <a href="#blog"      data-target="blog"      data-section="blog">Blog</a>
-  <a href="#contacto"  data-target="contacto"  data-section="contacto">Contacto</a>
-  <a href="#ofrendar"  data-target="ofrendar"  data-section="ofrendar" style="color:var(--gold)">Ofrendar</a>
+  <a href="#inicio" data-target="inicio">Inicio</a>
+  <a href="#nosotros" data-target="nosotros">Nosotros</a>
+  <a href="#mensajes" data-target="mensajes">Mensajes</a>
+  <a href="#envivo" data-target="envivo">En Vivo</a>
+  <a href="#galeria" data-target="galeria">Galería</a>
+  <a href="#eventos" data-target="eventos">Eventos</a>
+  <a href="#blog" data-target="blog">Blog</a>
+  <a href="#contacto" data-target="contacto">Contacto</a>
+  <a href="#ofrendar" data-target="ofrendar" style="color:var(--gold)">Ofrendar</a>
 </div>
 
 <div class="side-dots" id="sideDots">
-  <button class="dot active" type="button" data-target="inicio"   title="Inicio"    aria-label="Ir a Inicio"></button>
-  <button class="dot"        type="button" data-target="nosotros" title="Nosotros"  aria-label="Ir a Nosotros"></button>
-  <button class="dot"        type="button" data-target="mensajes" title="Mensajes"  aria-label="Ir a Mensajes"></button>
-  <button class="dot"        type="button" data-target="envivo"   title="En Vivo"   aria-label="Ir a En Vivo"></button>
-  <button class="dot"        type="button" data-target="galeria"  title="Galería"   aria-label="Ir a Galería"></button>
-  <button class="dot"        type="button" data-target="eventos"  title="Eventos"   aria-label="Ir a Eventos"></button>
-  <button class="dot"        type="button" data-target="blog"     title="Blog"      aria-label="Ir a Blog"></button>
-  <button class="dot"        type="button" data-target="contacto" title="Contacto"  aria-label="Ir a Contacto"></button>
-  <button class="dot"        type="button" data-target="ofrendar" title="Ofrendar"  aria-label="Ir a Ofrendar"></button>
+  <button class="dot active" type="button" data-target="inicio"></button>
+  <button class="dot" type="button" data-target="nosotros"></button>
+  <button class="dot" type="button" data-target="mensajes"></button>
+  <button class="dot" type="button" data-target="envivo"></button>
+  <button class="dot" type="button" data-target="galeria"></button>
+  <button class="dot" type="button" data-target="eventos"></button>
+  <button class="dot" type="button" data-target="blog"></button>
+  <button class="dot" type="button" data-target="contacto"></button>
+  <button class="dot" type="button" data-target="ofrendar"></button>
 </div>
 
 <div class="lightbox" id="lightbox">
   <div class="lightbox-header">
-    <div>
-      <p class="lightbox-title" id="lbTitle">Álbum</p>
-      <p class="lightbox-date" id="lbDate"></p>
-    </div>
+    <p class="lightbox-title" id="lbTitle">Álbum</p>
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   </div>
   <div class="lightbox-grid" id="lbGrid"></div>
@@ -575,15 +323,10 @@
     <canvas id="starCanvas"></canvas>
     <div class="hero-glow"></div>
     <div class="hero-content">
-      <svg class="hero-logo" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
-        <path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/>
-      </svg>
+      <svg class="hero-logo" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/></svg>
       <h1 class="hero-name">Primera Iglesia Evangélica Bautista de Asunción</h1>
-      <p class="hero-sub">Comunidad de Fe &nbsp;&middot;&nbsp; Esperanza &nbsp;&middot;&nbsp; Amor</p>
-      <p class="hero-verse">
-        &ldquo;Porque yo sé los pensamientos que tengo acerca de vosotros,<br>pensamientos de paz y no de mal.&rdquo;
-        <br><cite>&mdash; Jeremías 29:11</cite>
-      </p>
+      <p class="hero-sub">Comunidad de Fe &middot; Esperanza &middot; Amor</p>
+      <p class="hero-verse">“Porque yo sé los pensamientos que tengo acerca de vosotros, pensamientos de paz y no de mal.”<br><cite>— Jeremías 29:11</cite></p>
     </div>
     <div class="scroll-cue"><span>Deslizar</span></div>
     <span class="page-num">01 / 09</span>
@@ -593,24 +336,20 @@
     <div class="nos-grid">
       <div>
         <p class="section-label reveal">Quiénes Somos</p>
-        <h2 class="section-title reveal d1">Una iglesia<br>con propósito</h2>
+        <h2 class="section-title reveal d1">Una iglesia con propósito</h2>
         <div class="gold-line left reveal d2"></div>
-        <p class="nos-body reveal d2">Somos una comunidad de creyentes comprometidos con el evangelio de Jesucristo. Nos reunimos para adorar, crecer en la fe y servir a nuestra comunidad con amor genuino.<br><br>Nuestra misión es hacer discípulos que transformen sus hogares, su ciudad y el mundo.</p>
+        <p class="nos-body reveal d2">Somos una comunidad de creyentes comprometidos con el evangelio de Jesucristo. Nos reunimos para adorar, crecer en la fe y servir a nuestra comunidad con amor genuino.</p>
         <ul class="nos-list">
-          <li class="reveal d2"><span><strong style="color:var(--white)">Fe Bíblica</strong> &mdash; Fundamentados en la Palabra de Dios</span></li>
-          <li class="reveal d3"><span><strong style="color:var(--white)">Comunidad</strong> &mdash; Un lugar donde todos son bienvenidos</span></li>
-          <li class="reveal d3"><span><strong style="color:var(--white)">Misión</strong> &mdash; Alcanzando vidas para Cristo</span></li>
-          <li class="reveal d4"><span><strong style="color:var(--white)">Adoración</strong> &mdash; Con todo nuestro corazón</span></li>
+          <li class="reveal d2"><span><strong>Fe Bíblica</strong> FUNDAMENTADOS EN LA PALABRA</span></li>
+          <li class="reveal d3"><span><strong>Comunidad</strong> TODOS SON BIENVENIDOS</span></li>
+          <li class="reveal d4"><span><strong>Misión</strong> ALCANZANDO VIDAS PARA CRISTO</span></li>
         </ul>
       </div>
       <div class="nos-visual">
-        <div class="ring">
-          <div class="ring-inner">
-            <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/></svg>
-          </div>
-        </div>
-        <div class="stat"><div class="stat-num">+105</div><div class="stat-lbl">Años de<br>Ministerio</div></div>
-        <div class="stat"><div class="stat-num">Dom.</div><div class="stat-lbl">Culto<br>Principal</div></div>
+        <div class="ring"><div class="ring-inner">
+          <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15z"/></svg>
+        </div></div>
+        <div class="stat"><div class="stat-num">+105</div><div class="stat-lbl">Años de Ministerio</div></div>
       </div>
     </div>
     <span class="page-num">02 / 09</span>
@@ -618,59 +357,21 @@
 
   <section class="page" id="mensajes">
     <div class="mensajes-wrap">
-      <p class="section-label reveal">Programación &amp; Canal</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Mensajes</h2>
+      <p class="section-label reveal">Canal</p>
+      <h2 class="section-title reveal d1">Mensajes</h2>
       <div class="gold-line reveal d2"></div>
 
       <div class="culto-cards">
-        <div class="culto-card reveal d1">
-          <p class="culto-dia">Domingo</p>
-          <h3 class="culto-nombre">Culto Principal</h3>
-          <p class="culto-hora">10:15 AM</p>
-          <p class="culto-desc">Servicio de adoración, alabanza y predicación de la Palabra. Toda la familia es bienvenida.</p>
-        </div>
-        <div class="culto-card reveal d2">
-          <p class="culto-dia">Miércoles</p>
-          <h3 class="culto-nombre">Estudio Bíblico</h3>
-          <p class="culto-hora">19:30</p>
-          <p class="culto-desc">Profundizamos en la Palabra de Dios en un ambiente íntimo y de comunidad.</p>
-        </div>
-        <div class="culto-card reveal d3">
-          <p class="culto-dia">Sábado</p>
-          <h3 class="culto-nombre">MJ Pieba</h3>
-          <p class="culto-hora">18:30</p>
-          <p class="culto-desc">Reunión especial para jóvenes con alabanza contemporánea y mensaje relevante.</p>
-        </div>
+        <div class="culto-card reveal d1"><p class="culto-dia">Domingo</p><h3>Culto Principal</h3><p class="culto-hora">10:15 AM</p></div>
+        <div class="culto-card reveal d2"><p class="culto-dia">Miércoles</p><h3>Estudio Bíblico</h3><p class="culto-hora">19:30</p></div>
+        <div class="culto-card reveal d3"><p class="culto-dia">Sábado</p><h3>MJ Pieba</h3><p class="culto-hora">18:30</p></div>
       </div>
 
       <div class="video-section reveal d4">
         <div class="video-featured-card is-loading" id="videoFeaturedCard">
-          <div class="video-featured-eyebrow">
-            <span class="video-featured-label" id="videoFeatCat">Canal</span>
-            <span class="video-featured-date" id="videoFeatDate">Conectando con YouTube…</span>
-          </div>
-          <h3 class="video-featured-title" id="videoFeatTitle">Cargando último mensaje…</h3>
-          <p class="video-featured-desc" id="videoFeatDesc">Aquí aparecerá el mensaje más reciente del canal.</p>
+          <h3 id="videoFeatTitle">Cargando último mensaje…</h3>
           <div class="video-inline-player" id="videoInlinePlayer"></div>
-          <div class="video-featured-actions">
-            <button type="button" class="video-play-btn" id="videoPlayBtn" data-play-featured="">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              Reproducir aquí
-            </button>
-            <span class="video-total-count" id="videoTotalCount"></span>
-          </div>
-        </div>
-
-        <div class="video-filter-row" id="videoTypeFilters">
-          <span class="video-filter-label-sm">Filtrar</span>
-          <button type="button" class="vchip active" data-video-type="all">Todos</button>
-          <button type="button" class="vchip" data-video-type="Cultos">Cultos</button>
-          <button type="button" class="vchip" data-video-type="Estudios">Estudios</button>
-          <button type="button" class="vchip" data-video-type="Charlas">Charlas</button>
-          <button type="button" class="vchip" data-video-type="Debates">Debates</button>
-          <button type="button" class="vchip" data-video-type="Avisos">Avisos</button>
-          <button type="button" class="vchip" data-video-type="Jóvenes">Jóvenes</button>
-          <button type="button" class="vchip" data-video-type="Otros">Otros</button>
+          <button type="button" class="video-play-btn" id="videoPlayBtn" data-play-featured="">REPRODUCIR</button>
         </div>
         <div id="videoRowList"></div>
       </div>
@@ -681,18 +382,9 @@
   <section class="page" id="envivo">
     <div class="envivo-wrap">
       <div class="live-pill reveal"><span class="live-dot-r"></span>En Vivo</div>
-      <h2 class="section-title reveal d1" style="text-align:center">Transmisión<br>en Directo</h2>
+      <h2 class="section-title reveal d1">Transmisión en Directo</h2>
       <div class="gold-line reveal d2"></div>
-      <div class="stream-box reveal d2">
-        <div class="stream-ph">
-          <div class="stream-icon">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
-          <p style="font-size:.84rem;">La transmisión estará disponible<br>durante el culto</p>
-          <p class="stream-hint">Cargando estado del canal...</p>
-        </div>
-      </div>
-      <p class="next-txt reveal d3">Próxima transmisión: <strong>Consultando canal...</strong></p>
+      <div class="stream-box"><div class="stream-ph"><p>Transmisión disponible durante los horarios de culto</p></div></div>
     </div>
     <span class="page-num">04 / 09</span>
   </section>
@@ -700,39 +392,12 @@
   <section class="page" id="galeria">
     <div class="galeria-wrap">
       <p class="section-label reveal">Momentos</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Galería</h2>
+      <h2 class="section-title reveal d1">Galería</h2>
       <div class="gold-line reveal d2"></div>
-      <div class="album-grid" id="albumGrid">
-        <div class="album-card reveal d1" onclick="openAlbum('Culto de Navidad 2024','Diciembre 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg></div>
-          <div class="album-overlay"><p class="album-name">Culto de Navidad 2024</p><p class="album-date">Diciembre 2024</p></div>
-          <span class="album-count">0 fotos</span>
-        </div>
-        <div class="album-card reveal d2" onclick="openAlbum('Retiro Anual 2024','Octubre 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div>
-          <div class="album-overlay"><p class="album-name">Retiro Anual 2024</p><p class="album-date">Octubre 2024</p></div>
-          <span class="album-count">0 fotos</span>
-        </div>
-        <div class="album-card reveal d3" onclick="openAlbum('MJ Pieba — Agosto','Agosto 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#07051e 60%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-          <div class="album-overlay"><p class="album-name">MJ Pieba — Agosto</p><p class="album-date">Agosto 2024</p></div>
-          <span class="album-count">0 fotos</span>
-        </div>
-        <div class="album-card reveal d1" onclick="openAlbum('Bautismos 2024','Julio 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M18.364 5.636a9 9 0 0 1 0 12.728M15.536 8.464a5 5 0 0 1 0 7.072"/><circle cx="12" cy="12" r="1"/></svg></div>
-          <div class="album-overlay"><p class="album-name">Bautismos 2024</p><p class="album-date">Julio 2024</p></div>
-          <span class="album-count">0 fotos</span>
-        </div>
-        <div class="album-card reveal d2" onclick="openAlbum('Día de la Madre','Mayo 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#0f0b32 50%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-          <div class="album-overlay"><p class="album-name">Día de la Madre</p><p class="album-date">Mayo 2024</p></div>
-          <span class="album-count">0 fotos</span>
-        </div>
-        <div class="album-card reveal d3" onclick="openAlbum('Aniversario PIEBA +105','Marzo 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <div class="album-overlay"><p class="album-name">Aniversario PIEBA +105</p><p class="album-date">Marzo 2024</p></div>
-          <span class="album-count">0 fotos</span>
-        </div>
+      <div class="album-grid">
+        <div class="album-card" onclick="openAlbum('Aniversario','2024',0)"><div class="album-overlay"><p class="album-name">Aniversario PIEBA</p></div></div>
+        <div class="album-card" onclick="openAlbum('Retiro','2024',0)"><div class="album-overlay"><p class="album-name">Retiro Anual</p></div></div>
+        <div class="album-card" onclick="openAlbum('Navidad','2024',0)"><div class="album-overlay"><p class="album-name">Culto Navidad</p></div></div>
       </div>
     </div>
     <span class="page-num">05 / 09</span>
@@ -740,11 +405,11 @@
 
   <section class="page" id="eventos">
     <div class="eventos-wrap">
-      <p class="section-label reveal">Agenda</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Próximos Eventos</h2>
+      <p class="section-label reveal">Próximamente</p>
+      <h2 class="section-title reveal d1">Agenda de la Iglesia</h2>
       <div class="gold-line reveal d2"></div>
       <div class="evento-grid" id="contenedorEventos">
-        <p style="text-align:center; color:var(--muted); padding: 2rem; grid-column: 1/-1;">Cargando eventos de la agenda...</p>
+        <p style="text-align:center; opacity:0.5;">Cargando agenda...</p>
       </div>
     </div>
     <span class="page-num">06 / 09</span>
@@ -753,37 +418,10 @@
   <section class="page" id="blog">
     <div class="blog-wrap">
       <p class="section-label reveal">Reflexiones</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Blog</h2>
+      <h2 class="section-title reveal d1">Blog</h2>
       <div class="gold-line reveal d2"></div>
       <div class="blog-grid">
-        <div class="blog-card reveal d1">
-          <div class="blog-cover">
-            <div class="blog-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 60%,#0f0b32 100%);position:relative;overflow:hidden;">
-              <svg width="80" height="80" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" style="opacity:.08;position:absolute;"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15z"/></svg>
-              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.35)" stroke-width="1" style="z-index:1;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            </div>
-          </div>
-          <div class="blog-card-body">
-            <p class="blog-cat">Reflexión · Pastor</p>
-            <p class="blog-titulo">La fe que mueve montañas: una mirada a Mateo 17:20</p>
-            <p class="blog-excerpt">En tiempos de incertidumbre, la fe no es la ausencia de dudas sino la decisión de confiar a pesar de ellas. El Señor nos invita a ver más allá de las circunstancias...</p>
-            <div class="blog-meta"><span>Pr. Carlos Méndez</span><span class="blog-meta-dot"></span><span>20 de marzo, 2025</span></div>
-          </div>
-        </div>
-        <div class="blog-side">
-          <div class="blog-card-sm reveal d2">
-            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#0f0b32,#1c1760);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.58rem;">Comunidad</p><p class="blog-sm-titulo">Testimonio: Cómo la iglesia transformó mi familia</p><p class="blog-sm-meta">Marta González · 15 mar, 2025</p></div>
-          </div>
-          <div class="blog-card-sm reveal d3">
-            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#07051e,#0f0b32);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.58rem;">Estudio Bíblico</p><p class="blog-sm-titulo">Entendiendo el libro de Job: el sufrimiento y la gracia</p><p class="blog-sm-meta">Pr. Luis Almada · 8 mar, 2025</p></div>
-          </div>
-          <div class="blog-card-sm reveal d4">
-            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#1c1760,#07051e);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.58rem;">Jóvenes</p><p class="blog-sm-titulo">5 razones para servir desde joven en la iglesia</p><p class="blog-sm-meta">Equipo MJ Pieba · 1 mar, 2025</p></div>
-          </div>
-        </div>
+        <div class="blog-card"><div class="blog-cover"></div><div class="blog-card-body"><p class="blog-cat">Pastor</p><p class="blog-titulo">La fe que mueve montañas</p></div></div>
       </div>
     </div>
     <span class="page-num">07 / 09</span>
@@ -792,39 +430,9 @@
   <section class="page" id="contacto">
     <div class="cont-grid">
       <div>
-        <p class="section-label reveal">Encuéntranos</p>
-        <h2 class="section-title reveal d1">Contacto</h2>
-        <div class="gold-line left reveal d2"></div>
-        <div class="cont-items">
-          <div class="cont-item reveal d2">
-            <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
-            <div><p class="cont-lbl">Dirección</p><p class="cont-val">Calle Principal 123<br>Asunción, Paraguay</p></div>
-          </div>
-          <div class="cont-item reveal d2">
-            <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
-            <div><p class="cont-lbl">Teléfono / WhatsApp</p><p class="cont-val">+595 XXX XXX XXX</p></div>
-          </div>
-          <div class="cont-item reveal d3">
-            <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
-            <div><p class="cont-lbl">Correo</p><p class="cont-val">contacto@pieba.org</p></div>
-          </div>
-          <div class="cont-item reveal d4">
-            <div class="cont-ico" style="background:transparent;border-color:transparent;"></div>
-            <div>
-              <p class="cont-lbl">Redes Sociales</p>
-              <div class="social-row">
-                <a href="#" class="soc-btn" title="Facebook"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-                <a href="#" class="soc-btn" title="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-                <a href="#" class="soc-btn" title="YouTube"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0f0b32" stroke="none"/></svg></a>
-                <a href="#" class="soc-btn" title="WhatsApp"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="cont-map reveal d3">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.25)" stroke-width="1"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        <span>Reemplazar con<br>Google Maps iframe</span>
+        <h2 class="section-title">Contacto</h2>
+        <div class="cont-item"><div class="cont-ico">📍</div><div><p class="cont-lbl">Dirección</p><p class="cont-val">Asunción, Paraguay</p></div></div>
+        <div class="cont-item"><div class="cont-ico">📞</div><div><p class="cont-lbl">Teléfono</p><p class="cont-val">+595 XXX XXX</p></div></div>
       </div>
     </div>
     <span class="page-num">08 / 09</span>
@@ -832,22 +440,11 @@
 
   <section class="page" id="ofrendar">
     <div class="ofr-wrap">
-      <p class="section-label reveal">Generosidad</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Ofrendar</h2>
-      <div class="gold-line reveal d2"></div>
-      <p class="ofr-verse reveal d2">&ldquo;Cada uno dé como propuso en su corazón; no con tristeza, ni por necesidad, porque Dios ama al dador alegre.&rdquo; &mdash; 2 Corintios 9:7</p>
+      <h2 class="section-title">Ofrendar</h2>
       <div class="ofr-cards">
-        <div class="ofr-card reveal d2">
-          <p class="ofr-card-title">Transferencia Bancaria</p>
-          <div class="ofr-detail"><strong>Banco:</strong> Nombre del Banco<br><strong>Cuenta:</strong> 0000-000000-0<br><strong>Titular:</strong> Iglesia PIEBA<br><strong>RUC:</strong> 00000000-0</div>
-        </div>
-        <div class="ofr-card reveal d3">
-          <p class="ofr-card-title">Pago Móvil / QR</p>
-          <div class="qr-ph">QR</div>
-          <p class="ofr-detail">Escanea el código con<br>tu app de pagos</p>
-        </div>
+        <div class="ofr-card"><h3>Transferencia</h3><p class="ofr-detail">Banco: Itaú</p></div>
+        <div class="ofr-card"><h3>QR Pago</h3><div style="background:#fff; height:100px; width:100px; margin:auto;"></div></div>
       </div>
-      <p class="ofr-footnote reveal d4">También puedes ofrendar presencialmente durante nuestros cultos. ¡Gracias por tu generosidad!</p>
     </div>
     <span class="page-num">09 / 09</span>
   </section>
@@ -855,85 +452,33 @@
 </div>
 
 <script>
-/* ── CANVAS STARS ── */
-const canvas = document.getElementById('starCanvas');
-const ctx = canvas.getContext('2d');
-function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
-resize();
-window.addEventListener('resize', resize);
-const stars = Array.from({ length: 140 }, () => ({
-  x: Math.random(), y: Math.random(),
-  r: Math.random() * 1.4 + 0.25,
-  vy: Math.random() * 0.00012 + 0.00004,
-  phase: Math.random() * Math.PI * 2,
-  base: Math.random() * 0.55 + 0.1
-}));
-(function loop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(s => {
-    s.phase += 0.018;
-    const a = s.base * (0.55 + 0.45 * Math.sin(s.phase));
-    ctx.beginPath();
-    ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(201,169,110,${a})`;
-    ctx.fill();
-    s.y -= s.vy;
-    if (s.y < 0) { s.y = 1.02; s.x = Math.random(); }
-  });
-  requestAnimationFrame(loop);
-})();
-
-/* ── NAV / SCROLL ── */
-const wrap    = document.getElementById('scrollWrap');
-const topnav  = document.getElementById('topnav');
-const ham     = document.getElementById('ham');
+const wrap = document.getElementById('scrollWrap');
+const topnav = document.getElementById('topnav');
+const ham = document.getElementById('ham');
 const mobileNav = document.getElementById('mobileNav');
-const dots         = [...document.querySelectorAll('.dot')];
-const navLinks     = [...document.querySelectorAll('.nav-links a[data-section]')];
-const mobileLinks  = [...document.querySelectorAll('.mobile-nav a[data-section]')];
-const allNavLinks  = [...navLinks, ...mobileLinks];
-const sections     = [...document.querySelectorAll('.page')];
-const prefersRM    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dots = [...document.querySelectorAll('.dot')];
 
-function getTargetTop(target) {
-  const wrapRect   = wrap.getBoundingClientRect();
-  const targetRect = target.getBoundingClientRect();
-  return wrap.scrollTop + (targetRect.top - wrapRect.top);
-}
 function setActive(id) {
   dots.forEach(d => d.classList.toggle('active', d.dataset.target === id));
-  allNavLinks.forEach(a => {
-    const active = a.dataset.section === id;
-    a.classList.toggle('active', active);
-  });
 }
-function closeNav() {
-  mobileNav.classList.remove('open');
-  ham.classList.remove('open');
-}
+
 function goTo(id) {
   const target = document.getElementById(id);
-  if (!target || !wrap) return;
-  closeNav();
-  setActive(id);
-  wrap.scrollTo({ top: getTargetTop(target), behavior: prefersRM ? 'auto' : 'smooth' });
+  if (!target) return;
+  mobileNav.classList.remove('open');
+  ham.classList.remove('open');
+  wrap.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
 }
 
-ham.addEventListener('click', e => {
-  e.preventDefault(); e.stopPropagation();
-  const open = mobileNav.classList.toggle('open');
-  ham.classList.toggle('open', open);
-});
+ham.onclick = () => {
+  mobileNav.classList.toggle('open');
+  ham.classList.toggle('open');
+};
 
-document.addEventListener('click', e => {
-  const trigger = e.target.closest('[data-target]');
-  if (trigger && !trigger.classList.contains('vchip')) {
-    const id = trigger.dataset.target;
-    if (id) { e.preventDefault(); goTo(id); }
-  }
-});
-
-wrap.addEventListener('scroll', () => { topnav.classList.toggle('scrolled', wrap.scrollTop > 60); });
+document.onclick = (e) => {
+  const t = e.target.closest('[data-target]');
+  if (t) goTo(t.dataset.target);
+};
 
 const io = new IntersectionObserver(entries => {
   entries.forEach(entry => {
@@ -944,21 +489,10 @@ const io = new IntersectionObserver(entries => {
   });
 }, { root: wrap, threshold: 0.15 });
 
-sections.forEach(s => io.observe(s));
-
-/* ── LIGHTBOX ── */
-function openAlbum(name, date, photoCount) {
-  document.getElementById('lbTitle').textContent = name;
-  document.getElementById('lbDate').textContent  = date;
-  const grid = document.getElementById('lbGrid');
-  grid.innerHTML = photoCount === 0 ? '<p style="color:var(--muted); text-align:center; grid-column:1/-1;">Álbum vacío</p>' : '';
-  document.getElementById('lightbox').classList.add('open');
-}
-function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.querySelectorAll('.page').forEach(s => io.observe(s));
 </script>
 
 <script>
-/* ── CONTENTFUL (EVENTOS) ── */
 const SPACE_ID = 'v6s74ceb9qbl';
 const ACCESS_TOKEN = 'NET8uPjsk-61jVBvKgikzITsxvTVo1iilD32qefhbZw';
 
@@ -969,28 +503,31 @@ async function cargarEventosDesdeContentful() {
     const respuesta = await fetch(url);
     const datos = await respuesta.json();
     const contenedor = document.getElementById('contenedorEventos');
+    
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
 
-    if (datos.items && datos.items.length > 0) {
-      contenedor.innerHTML = datos.items.map(item => {
+    // FILTRO: Solo eventos de hoy en adelante
+    const proximos = datos.items.filter(item => {
+      const fechaEvento = new Date(item.fields.fecha);
+      return fechaEvento >= hoy;
+    });
+
+    if (proximos.length > 0) {
+      contenedor.innerHTML = proximos.map(item => {
         const e = item.fields;
         const d = new Date(e.fecha);
-        const dia = d.getDate();
-        const mes = d.toLocaleDateString('es-PY', { month: 'long', year: 'numeric' });
-        const hora = d.toLocaleTimeString('es-PY', { hour: '2-digit', minute: '2-digit' });
-        
-        let claseTag = (e.prioridad === 'Urgente') ? 'urgente' : '';
-
         return `
           <div class="evento-card reveal visible">
             <div class="evento-date-bar">
-              <div class="evento-dia">${dia}</div>
+              <div class="evento-dia">${d.getDate()}</div>
               <div class="evento-mes-hora">
-                <span class="evento-mes">${mes}</span>
-                <span class="evento-hora">${hora}</span>
+                <span class="evento-mes">${d.toLocaleDateString('es-PY', { month: 'long' })}</span>
+                <span class="evento-hora">${d.toLocaleTimeString('es-PY', { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
             </div>
             <div class="evento-body">
-              <span class="evento-tag ${claseTag}">${e.prioridad || 'Evento'}</span>
+              <span class="evento-tag">${e.prioridad || 'Aviso'}</span>
               <p class="evento-titulo">${e.titulo}</p>
               <p class="evento-desc">${e.texto}</p>
             </div>
@@ -998,120 +535,39 @@ async function cargarEventosDesdeContentful() {
         `;
       }).join('');
     } else {
-      contenedor.innerHTML = '<p style="color:var(--muted); grid-column:1/-1; text-align:center;">No hay eventos programados en este momento.</p>';
+      // SI NO HAY EVENTOS FUTUROS:
+      contenedor.innerHTML = `
+        <div style="text-align:center; padding: 60px; width: 100%;">
+          <p style="font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--gold);">No hay eventos programados</p>
+          <p style="margin-top: 10px; opacity: 0.6;">Vuelve pronto para conocer las novedades.</p>
+        </div>`;
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error cargando agenda");
   }
 }
-
 cargarEventosDesdeContentful();
 </script>
 
 <script>
-/* ── YOUTUBE ── */
-const YT_API_KEY = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
-const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
-const YT_BASE = 'https://www.googleapis.com/youtube/v3';
-
-const vtState = { all: [], filtered: [], selectedId: null, playingId: null, typeFilter: 'all', latestEmbeddable: null };
-const $id = id => document.getElementById(id);
-const qs = s => document.querySelector(s);
-function escHtml(str = '') { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function normalise(str = '') { return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w\s#]/g,' ').replace(/\s+/g,' ').trim(); }
-function fmtDate(iso) { return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'}); }
-function fmtShortDate(iso) { return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'short'}); }
-function fmtDateTime(iso) { return new Date(iso).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}); }
-function summarise(str = '', max = 180) { const c = String(str).replace(/\s+/g,' ').trim(); return c.length > max ? c.slice(0,max).trim()+'…' : (c || 'Canal PIEBA.'); }
-function parseISO(iso = '') { const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i); if (!m) return 0; return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0)); }
-function embedUrl(id, autoplay=false) { return `https://www.youtube-nocookie.com/embed/${id}?autoplay=${autoplay?1:0}&controls=1&rel=0&playsinline=1`; }
-
-function classify(v) {
-  const t = normalise(v.title||'');
-  if (/(debate|panel)/.test(t)) return 'Debates';
-  if (/(charla|conferencia)/.test(t)) return 'Charlas';
-  if (/(estudio|biblico)/.test(t)) return 'Estudios';
-  if (/(culto|mensaje|predic)/.test(t)) return 'Cultos';
-  return 'Otros';
-}
-
-function toItem(v) {
-  if (!v) return null;
-  const ds = parseISO(v.contentDetails?.duration||'');
-  const item = { videoId: v.id, title: v.snippet?.title||'', description: v.snippet?.description||'', publishedAt: v.snippet?.publishedAt||null, scheduledStart:v.liveStreamingDetails?.scheduledStartTime||null, actualStart: v.liveStreamingDetails?.actualStartTime||null, embeddable: v.status?.embeddable !== false, privacy: v.status?.privacyStatus||'public', durationSeconds: ds };
-  item.category = classify(item);
-  item.monthKey = item.publishedAt ? item.publishedAt.slice(0,7) : 'unknown';
-  item.monthLabel = item.publishedAt ? new Date(`${item.monthKey}-01T00:00:00`).toLocaleDateString('es-PY',{month:'long',year:'numeric'}) : 'Sin fecha';
-  return item;
-}
-
-async function ytFetch(path, params={}) {
-  const url = new URL(`${YT_BASE}/${path}`);
-  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v])=>{ if(v!=null) url.searchParams.set(k,v); });
-  const res = await fetch(url);
-  return await res.json();
-}
-
 async function initYouTube() {
-  const card = $id('videoFeaturedCard');
+  const card = document.getElementById('videoFeaturedCard');
   try {
-    const d = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
-    const pid = d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
-    if (!pid) throw new Error();
-    
-    const vids = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:40});
-    const ids = vids.items.map(i=>i.snippet.resourceId.videoId).join(',');
-    const details = await ytFetch('videos',{part:'snippet,status,contentDetails,liveStreamingDetails',id:ids});
-    
-    const list = details.items.map(toItem).filter(v => v.embeddable && v.privacy==='public');
-    if (!list.length) throw new Error();
-
-    vtState.all = list;
-    vtState.latestEmbeddable = list[0];
-    renderFeaturedCard(list[0]);
-    renderVideoRows(list);
-
-    const live = await ytFetch('search',{part:'snippet',channelId:YT_CHANNEL_ID,eventType:'live',type:'video'});
-    if (live.items?.length) { 
-      $id('envivo').querySelector('.stream-box').innerHTML = `<iframe src="${embedUrl(live.items[0].id.videoId,true)}" allowfullscreen></iframe>`;
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCcijrVl3zWSXSuzP3nQI32A&maxResults=1&order=date&type=video&key=AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4`);
+    const data = await res.json();
+    if (data.items.length > 0) {
+      const v = data.items[0];
+      document.getElementById('videoFeatTitle').textContent = v.snippet.title;
+      document.getElementById('videoPlayBtn').onclick = () => {
+        document.getElementById('videoInlinePlayer').innerHTML = `<iframe src="https://www.youtube.com/embed/${v.id.videoId}?autoplay=1" allowfullscreen style="width:100%; aspect-ratio:16/9; border:0;"></iframe>`;
+        document.getElementById('videoInlinePlayer').classList.add('open');
+      };
     }
-  } catch(e) {
-    if(card) card.classList.remove('is-loading');
-  }
+    card.classList.remove('is-loading');
+  } catch(e) { console.log("YT Error"); }
 }
-
-function renderFeaturedCard(v) {
-  const card = $id('videoFeaturedCard');
-  card.classList.remove('is-loading');
-  $id('videoFeatCat').textContent = v.category;
-  $id('videoFeatDate').textContent = fmtDate(v.publishedAt);
-  $id('videoFeatTitle').textContent = v.title;
-  $id('videoFeatDesc').textContent = summarise(v.description);
-  $id('videoPlayBtn').dataset.playFeatured = v.videoId;
-}
-
-function renderVideoRows(vids) {
-  $id('videoRowList').innerHTML = vids.slice(0,10).map(v => `
-    <div class="video-row" onclick="selectVideo('${v.videoId}')">
-      <span class="vr-day">${fmtShortDate(v.publishedAt)}</span>
-      <span class="vr-cat">${v.category}</span>
-      <span class="vr-title">${v.title}</span>
-      <span class="vr-play">▶</span>
-    </div>
-  `).join('');
-}
-
-function selectVideo(id) {
-  $id('videoInlinePlayer').innerHTML = `<iframe src="${embedUrl(id,true)}" allowfullscreen></iframe>`;
-  $id('videoInlinePlayer').classList.add('open');
-}
-
-document.addEventListener('click', e => {
-  const btn = e.target.closest('[data-play-featured]');
-  if (btn) selectVideo(btn.dataset.playFeatured);
-});
-
 initYouTube();
 </script>
+
 </body>
 </html>
