@@ -154,10 +154,9 @@
     .culto-hora { font-size: 2.1rem; font-weight: 300; margin-top: .85rem; }
     .culto-desc { font-size: .78rem; color: var(--muted); margin-top: .65rem; line-height: 1.65; }
 
-    /* ─── VIDEO SECTION (nueva) ─── */
+    /* ─── VIDEO SECTION ─── */
     .video-section { margin-top: 2.25rem; text-align: left; }
 
-    /* Featured card */
     .video-featured-card {
       background: var(--glass);
       border: 1px solid var(--glass-b);
@@ -199,7 +198,6 @@
       max-width: 700px;
     }
 
-    /* Inline player – expands smoothly */
     .video-inline-player {
       overflow: hidden;
       max-height: 0;
@@ -214,7 +212,6 @@
       width: 100%; aspect-ratio: 16/9; display: block; border: 0; border-radius: 2px;
     }
 
-    /* Play button */
     .video-featured-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.3rem; flex-wrap: wrap; }
     .video-play-btn {
       display: inline-flex; align-items: center; gap: .6rem;
@@ -230,7 +227,6 @@
     .video-play-btn:hover svg { transform: scale(1.2); }
     .video-total-count { font-size: .68rem; color: var(--muted); letter-spacing: .06em; }
 
-    /* Filter chips row */
     .video-filter-row {
       display: flex; align-items: center; gap: .45rem; flex-wrap: wrap;
       margin-top: 1.75rem; padding-bottom: .9rem;
@@ -250,7 +246,6 @@
     .vchip:hover { border-color: rgba(201,169,110,.5); color: var(--gold); }
     .vchip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.08); }
 
-    /* Month-grouped video rows */
     .video-month-group { margin-top: 1.4rem; }
     .video-month-header {
       font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: var(--gold);
@@ -311,6 +306,16 @@
     .video-empty-msg {
       text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: .8rem;
       border: 1px dashed rgba(255,255,255,.08); border-radius: 3px; margin-top: 1.25rem;
+    }
+
+    /* ── MENSAJES skeleton loader ── */
+    .video-skeleton {
+      display: flex; flex-direction: column; gap: .85rem; margin-top: 2.25rem;
+      animation: pulse 1.6s ease infinite;
+    }
+    .video-skeleton-bar {
+      background: rgba(255,255,255,.05);
+      border-radius: 2px;
     }
 
     /* ── EN VIVO ── */
@@ -385,7 +390,70 @@
     /* ── EVENTOS ── */
     #eventos { background: var(--navy-deep); }
     .eventos-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
-    .evento-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
+
+    /* Grid dinámico — se ajusta por JS según cantidad de items */
+    .evento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+
+    /* Un solo evento: centrado con ancho máximo elegante */
+    .evento-grid.solo {
+      grid-template-columns: 1fr;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Dos eventos: columnas de 2 centradas */
+    .evento-grid.par {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Estado vacío elegante */
+    .eventos-empty {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      min-height: 38vh;
+      text-align: center;
+    }
+    .eventos-empty-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,169,110,.2);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem;
+      background: rgba(201,169,110,.04);
+    }
+    .eventos-empty-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: .06em;
+      margin-bottom: .65rem;
+    }
+    .eventos-empty-sub {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 320px;
+    }
+    .eventos-empty-line {
+      width: 36px; height: 1px;
+      background: rgba(201,169,110,.3);
+      margin: 1.25rem auto 0;
+    }
+
     .evento-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 0; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; }
     .evento-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
     .evento-date-bar { background: linear-gradient(90deg, rgba(201,169,110,.15), transparent); border-bottom: 1px solid var(--glass-b); padding: .75rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
@@ -395,6 +463,7 @@
     .evento-hora { font-size: .72rem; color: var(--muted); margin-top: .15rem; }
     .evento-body { padding: 1.1rem 1.25rem 1.4rem; }
     .evento-tag { font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .18rem .55rem; border-radius: 2px; display: inline-block; margin-bottom: .6rem; }
+    .evento-tag.urgente { background: rgba(255,112,112,.85); color: #fff; }
     .evento-titulo { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; line-height: 1.3; }
     .evento-desc { font-size: .78rem; color: var(--muted); margin-top: .55rem; line-height: 1.65; }
     .evento-lugar { display: flex; align-items: center; gap: .4rem; font-size: .68rem; color: var(--muted); margin-top: .75rem; }
@@ -486,7 +555,6 @@
       .nos-body { font-size: .88rem; }
       .nos-list li span { font-size: .84rem; }
 
-      /* Mensajes mobile */
       .mensajes-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .culto-cards { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
       .culto-card { padding: 1.2rem 1rem; }
@@ -514,7 +582,7 @@
       .aviso-texto { font-size: .8rem; }
 
       .eventos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .evento-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
+      .evento-grid, .evento-grid.par, .evento-grid.solo { grid-template-columns: 1fr; max-width: 100%; gap: .85rem; margin-top: 1.5rem; }
 
       .blog-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .blog-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
@@ -663,7 +731,6 @@
       <h2 class="section-title reveal d1" style="text-align:center">Mensajes</h2>
       <div class="gold-line reveal d2"></div>
 
-      <!-- Schedule cards -->
       <div class="culto-cards">
         <div class="culto-card reveal d1">
           <p class="culto-dia">Domingo</p>
@@ -685,10 +752,9 @@
         </div>
       </div>
 
-      <!-- ── VIDEO SECTION ── -->
-      <div class="video-section reveal d4">
+      <!-- VIDEO SECTION — se puebla cuando mensajes entra al viewport -->
+      <div class="video-section reveal d4" id="videoSectionRoot">
 
-        <!-- Featured card -->
         <div class="video-featured-card is-loading" id="videoFeaturedCard">
           <div class="video-featured-eyebrow">
             <span class="video-featured-label" id="videoFeatCat">Canal</span>
@@ -696,10 +762,7 @@
           </div>
           <h3 class="video-featured-title" id="videoFeatTitle">Cargando último mensaje…</h3>
           <p class="video-featured-desc" id="videoFeatDesc">Aquí aparecerá el mensaje más reciente del canal.</p>
-
-          <!-- Inline player – expands on play -->
           <div class="video-inline-player" id="videoInlinePlayer"></div>
-
           <div class="video-featured-actions">
             <button type="button" class="video-play-btn" id="videoPlayBtn" data-play-featured="">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -709,7 +772,6 @@
           </div>
         </div>
 
-        <!-- Type filter chips -->
         <div class="video-filter-row" id="videoTypeFilters">
           <span class="video-filter-label-sm">Filtrar</span>
           <button type="button" class="vchip active" data-video-type="all">Todos</button>
@@ -722,10 +784,9 @@
           <button type="button" class="vchip" data-video-type="Otros">Otros</button>
         </div>
 
-        <!-- Month-grouped rows -->
         <div id="videoRowList"></div>
 
-      </div><!-- /video-section -->
+      </div>
     </div>
     <span class="page-num">03 / 10</span>
   </section>
@@ -846,20 +907,15 @@
       <p class="section-label reveal">Agenda</p>
       <h2 class="section-title reveal d1" style="text-align:center">Próximos Eventos</h2>
       <div class="gold-line reveal d2"></div>
-      <div class="evento-grid">
-        <div class="evento-card reveal d1">
-          <div class="evento-date-bar"><div class="evento-dia">30</div><div class="evento-mes-hora"><span class="evento-mes">Marzo 2025</span><span class="evento-hora">11:00 AM</span></div></div>
-          <div class="evento-body"><span class="evento-tag">Culto Especial</span><p class="evento-titulo">Conferencia de Pastores — Culto Especial</p><p class="evento-desc">Culto dominical con horario modificado por la presencia de pastores invitados. Toda la congregación es bienvenida.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Templo Central PIEBA</div></div>
-        </div>
-        <div class="evento-card reveal d2">
-          <div class="evento-date-bar"><div class="evento-dia">12</div><div class="evento-mes-hora"><span class="evento-mes">Abril 2025</span><span class="evento-hora">09:00 AM</span></div></div>
-          <div class="evento-body"><span class="evento-tag">Retiro</span><p class="evento-titulo">Retiro de Damas — Renovando la Esperanza</p><p class="evento-desc">Un fin de semana de descanso, reflexión y comunidad para las mujeres de la iglesia. Cupos limitados, inscribirse en secretaría.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Centro Campestre &mdash; San Bernardino</div></div>
-        </div>
-        <div class="evento-card reveal d3">
-          <div class="evento-date-bar"><div class="evento-dia">26</div><div class="evento-mes-hora"><span class="evento-mes">Abril 2025</span><span class="evento-hora">18:30</span></div></div>
-          <div class="evento-body"><span class="evento-tag">Jóvenes</span><p class="evento-titulo">Noche de Alabanza MJ Pieba</p><p class="evento-desc">Noche especial de alabanza y adoración para jóvenes. Con bandas invitadas y dinámica de comunidad. Entrada libre.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Templo Central PIEBA</div></div>
+
+      <!-- Contenedor dinámico — poblado por Contentful -->
+      <div class="evento-grid" id="contenedorEventos">
+        <!-- Estado de carga inicial -->
+        <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; opacity:.45;">
+          <p style="font-family:'Cinzel',serif; color:var(--gold); font-size:.88rem; letter-spacing:.1em;">Cargando agenda…</p>
         </div>
       </div>
+
     </div>
     <span class="page-num">07 / 10</span>
   </section>
@@ -874,7 +930,6 @@
         <div class="blog-card reveal d1">
           <div class="blog-cover">
             <div class="blog-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 60%,#0f0b32 100%);position:relative;overflow:hidden;">
-              <svg width="80" height="80" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" style="opacity:.08;position:absolute;"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15z"/></svg>
               <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.35)" stroke-width="1" style="z-index:1;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             </div>
           </div>
@@ -1058,14 +1113,24 @@ document.addEventListener('click', e => {
 
 wrap.addEventListener('scroll', () => { topnav.classList.toggle('scrolled', wrap.scrollTop > 60); });
 
+/* ─────────────────────────────────────────────
+   INTERSECTION OBSERVER
+   — revela .reveal y dispara cargas lazy
+   ───────────────────────────────────────────── */
 const io = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       setActive(entry.target.id);
       entry.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+
+      /* ── LAZY: YouTube se carga la primera vez que mensajes entra al viewport ── */
+      if (entry.target.id === 'mensajes' && !vtState._ytLoaded) {
+        vtState._ytLoaded = true;
+        initYouTube();
+      }
     }
   });
-}, { root: wrap, threshold: 0.45 });
+}, { root: wrap, threshold: 0.35 });
 
 sections.forEach(s => io.observe(s));
 document.querySelectorAll('#inicio .reveal').forEach(el => el.classList.add('visible'));
@@ -1107,15 +1172,15 @@ const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
 const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
 
 const vtState = {
-  all:        [],     // all long-form videos fetched
-  filtered:   [],     // after type filter
-  selectedId: null,   // featured video id
-  playingId:  null,   // currently playing id
+  all:        [],
+  filtered:   [],
+  selectedId: null,
+  playingId:  null,
   typeFilter: 'all',
-  latestEmbeddable: null
+  latestEmbeddable: null,
+  _ytLoaded:  false   // ← flag para carga lazy
 };
 
-/* helpers */
 const qs   = s => document.querySelector(s);
 const $id  = id => document.getElementById(id);
 
@@ -1241,7 +1306,6 @@ async function getBroadcast(eventType) {
 }
 
 /* ─── VIDEO SECTION RENDER ─── */
-
 function renderFeaturedCard(video) {
   const card   = $id('videoFeaturedCard');
   const cat    = $id('videoFeatCat');
@@ -1264,7 +1328,6 @@ function renderFeaturedCard(video) {
   }
 
   const isPlaying = vtState.playingId === video.videoId;
-
   if(cat)   { cat.textContent = video.category; cat.className = `video-featured-label cat-${video.category}`; }
   if(date)  date.textContent  = video.publishedAt ? fmtDate(video.publishedAt) : 'Sin fecha';
   if(title) title.textContent = video.title;
@@ -1279,27 +1342,22 @@ function renderFeaturedCard(video) {
       : `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reproducir aquí`;
     btn.classList.toggle('is-playing', isPlaying);
   }
-
   card.classList.toggle('is-playing', isPlaying);
 }
 
 function renderVideoRows(videos) {
   const list = $id('videoRowList');
   if (!list) return;
-
   if (!videos.length) {
     list.innerHTML = `<div class="video-empty-msg">No hay videos para este filtro.</div>`;
     return;
   }
-
-  // Group by month
   const groups = new Map();
   videos.forEach(v => {
     const key = v.monthKey==='unknown' ? 'Sin fecha' : v.monthKey;
     if (!groups.has(key)) groups.set(key, { label: v.monthLabel, videos: [] });
     groups.get(key).videos.push(v);
   });
-
   let html = '';
   groups.forEach(({ label, videos: gvids }) => {
     html += `<div class="video-month-group"><p class="video-month-header">${escHtml(label)}</p>`;
@@ -1318,7 +1376,6 @@ function renderVideoRows(videos) {
     });
     html += `</div>`;
   });
-
   list.innerHTML = html;
 }
 
@@ -1330,7 +1387,6 @@ function applyFilter({ resetFeatured = true } = {}) {
   vtState.filtered = getFiltered();
   if (resetFeatured || !vtState.filtered.find(v => v.videoId === vtState.selectedId)) {
     vtState.selectedId = vtState.filtered[0]?.videoId || null;
-    // If the currently playing video is gone from filter, close player
     if (vtState.playingId && !vtState.filtered.find(v => v.videoId === vtState.playingId)) {
       vtState.playingId = null;
       const player = $id('videoInlinePlayer');
@@ -1346,27 +1402,21 @@ function applyFilter({ resetFeatured = true } = {}) {
 function selectVideo(videoId, play = true) {
   const video = vtState.all.find(v => v.videoId === videoId);
   if (!video) return;
-
   vtState.selectedId = videoId;
-
   if (play) {
     vtState.playingId = videoId;
     const player = $id('videoInlinePlayer');
     if (player) {
       player.innerHTML = `<iframe src="${embedUrl(videoId, true)}" title="${escHtml(video.title)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
       player.classList.add('open');
-      // Scroll featured into view
       $id('videoFeaturedCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
-
   renderFeaturedCard(video);
   renderVideoRows(vtState.filtered);
 }
 
-/* Click delegation for video section */
 document.addEventListener('click', e => {
-  // Type filter chips
   const chip = e.target.closest('[data-video-type]');
   if (chip) {
     vtState.typeFilter = chip.dataset.videoType;
@@ -1374,22 +1424,16 @@ document.addEventListener('click', e => {
     applyFilter({ resetFeatured: true });
     return;
   }
-
-  // Featured play button
   const playBtn = e.target.closest('[data-play-featured]');
   if (playBtn && playBtn.dataset.playFeatured) {
     selectVideo(playBtn.dataset.playFeatured, true);
     return;
   }
-
-  // Row click
   const row = e.target.closest('[data-row-video]');
   if (row && row.dataset.rowVideo) {
     selectVideo(row.dataset.rowVideo, true);
     return;
   }
-
-  // Live fallback button (in #envivo section)
   const liveFallback = e.target.closest('[data-play-live-fallback]');
   if (liveFallback) {
     const vid = vtState.all.find(v => v.videoId === liveFallback.dataset.playLiveFallback) || vtState.latestEmbeddable;
@@ -1398,7 +1442,7 @@ document.addEventListener('click', e => {
   }
 });
 
-/* ─── LIVE / EN-VIVO SECTION ─── */
+/* ─── LIVE / EN-VIVO ─── */
 function mountLivePlayer(video) {
   const box  = qs('.stream-box');
   const next = qs('.next-txt');
@@ -1441,14 +1485,13 @@ function renderNoLive(fallback) {
   }
 }
 
-/* ─── INIT ─── */
+/* ─── INIT YOUTUBE (llamado lazy desde el IO cuando mensajes entra al viewport) ─── */
 async function initYouTube() {
   if (!YT_API_KEY || !YT_CHANNEL_ID) return;
   try {
     const recent = await getRecent(40);
     const latest = recent[0] || null;
 
-    // Populate video section
     if (recent.length) {
       vtState.all = recent;
       vtState.latestEmbeddable = latest;
@@ -1465,7 +1508,6 @@ async function initYouTube() {
       if(title) title.textContent = 'No se encontraron videos largos en el canal';
     }
 
-    // Live section
     const live = await getBroadcast('live');
     if (live) { renderLive(live); return; }
     const upcoming = await getBroadcast('upcoming');
@@ -1485,8 +1527,98 @@ async function initYouTube() {
     renderNoLive(null);
   }
 }
-
-initYouTube();
 </script>
+
+<script>
+/* ── CONTENTFUL — EVENTOS ── */
+const CONTENTFUL_SPACE  = 'v6s74ceb9qbl';
+const CONTENTFUL_TOKEN  = 'NET8uPjsk-61jVBvKgikzITsxvTVo1iilD32qefhbZw';
+
+async function cargarEventos() {
+  const url = `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE}/environments/master/entries?access_token=${CONTENTFUL_TOKEN}&content_type=aviso&order=fields.fecha`;
+  const contenedor = document.getElementById('contenedorEventos');
+  if (!contenedor) return;
+
+  try {
+    const res   = await fetch(url);
+    const datos = await res.json();
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const proximos = (datos.items || []).filter(item => {
+      const f = new Date(item.fields?.fecha);
+      return !isNaN(f) && f >= hoy;
+    });
+
+    /* ── Ajuste de columnas del grid según cantidad ── */
+    contenedor.classList.remove('solo', 'par');
+    if (proximos.length === 1) contenedor.classList.add('solo');
+    else if (proximos.length === 2) contenedor.classList.add('par');
+
+    if (proximos.length === 0) {
+      contenedor.innerHTML = `
+        <div class="eventos-empty">
+          <div class="eventos-empty-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.6)" stroke-width="1.5">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8"  y1="2" x2="8"  y2="6"/>
+              <line x1="3"  y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <p class="eventos-empty-title">Sin eventos próximos</p>
+          <p class="eventos-empty-sub">Vuelve pronto para conocer nuestras próximas actividades y reuniones.</p>
+          <div class="eventos-empty-line"></div>
+        </div>`;
+      return;
+    }
+
+    contenedor.innerHTML = proximos.map(item => {
+      const e  = item.fields || {};
+      const d  = new Date(e.fecha);
+      const dia  = d.getDate();
+      const mes  = d.toLocaleDateString('es-PY', { month: 'long', year: 'numeric' });
+      const hora = d.toLocaleTimeString('es-PY', { hour: '2-digit', minute: '2-digit' });
+      const esUrgente = e.prioridad === 'Urgente';
+
+      return `
+        <div class="evento-card reveal visible">
+          <div class="evento-date-bar">
+            <div class="evento-dia">${dia}</div>
+            <div class="evento-mes-hora">
+              <span class="evento-mes">${mes}</span>
+              <span class="evento-hora">${hora}</span>
+            </div>
+          </div>
+          <div class="evento-body">
+            <span class="evento-tag${esUrgente ? ' urgente' : ''}">${e.prioridad || 'Evento'}</span>
+            <p class="evento-titulo">${e.titulo || ''}</p>
+            <p class="evento-desc">${e.texto || ''}</p>
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch (err) {
+    console.error('Contentful error:', err);
+    contenedor.innerHTML = `
+      <div class="eventos-empty">
+        <div class="eventos-empty-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.5)" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <circle cx="12" cy="16" r=".5" fill="rgba(201,169,110,.5)"/>
+          </svg>
+        </div>
+        <p class="eventos-empty-title">Sin eventos disponibles</p>
+        <p class="eventos-empty-sub">No se pudo conectar con la agenda en este momento.</p>
+        <div class="eventos-empty-line"></div>
+      </div>`;
+  }
+}
+
+cargarEventos();
+</script>
+
 </body>
 </html>
