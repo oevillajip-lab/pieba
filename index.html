@@ -359,32 +359,7 @@
     .lightbox-empty span { color: var(--gold); }
     .lb-upload-hint { margin-top: 1.25rem; display: inline-flex; align-items: center; gap: .5rem; border: 1px dashed rgba(201,169,110,.35); padding: .65rem 1.25rem; border-radius: 3px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
 
-    /* ── AVISOS ── */
-    #avisos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
-    .avisos-wrap { text-align: center; max-width: 880px; width: 100%; padding: 2rem 3rem; }
-    .aviso-list { display: flex; flex-direction: column; gap: .85rem; margin-top: 2rem; text-align: left; }
-    .aviso-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: border-color .3s; }
-    .aviso-card:hover { border-color: var(--gold-dim); }
-    .aviso-card.urgente { border-left: 3px solid #ff7070; }
-    .aviso-card.info { border-left: 3px solid var(--gold); }
-    .aviso-card.normal { border-left: 3px solid rgba(255,255,255,.18); }
-    .aviso-ico { width: 36px; height: 36px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
-    .aviso-ico.urgente { background: rgba(255,112,112,.1); }
-    .aviso-ico.info { background: var(--gold-dim); }
-    .aviso-ico.normal { background: var(--glass); }
-    .aviso-tag { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; padding: .18rem .55rem; border-radius: 2px; font-weight: 600; }
-    .aviso-tag.urgente { color: #ff7070; background: rgba(255,112,112,.1); }
-    .aviso-tag.info { color: var(--gold); background: var(--gold-dim); }
-    .aviso-tag.normal { color: var(--muted); background: var(--glass); }
-    .aviso-body { flex: 1; }
-    .aviso-titulo { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; margin-bottom: .35rem; }
-    .aviso-texto { font-size: .82rem; color: var(--muted); line-height: 1.65; }
-    .aviso-footer { display: flex; align-items: center; gap: .75rem; margin-top: .6rem; }
-    .aviso-fecha { font-size: .62rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
-
-    /* ── EVENTOS ── */
-    #eventos { background: var(--navy-deep); }
-    .eventos-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
+    /* ── EVENTOS (Contentful) ── */
     .evento-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
     .evento-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 0; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; }
     .evento-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
@@ -395,10 +370,9 @@
     .evento-hora { font-size: .72rem; color: var(--muted); margin-top: .15rem; }
     .evento-body { padding: 1.1rem 1.25rem 1.4rem; }
     .evento-tag { font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .18rem .55rem; border-radius: 2px; display: inline-block; margin-bottom: .6rem; }
+    .evento-tag.urgente { background: #ff7070; }
     .evento-titulo { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; line-height: 1.3; }
     .evento-desc { font-size: .78rem; color: var(--muted); margin-top: .55rem; line-height: 1.65; }
-    .evento-lugar { display: flex; align-items: center; gap: .4rem; font-size: .68rem; color: var(--muted); margin-top: .75rem; }
-    .evento-lugar svg { flex-shrink: 0; }
 
     /* ── BLOG ── */
     #blog { background: var(--navy); }
@@ -507,12 +481,6 @@
       .lightbox-header { padding: 1rem 1.1rem; }
       .lightbox-title { font-size: .95rem; }
 
-      .avisos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .aviso-list { margin-top: 1.5rem; gap: .7rem; }
-      .aviso-card { padding: 1rem 1.1rem; gap: 1rem; }
-      .aviso-titulo { font-size: .88rem; }
-      .aviso-texto { font-size: .8rem; }
-
       .eventos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .evento-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
 
@@ -572,7 +540,6 @@
   <a href="#mensajes"  data-target="mensajes"  data-section="mensajes">Mensajes</a>
   <a href="#envivo"    data-target="envivo"    data-section="envivo">En Vivo</a>
   <a href="#galeria"   data-target="galeria"   data-section="galeria">Galería</a>
-  <a href="#avisos"    data-target="avisos"    data-section="avisos">Avisos</a>
   <a href="#eventos"   data-target="eventos"   data-section="eventos">Eventos</a>
   <a href="#blog"      data-target="blog"      data-section="blog">Blog</a>
   <a href="#contacto"  data-target="contacto"  data-section="contacto">Contacto</a>
@@ -585,7 +552,6 @@
   <button class="dot"        type="button" data-target="mensajes" title="Mensajes"  aria-label="Ir a Mensajes"></button>
   <button class="dot"        type="button" data-target="envivo"   title="En Vivo"   aria-label="Ir a En Vivo"></button>
   <button class="dot"        type="button" data-target="galeria"  title="Galería"   aria-label="Ir a Galería"></button>
-  <button class="dot"        type="button" data-target="avisos"   title="Avisos"    aria-label="Ir a Avisos"></button>
   <button class="dot"        type="button" data-target="eventos"  title="Eventos"   aria-label="Ir a Eventos"></button>
   <button class="dot"        type="button" data-target="blog"     title="Blog"      aria-label="Ir a Blog"></button>
   <button class="dot"        type="button" data-target="contacto" title="Contacto"  aria-label="Ir a Contacto"></button>
@@ -620,7 +586,7 @@
       </p>
     </div>
     <div class="scroll-cue"><span>Deslizar</span></div>
-    <span class="page-num">01 / 10</span>
+    <span class="page-num">01 / 09</span>
   </section>
 
   <section class="page" id="nosotros">
@@ -647,7 +613,7 @@
         <div class="stat"><div class="stat-num">Dom.</div><div class="stat-lbl">Culto<br>Principal</div></div>
       </div>
     </div>
-    <span class="page-num">02 / 10</span>
+    <span class="page-num">02 / 09</span>
   </section>
 
   <section class="page" id="mensajes">
@@ -678,7 +644,6 @@
       </div>
 
       <div class="video-section reveal d4">
-
         <div class="video-featured-card is-loading" id="videoFeaturedCard">
           <div class="video-featured-eyebrow">
             <span class="video-featured-label" id="videoFeatCat">Canal</span>
@@ -686,9 +651,7 @@
           </div>
           <h3 class="video-featured-title" id="videoFeatTitle">Cargando último mensaje…</h3>
           <p class="video-featured-desc" id="videoFeatDesc">Aquí aparecerá el mensaje más reciente del canal.</p>
-
           <div class="video-inline-player" id="videoInlinePlayer"></div>
-
           <div class="video-featured-actions">
             <button type="button" class="video-play-btn" id="videoPlayBtn" data-play-featured="">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -709,11 +672,10 @@
           <button type="button" class="vchip" data-video-type="Jóvenes">Jóvenes</button>
           <button type="button" class="vchip" data-video-type="Otros">Otros</button>
         </div>
-
         <div id="videoRowList"></div>
-
-      </div></div>
-    <span class="page-num">03 / 10</span>
+      </div>
+    </div>
+    <span class="page-num">03 / 09</span>
   </section>
 
   <section class="page" id="envivo">
@@ -732,7 +694,7 @@
       </div>
       <p class="next-txt reveal d3">Próxima transmisión: <strong>Consultando canal...</strong></p>
     </div>
-    <span class="page-num">04 / 10</span>
+    <span class="page-num">04 / 09</span>
   </section>
 
   <section class="page" id="galeria">
@@ -773,19 +735,7 @@
         </div>
       </div>
     </div>
-    <span class="page-num">05 / 10</span>
-  <section class="page" id="avisos">
-    <div class="avisos-wrap">
-      <p class="section-label reveal">Comunicados</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Avisos</h2>
-      <div class="gold-line reveal d2"></div>
-      
-      <div class="aviso-list" id="contenedorAvisos">
-        <p style="text-align:center; color:var(--muted); padding: 2rem;">Cargando comunicados...</p>
-      </div>
-      
-    </div>
-    <span class="page-num">06 / 10</span>
+    <span class="page-num">05 / 09</span>
   </section>
 
   <section class="page" id="eventos">
@@ -793,22 +743,11 @@
       <p class="section-label reveal">Agenda</p>
       <h2 class="section-title reveal d1" style="text-align:center">Próximos Eventos</h2>
       <div class="gold-line reveal d2"></div>
-      <div class="evento-grid">
-        <div class="evento-card reveal d1">
-          <div class="evento-date-bar"><div class="evento-dia">30</div><div class="evento-mes-hora"><span class="evento-mes">Marzo 2025</span><span class="evento-hora">11:00 AM</span></div></div>
-          <div class="evento-body"><span class="evento-tag">Culto Especial</span><p class="evento-titulo">Conferencia de Pastores — Culto Especial</p><p class="evento-desc">Culto dominical con horario modificado por la presencia de pastores invitados. Toda la congregación es bienvenida.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Templo Central PIEBA</div></div>
-        </div>
-        <div class="evento-card reveal d2">
-          <div class="evento-date-bar"><div class="evento-dia">12</div><div class="evento-mes-hora"><span class="evento-mes">Abril 2025</span><span class="evento-hora">09:00 AM</span></div></div>
-          <div class="evento-body"><span class="evento-tag">Retiro</span><p class="evento-titulo">Retiro de Damas — Renovando la Esperanza</p><p class="evento-desc">Un fin de semana de descanso, reflexión y comunidad para las mujeres de la iglesia. Cupos limitados, inscribirse en secretaría.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Centro Campestre &mdash; San Bernardino</div></div>
-        </div>
-        <div class="evento-card reveal d3">
-          <div class="evento-date-bar"><div class="evento-dia">26</div><div class="evento-mes-hora"><span class="evento-mes">Abril 2025</span><span class="evento-hora">18:30</span></div></div>
-          <div class="evento-body"><span class="evento-tag">Jóvenes</span><p class="evento-titulo">Noche de Alabanza MJ Pieba</p><p class="evento-desc">Noche especial de alabanza y adoración para jóvenes. Con bandas invitadas y dinámica de comunidad. Entrada libre.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Templo Central PIEBA</div></div>
-        </div>
+      <div class="evento-grid" id="contenedorEventos">
+        <p style="text-align:center; color:var(--muted); padding: 2rem; grid-column: 1/-1;">Cargando eventos de la agenda...</p>
       </div>
     </div>
-    <span class="page-num">07 / 10</span>
+    <span class="page-num">06 / 09</span>
   </section>
 
   <section class="page" id="blog">
@@ -847,7 +786,7 @@
         </div>
       </div>
     </div>
-    <span class="page-num">08 / 10</span>
+    <span class="page-num">07 / 09</span>
   </section>
 
   <section class="page" id="contacto">
@@ -888,7 +827,7 @@
         <span>Reemplazar con<br>Google Maps iframe</span>
       </div>
     </div>
-    <span class="page-num">09 / 10</span>
+    <span class="page-num">08 / 09</span>
   </section>
 
   <section class="page" id="ofrendar">
@@ -910,10 +849,12 @@
       </div>
       <p class="ofr-footnote reveal d4">También puedes ofrendar presencialmente durante nuestros cultos. ¡Gracias por tu generosidad!</p>
     </div>
-    <span class="page-num">10 / 10</span>
+    <span class="page-num">09 / 09</span>
   </section>
 
-</div><script>
+</div>
+
+<script>
 /* ── CANVAS STARS ── */
 const canvas = document.getElementById('starCanvas');
 const ctx = canvas.getContext('2d');
@@ -947,7 +888,6 @@ const wrap    = document.getElementById('scrollWrap');
 const topnav  = document.getElementById('topnav');
 const ham     = document.getElementById('ham');
 const mobileNav = document.getElementById('mobileNav');
-
 const dots         = [...document.querySelectorAll('.dot')];
 const navLinks     = [...document.querySelectorAll('.nav-links a[data-section]')];
 const mobileLinks  = [...document.querySelectorAll('.mobile-nav a[data-section]')];
@@ -965,13 +905,11 @@ function setActive(id) {
   allNavLinks.forEach(a => {
     const active = a.dataset.section === id;
     a.classList.toggle('active', active);
-    active ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current');
   });
 }
 function closeNav() {
   mobileNav.classList.remove('open');
   ham.classList.remove('open');
-  ham.setAttribute('aria-expanded','false');
 }
 function goTo(id) {
   const target = document.getElementById(id);
@@ -979,28 +917,24 @@ function goTo(id) {
   closeNav();
   setActive(id);
   wrap.scrollTo({ top: getTargetTop(target), behavior: prefersRM ? 'auto' : 'smooth' });
-  if (history.replaceState) history.replaceState(null,'',`#${id}`);
 }
 
 ham.addEventListener('click', e => {
   e.preventDefault(); e.stopPropagation();
   const open = mobileNav.classList.toggle('open');
   ham.classList.toggle('open', open);
-  ham.setAttribute('aria-expanded', String(open));
 });
 
 document.addEventListener('click', e => {
   const trigger = e.target.closest('[data-target]');
-  if (trigger && !trigger.classList.contains('vchip') && !trigger.hasAttribute('data-video-type')) {
+  if (trigger && !trigger.classList.contains('vchip')) {
     const id = trigger.dataset.target;
-    if (id) { e.preventDefault(); goTo(id); return; }
+    if (id) { e.preventDefault(); goTo(id); }
   }
-  if (mobileNav.classList.contains('open') && !mobileNav.contains(e.target) && !ham.contains(e.target)) closeNav();
 });
 
 wrap.addEventListener('scroll', () => { topnav.classList.toggle('scrolled', wrap.scrollTop > 60); });
 
-/* ESTE FUE EL PROBLEMA: HE BAJADO EL THRESHOLD A 0.15 PARA QUE NO FALLE CON SECCIONES ALTAS */
 const io = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -1011,475 +945,173 @@ const io = new IntersectionObserver(entries => {
 }, { root: wrap, threshold: 0.15 });
 
 sections.forEach(s => io.observe(s));
-document.querySelectorAll('#inicio .reveal').forEach(el => el.classList.add('visible'));
-
-if (location.hash) {
-  const initId = location.hash.replace('#','');
-  if (document.getElementById(initId)) requestAnimationFrame(() => goTo(initId));
-}
 
 /* ── LIGHTBOX ── */
 function openAlbum(name, date, photoCount) {
   document.getElementById('lbTitle').textContent = name;
   document.getElementById('lbDate').textContent  = date;
   const grid = document.getElementById('lbGrid');
-  grid.innerHTML = '';
-  if (photoCount === 0) {
-    grid.innerHTML = `<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p><p style="margin-top:.5rem;font-size:.75rem;">Cuando integres Sanity CMS, las fotos aparecerán aquí automáticamente.</p><div class="lb-upload-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Agregar fotos desde el panel CMS</div></div>`;
-  } else {
-    for (let i = 0; i < photoCount; i++) {
-      grid.innerHTML += `<div class="lightbox-photo"><div class="lightbox-photo-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
-    }
-  }
+  grid.innerHTML = photoCount === 0 ? '<p style="color:var(--muted); text-align:center; grid-column:1/-1;">Álbum vacío</p>' : '';
   document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
 }
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
 </script>
 
 <script>
-/* ─────────────────────────────────────────────
-   YOUTUBE + VIDEO SECTION
-   ───────────────────────────────────────────── */
-const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
+/* ── CONTENTFUL (EVENTOS) ── */
+const SPACE_ID = 'v6s74ceb9qbl';
+const ACCESS_TOKEN = 'NET8uPjsk-61jVBvKgikzITsxvTVo1iilD32qefhbZw';
+
+async function cargarEventosDesdeContentful() {
+  const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=aviso&order=fields.fecha`;
+
+  try {
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+    const contenedor = document.getElementById('contenedorEventos');
+
+    if (datos.items && datos.items.length > 0) {
+      contenedor.innerHTML = datos.items.map(item => {
+        const e = item.fields;
+        const d = new Date(e.fecha);
+        const dia = d.getDate();
+        const mes = d.toLocaleDateString('es-PY', { month: 'long', year: 'numeric' });
+        const hora = d.toLocaleTimeString('es-PY', { hour: '2-digit', minute: '2-digit' });
+        
+        let claseTag = (e.prioridad === 'Urgente') ? 'urgente' : '';
+
+        return `
+          <div class="evento-card reveal visible">
+            <div class="evento-date-bar">
+              <div class="evento-dia">${dia}</div>
+              <div class="evento-mes-hora">
+                <span class="evento-mes">${mes}</span>
+                <span class="evento-hora">${hora}</span>
+              </div>
+            </div>
+            <div class="evento-body">
+              <span class="evento-tag ${claseTag}">${e.prioridad || 'Evento'}</span>
+              <p class="evento-titulo">${e.titulo}</p>
+              <p class="evento-desc">${e.texto}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      contenedor.innerHTML = '<p style="color:var(--muted); grid-column:1/-1; text-align:center;">No hay eventos programados en este momento.</p>';
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+cargarEventosDesdeContentful();
+</script>
+
+<script>
+/* ── YOUTUBE ── */
+const YT_API_KEY = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
-const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
+const YT_BASE = 'https://www.googleapis.com/youtube/v3';
 
-const vtState = {
-  all:        [],     // all long-form videos fetched
-  filtered:   [],     // after type filter
-  selectedId: null,   // featured video id
-  playingId:  null,   // currently playing id
-  typeFilter: 'all',
-  latestEmbeddable: null
-};
-
-/* helpers */
-const qs   = s => document.querySelector(s);
-const $id  = id => document.getElementById(id);
-
-function escHtml(str = '') {
-  return String(str).replace(/[&<>"']/g, m =>
-    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function normalise(str = '') {
-  return String(str).toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^\w\s#]/g,' ').replace(/\s+/g,' ').trim();
-}
-function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
-}
-function fmtShortDate(iso) {
-  return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'short'});
-}
-function fmtDateTime(iso) {
-  return new Date(iso).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
-}
-function summarise(str = '', max = 180) {
-  const c = String(str).replace(/\s+/g,' ').trim();
-  return c.length > max ? c.slice(0,max).trim()+'…' : (c || 'Contenido del canal PIEBA.');
-}
-function parseISO(iso = '') {
-  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
-  if (!m) return 0;
-  return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0));
-}
-function embedUrl(id, autoplay=false) {
-  return `https://www.youtube-nocookie.com/embed/${id}?autoplay=${autoplay?1:0}&controls=1&rel=0&playsinline=1`;
-}
-
-const bibleRe = /(genesis|exodo|levitico|numeros|deuteronomio|josue|jueces|rut|samuel|reyes|cronicas|esdras|nehemias|ester|job|salmo|salmos|proverbios|eclesiastes|cantares|isaias|jeremias|lamentaciones|ezequiel|daniel|oseas|joel|amos|abdias|jonas|miqueas|nahum|habacuc|sofonias|hageo|zacarias|malaquias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|tito|filemon|hebreos|santiago|pedro|judas|apocalipsis)/;
+const vtState = { all: [], filtered: [], selectedId: null, playingId: null, typeFilter: 'all', latestEmbeddable: null };
+const $id = id => document.getElementById(id);
+const qs = s => document.querySelector(s);
+function escHtml(str = '') { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function normalise(str = '') { return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w\s#]/g,' ').replace(/\s+/g,' ').trim(); }
+function fmtDate(iso) { return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'}); }
+function fmtShortDate(iso) { return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'short'}); }
+function fmtDateTime(iso) { return new Date(iso).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}); }
+function summarise(str = '', max = 180) { const c = String(str).replace(/\s+/g,' ').trim(); return c.length > max ? c.slice(0,max).trim()+'…' : (c || 'Canal PIEBA.'); }
+function parseISO(iso = '') { const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i); if (!m) return 0; return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0)); }
+function embedUrl(id, autoplay=false) { return `https://www.youtube-nocookie.com/embed/${id}?autoplay=${autoplay?1:0}&controls=1&rel=0&playsinline=1`; }
 
 function classify(v) {
   const t = normalise(v.title||'');
-  const d = normalise((v.description||'').split('\n').slice(0,4).join(' '));
-  if (/(^|\s)(aviso|avisos|anuncio|anuncios|informativo|comunicado)(\s|$)/.test(t)||/\baviso\b/.test(d)) return 'Avisos';
-  if (/(^|\s)(mj|jovenes|juvenil|juventud|adolescentes)(\s|$)/.test(t)||/\bjuventud\b/.test(d))          return 'Jóvenes';
-  if (/(debate|panel|conversatorio|mesa redonda|dialogo|q a)/.test(t))                                   return 'Debates';
-  if (/(charla|conferencia|seminario|entrevista|testimonio|taller)/.test(t))                             return 'Charlas';
-  if (/(estudio biblico|escuela dominical|discipulado|devocional|ensenanza|serie biblica)/.test(t))      return 'Estudios';
-  if (/(culto|predic|sermon|mensaje|adoracion|santa cena|domingo|miercoles|pr |pastor)/.test(t)||bibleRe.test(t)) return 'Cultos';
-  if (/(estudio biblico|escuela dominical|discipulado)/.test(d))                                         return 'Estudios';
-  if (v.durationSeconds >= 1200) return 'Cultos';
+  if (/(debate|panel)/.test(t)) return 'Debates';
+  if (/(charla|conferencia)/.test(t)) return 'Charlas';
+  if (/(estudio|biblico)/.test(t)) return 'Estudios';
+  if (/(culto|mensaje|predic)/.test(t)) return 'Cultos';
   return 'Otros';
 }
 
 function toItem(v) {
   if (!v) return null;
   const ds = parseISO(v.contentDetails?.duration||'');
-  const item = {
-    videoId:       v.id,
-    title:         v.snippet?.title||'',
-    description:   v.snippet?.description||'',
-    publishedAt:   v.snippet?.publishedAt||null,
-    scheduledStart:v.liveStreamingDetails?.scheduledStartTime||null,
-    actualStart:   v.liveStreamingDetails?.actualStartTime||null,
-    embeddable:    v.status?.embeddable !== false,
-    privacy:       v.status?.privacyStatus||'public',
-    durationSeconds: ds
-  };
+  const item = { videoId: v.id, title: v.snippet?.title||'', description: v.snippet?.description||'', publishedAt: v.snippet?.publishedAt||null, scheduledStart:v.liveStreamingDetails?.scheduledStartTime||null, actualStart: v.liveStreamingDetails?.actualStartTime||null, embeddable: v.status?.embeddable !== false, privacy: v.status?.privacyStatus||'public', durationSeconds: ds };
   item.category = classify(item);
-  item.monthKey  = item.publishedAt ? item.publishedAt.slice(0,7) : 'unknown';
-  item.monthLabel= item.publishedAt
-    ? new Date(`${item.monthKey}-01T00:00:00`).toLocaleDateString('es-PY',{month:'long',year:'numeric'})
-    : 'Sin fecha';
+  item.monthKey = item.publishedAt ? item.publishedAt.slice(0,7) : 'unknown';
+  item.monthLabel = item.publishedAt ? new Date(`${item.monthKey}-01T00:00:00`).toLocaleDateString('es-PY',{month:'long',year:'numeric'}) : 'Sin fecha';
   return item;
-}
-
-function isLongPlayable(v) {
-  if (!v || v.privacy==='private' || !v.embeddable) return false;
-  if (v.durationSeconds>0 && v.durationSeconds<90) return false;
-  const t = normalise(`${v.title} ${v.description}`);
-  if (/(^|\s)(#shorts|shorts|short|reel|reels|clip)(\s|$)/.test(t)) return false;
-  return true;
 }
 
 async function ytFetch(path, params={}) {
   const url = new URL(`${YT_BASE}/${path}`);
-  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v])=>{ if(v!=null&&v!=='') url.searchParams.set(k,v); });
-  const res  = await fetch(url);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message||'YouTube error');
-  return data;
+  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v])=>{ if(v!=null) url.searchParams.set(k,v); });
+  const res = await fetch(url);
+  return await res.json();
 }
 
-async function getUploadsId() {
-  const d = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
-  return d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads||null;
-}
-
-async function getRecent(limit=40) {
-  const pid = await getUploadsId();
-  if (!pid) return [];
-  const items=[]; let pt='';
-  while(items.length<limit){
-    const d = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:Math.min(50,limit-items.length),pageToken:pt});
-    items.push(...(d.items||[]));
-    if(!d.nextPageToken||!d.items?.length) break;
-    pt=d.nextPageToken;
-  }
-  const ids = items.map(i=>i?.snippet?.resourceId?.videoId).filter(Boolean);
-  if(!ids.length) return [];
-  const chunks=[]; for(let i=0;i<ids.length;i+=50) chunks.push(ids.slice(i,i+50).join(','));
-  const batches = await Promise.all(chunks.map(c=>ytFetch('videos',{part:'snippet,status,liveStreamingDetails,contentDetails',id:c})));
-  return batches.flatMap(b=>b.items||[]).map(toItem).filter(Boolean).filter(isLongPlayable)
-    .sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0));
-}
-
-async function getBroadcast(eventType) {
-  const s = await ytFetch('search',{part:'snippet',channelId:YT_CHANNEL_ID,eventType,type:'video',videoEmbeddable:'true',maxResults:5});
-  const ids = (s.items||[]).map(i=>i.id?.videoId).filter(Boolean);
-  if(!ids.length) return null;
-  const vd = await ytFetch('videos',{part:'snippet,status,liveStreamingDetails,contentDetails',id:ids.join(',')});
-  const list = (vd.items||[]).map(toItem).filter(Boolean).filter(isLongPlayable);
-  if(!list.length) return null;
-  if(eventType==='live') list.sort((a,b)=>new Date(b.actualStart||b.publishedAt)-new Date(a.actualStart||a.publishedAt));
-  else list.sort((a,b)=>new Date(a.scheduledStart||a.publishedAt)-new Date(b.scheduledStart||b.publishedAt));
-  return list[0];
-}
-
-/* ─── VIDEO SECTION RENDER ─── */
-
-function renderFeaturedCard(video) {
-  const card   = $id('videoFeaturedCard');
-  const cat    = $id('videoFeatCat');
-  const date   = $id('videoFeatDate');
-  const title  = $id('videoFeatTitle');
-  const desc   = $id('videoFeatDesc');
-  const btn    = $id('videoPlayBtn');
-  const count  = $id('videoTotalCount');
-  if (!card) return;
-
-  card.classList.remove('is-loading');
-
-  if (!video) {
-    if(cat)   cat.textContent   = 'Canal';
-    if(date)  date.textContent  = 'Sin resultados';
-    if(title) title.textContent = 'No hay videos para este filtro';
-    if(desc)  desc.textContent  = 'Prueba seleccionando otro tipo de contenido.';
-    if(btn)   { btn.textContent='Sin video'; btn.disabled=true; btn.dataset.playFeatured=''; }
-    return;
-  }
-
-  const isPlaying = vtState.playingId === video.videoId;
-
-  if(cat)   { cat.textContent = video.category; cat.className = `video-featured-label cat-${video.category}`; }
-  if(date)  date.textContent  = video.publishedAt ? fmtDate(video.publishedAt) : 'Sin fecha';
-  if(title) title.textContent = video.title;
-  if(desc)  desc.textContent  = summarise(video.description, 200);
-  if(count) count.textContent = vtState.filtered.length > 1 ? `${vtState.filtered.length} videos disponibles` : '';
-
-  if(btn) {
-    btn.dataset.playFeatured = video.videoId;
-    btn.disabled = false;
-    btn.innerHTML = isPlaying
-      ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Reproduciendo`
-      : `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reproducir aquí`;
-    btn.classList.toggle('is-playing', isPlaying);
-  }
-
-  card.classList.toggle('is-playing', isPlaying);
-}
-
-function renderVideoRows(videos) {
-  const list = $id('videoRowList');
-  if (!list) return;
-
-  if (!videos.length) {
-    list.innerHTML = `<div class="video-empty-msg">No hay videos para este filtro.</div>`;
-    return;
-  }
-
-  // Group by month
-  const groups = new Map();
-  videos.forEach(v => {
-    const key = v.monthKey==='unknown' ? 'Sin fecha' : v.monthKey;
-    if (!groups.has(key)) groups.set(key, { label: v.monthLabel, videos: [] });
-    groups.get(key).videos.push(v);
-  });
-
-  let html = '';
-  groups.forEach(({ label, videos: gvids }) => {
-    html += `<div class="video-month-group"><p class="video-month-header">${escHtml(label)}</p>`;
-    gvids.forEach(v => {
-      const active    = v.videoId === vtState.selectedId ? 'vr-active' : '';
-      const shortDate = v.publishedAt ? fmtShortDate(v.publishedAt) : '—';
-      html += `
-        <div class="video-row ${active}" data-row-video="${escHtml(v.videoId)}">
-          <span class="vr-day">${escHtml(shortDate)}</span>
-          <span class="vr-cat cat-${escHtml(v.category)}">${escHtml(v.category)}</span>
-          <span class="vr-title">${escHtml(v.title)}</span>
-          <span class="vr-play">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </span>
-        </div>`;
-    });
-    html += `</div>`;
-  });
-
-  list.innerHTML = html;
-}
-
-function getFiltered() {
-  return vtState.all.filter(v => vtState.typeFilter === 'all' || v.category === vtState.typeFilter);
-}
-
-function applyFilter({ resetFeatured = true } = {}) {
-  vtState.filtered = getFiltered();
-  if (resetFeatured || !vtState.filtered.find(v => v.videoId === vtState.selectedId)) {
-    vtState.selectedId = vtState.filtered[0]?.videoId || null;
-    // If the currently playing video is gone from filter, close player
-    if (vtState.playingId && !vtState.filtered.find(v => v.videoId === vtState.playingId)) {
-      vtState.playingId = null;
-      const player = $id('videoInlinePlayer');
-      if (player) { player.innerHTML=''; player.classList.remove('open'); }
-    }
-  }
-  const featured = vtState.filtered.find(v => v.videoId === vtState.selectedId) || vtState.filtered[0] || null;
-  vtState.selectedId = featured?.videoId || null;
-  renderFeaturedCard(featured);
-  renderVideoRows(vtState.filtered);
-}
-
-function selectVideo(videoId, play = true) {
-  const video = vtState.all.find(v => v.videoId === videoId);
-  if (!video) return;
-
-  vtState.selectedId = videoId;
-
-  if (play) {
-    vtState.playingId = videoId;
-    const player = $id('videoInlinePlayer');
-    if (player) {
-      player.innerHTML = `<iframe src="${embedUrl(videoId, true)}" title="${escHtml(video.title)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
-      player.classList.add('open');
-      // Scroll featured into view
-      $id('videoFeaturedCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }
-
-  renderFeaturedCard(video);
-  renderVideoRows(vtState.filtered);
-}
-
-/* Click delegation for video section */
-document.addEventListener('click', e => {
-  // Type filter chips
-  const chip = e.target.closest('[data-video-type]');
-  if (chip) {
-    vtState.typeFilter = chip.dataset.videoType;
-    document.querySelectorAll('[data-video-type]').forEach(c => c.classList.toggle('active', c.dataset.videoType === vtState.typeFilter));
-    applyFilter({ resetFeatured: true });
-    return;
-  }
-
-  // Featured play button
-  const playBtn = e.target.closest('[data-play-featured]');
-  if (playBtn && playBtn.dataset.playFeatured) {
-    selectVideo(playBtn.dataset.playFeatured, true);
-    return;
-  }
-
-  // Row click
-  const row = e.target.closest('[data-row-video]');
-  if (row && row.dataset.rowVideo) {
-    selectVideo(row.dataset.rowVideo, true);
-    return;
-  }
-
-  // Live fallback button (in #envivo section)
-  const liveFallback = e.target.closest('[data-play-live-fallback]');
-  if (liveFallback) {
-    const vid = vtState.all.find(v => v.videoId === liveFallback.dataset.playLiveFallback) || vtState.latestEmbeddable;
-    if (vid) mountLivePlayer(vid);
-    return;
-  }
-});
-
-/* ─── LIVE / EN-VIVO SECTION ─── */
-function mountLivePlayer(video) {
-  const box  = qs('.stream-box');
-  const next = qs('.next-txt');
-  const pill = qs('.live-pill');
-  if (!box || !video) return;
-  box.innerHTML = `<iframe src="${embedUrl(video.videoId,true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escHtml(video.title)}"></iframe>`;
-  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>CANAL';
-  if (next) next.innerHTML = `Reproduciendo: <strong>${escHtml(video.title)}</strong>`;
-}
-
-function renderLive(video) {
-  const box=qs('.stream-box'), pill=qs('.live-pill'), next=qs('.next-txt');
-  if (!box||!video) return;
-  box.innerHTML = `<iframe src="${embedUrl(video.videoId,true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escHtml(video.title)}"></iframe>`;
-  if(pill) pill.innerHTML='<span class="live-dot-r"></span>EN VIVO AHORA';
-  if(next) next.innerHTML=`📺 <strong>${escHtml(video.title)}</strong> · Transmisión en curso`;
-}
-
-function renderUpcoming(video, fallback) {
-  const box=qs('.stream-box'), next=qs('.next-txt'), pill=qs('.live-pill');
-  if(!box||!video) return;
-  const fb = fallback
-    ? `<button type="button" data-play-live-fallback="${escHtml(fallback.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button>`
-    : `<span style="font-size:.78rem;color:var(--muted)">Sin video reciente</span>`;
-  box.innerHTML=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:1.4rem"><div style="max-width:560px;width:100%;text-align:center"><p style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem">Próxima transmisión programada</p><p style="font-size:.98rem;line-height:1.55;color:var(--white);margin-bottom:.85rem">${escHtml(video.title)}</p><p style="font-size:.82rem;color:var(--muted);margin-bottom:1.15rem">${video.scheduledStart?escHtml(fmtDateTime(video.scheduledStart)):'Horario pendiente'}</p>${fb}</div></div>`;
-  if(pill) pill.innerHTML='<span class="live-dot-r"></span>PRÓXIMO EN VIVO';
-  if(next) next.innerHTML=`Próxima transmisión: <strong>${video.scheduledStart?escHtml(fmtDateTime(video.scheduledStart)):'Programada'}</strong>`;
-}
-
-function renderNoLive(fallback) {
-  const box=qs('.stream-box'), next=qs('.next-txt'), pill=qs('.live-pill');
-  if(!box) return;
-  if(fallback) {
-    box.innerHTML=`<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión activa.<br>Reproducí el mensaje más reciente aquí mismo.</p><button type="button" data-play-live-fallback="${escHtml(fallback.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button></div>`;
-    if(pill) pill.innerHTML='<span class="live-dot-r"></span>CANAL';
-    if(next) next.innerHTML=`Destacado reciente: <strong>${escHtml(fallback.title)}</strong>`;
-  } else {
-    box.innerHTML=`<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión activa en este momento.</p></div>`;
-    if(next) next.textContent='Sin transmisión programada por el momento';
-  }
-}
-
-/* ─── INIT ─── */
 async function initYouTube() {
-  const card = document.getElementById('videoFeaturedCard');
-  if(card) card.classList.add('is-loading');
-
+  const card = $id('videoFeaturedCard');
   try {
-    if (!YT_API_KEY || !YT_CHANNEL_ID) throw new Error("Faltan datos de la API");
+    const d = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
+    const pid = d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+    if (!pid) throw new Error();
+    
+    const vids = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:40});
+    const ids = vids.items.map(i=>i.snippet.resourceId.videoId).join(',');
+    const details = await ytFetch('videos',{part:'snippet,status,contentDetails,liveStreamingDetails',id:ids});
+    
+    const list = details.items.map(toItem).filter(v => v.embeddable && v.privacy==='public');
+    if (!list.length) throw new Error();
 
-    const recent = await getRecent(40);
-    if (recent.length) {
-      vtState.all = recent;
-      vtState.latestEmbeddable = recent[0];
-      vtState.filtered = recent;
-      vtState.selectedId = recent[0].videoId;
-      renderFeaturedCard(recent[0]);
-      renderVideoRows(recent);
-      const count = document.getElementById('videoTotalCount');
-      if(count) count.textContent = `${recent.length} videos disponibles`;
-    } else {
-      throw new Error("Canal vacío");
-    }
+    vtState.all = list;
+    vtState.latestEmbeddable = list[0];
+    renderFeaturedCard(list[0]);
+    renderVideoRows(list);
 
-    const live = await getBroadcast('live');
-    if (live) { 
-      renderLive(live); 
-    } else {
-      const upcoming = await getBroadcast('upcoming');
-      if (upcoming) renderUpcoming(upcoming, recent[0]);
-      else renderNoLive(recent[0]);
+    const live = await ytFetch('search',{part:'snippet',channelId:YT_CHANNEL_ID,eventType:'live',type:'video'});
+    if (live.items?.length) { 
+      $id('envivo').querySelector('.stream-box').innerHTML = `<iframe src="${embedUrl(live.items[0].id.videoId,true)}" allowfullscreen></iframe>`;
     }
-  } catch(err) {
-    console.warn('YouTube:', err);
-    const title = document.getElementById('videoFeatTitle');
-    if(title) title.textContent = 'Mensajes en YouTube';
-    const desc = document.getElementById('videoFeatDesc');
-    if(desc) desc.textContent = 'Haz clic abajo para ir directamente a nuestro canal y ver las últimas predicaciones.';
-    const btn = document.getElementById('videoPlayBtn');
-    if(btn) {
-      btn.innerHTML = 'Ir al Canal de PIEBA';
-      btn.onclick = () => window.open('https://www.youtube.com/@PIEBA', '_blank');
-      btn.disabled = false;
-    }
-    renderNoLive(null);
-  } finally {
+  } catch(e) {
     if(card) card.classList.remove('is-loading');
   }
 }
 
-initYouTube();
-</script>
-
-<script>
-const SPACE_ID = 'v6s74ceb9qbl';
-const ACCESS_TOKEN = 'NET8uPjsk-61jVBvKgikzITsxvTVo1iilD32qefhbZw';
-
-async function cargarAvisosDesdeContentful() {
-  const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=aviso&order=-fields.fecha`;
-
-  try {
-    const respuesta = await fetch(url);
-    const datos = await respuesta.json();
-    const contenedor = document.getElementById('contenedorAvisos');
-
-    if (datos.items && datos.items.length > 0) {
-      contenedor.innerHTML = datos.items.map(item => {
-        const a = item.fields;
-        // Definir colores y clases según prioridad
-        let claseColor = 'normal';
-        if (a.prioridad === 'Urgente') claseColor = 'urgente';
-        if (a.prioridad === 'Información') claseColor = 'info';
-
-        // Formatear fecha básica
-        const fechaFormateada = a.fecha ? new Date(a.fecha).toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-
-        return `
-          <div class="aviso-card ${claseColor} reveal visible">
-            <div class="aviso-body">
-              <span class="aviso-tag ${claseColor}">${a.prioridad || 'General'}</span>
-              <p class="aviso-titulo">${a.titulo}</p>
-              <p class="aviso-texto">${a.texto}</p>
-              <div class="aviso-footer"><span class="aviso-fecha">${fechaFormateada}</span></div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    } else {
-      contenedor.innerHTML = '<p style="color:var(--muted);">No hay avisos recientes.</p>';
-    }
-  } catch (error) {
-    console.error("Error cargando avisos:", error);
-  }
+function renderFeaturedCard(v) {
+  const card = $id('videoFeaturedCard');
+  card.classList.remove('is-loading');
+  $id('videoFeatCat').textContent = v.category;
+  $id('videoFeatDate').textContent = fmtDate(v.publishedAt);
+  $id('videoFeatTitle').textContent = v.title;
+  $id('videoFeatDesc').textContent = summarise(v.description);
+  $id('videoPlayBtn').dataset.playFeatured = v.videoId;
 }
 
-// Ejecutar la carga al abrir la página
-cargarAvisosDesdeContentful();
-</script>  
-  
+function renderVideoRows(vids) {
+  $id('videoRowList').innerHTML = vids.slice(0,10).map(v => `
+    <div class="video-row" onclick="selectVideo('${v.videoId}')">
+      <span class="vr-day">${fmtShortDate(v.publishedAt)}</span>
+      <span class="vr-cat">${v.category}</span>
+      <span class="vr-title">${v.title}</span>
+      <span class="vr-play">▶</span>
+    </div>
+  `).join('');
+}
+
+function selectVideo(id) {
+  $id('videoInlinePlayer').innerHTML = `<iframe src="${embedUrl(id,true)}" allowfullscreen></iframe>`;
+  $id('videoInlinePlayer').classList.add('open');
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-play-featured]');
+  if (btn) selectVideo(btn.dataset.playFeatured);
+});
+
+initYouTube();
+</script>
 </body>
 </html>
