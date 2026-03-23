@@ -22,10 +22,7 @@
       --glass-b:     rgba(255,255,255,0.1);
     }
 
-    html, body {
-  height: 100%;
-  margin: 0;
-}
+    html, body { height: 100%; margin: 0; overflow: hidden; }
 
     body {
       font-family: 'Raleway', sans-serif;
@@ -33,19 +30,20 @@
       color: var(--white);
     }
 
-.scroll-wrap {
-  height: 100dvh;
-  min-height: 100dvh;
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
+    .scroll-wrap {
+      height: 100dvh;
+      min-height: 100dvh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
 
 .page {
   min-height: 100dvh;
   height: auto;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   position: relative;
   overflow: visible;
   display: flex;
@@ -55,70 +53,113 @@
   padding: 6.5rem 0 2.5rem;
 }
 
+    /* ── NAV ── */
     .topnav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1.2rem 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.1rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
       background: linear-gradient(to bottom, rgba(7,5,30,.95) 0%, transparent 100%);
       transition: background .4s, backdrop-filter .4s;
     }
-    .topnav.scrolled {
-      background: rgba(7,5,30,.93);
-      backdrop-filter: blur(14px);
-    }
+    .topnav.scrolled { background: rgba(7,5,30,.93); backdrop-filter: blur(14px); }
     .nav-logo { display: flex; align-items: center; gap: .7rem; text-decoration: none; }
-    .nav-logo svg { height: 38px; width: 38px; }
-    .nav-logo-text { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.05rem; color: var(--white); letter-spacing: .1em; }
-    .nav-links { display: flex; list-style: none; gap: 2.25rem; }
-    .nav-links a { font-size: .75rem; font-weight: 500; text-transform: uppercase; letter-spacing: .18em; color: var(--muted); text-decoration: none; transition: color .3s; }
+    .nav-logo svg { height: 34px; width: 34px; }
+    .nav-logo-text { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1rem; color: var(--white); letter-spacing: .1em; }
+    .nav-links { display: flex; list-style: none; gap: 1.6rem; }
+    .nav-links a { font-size: .68rem; font-weight: 500; text-transform: uppercase; letter-spacing: .16em; color: var(--muted); text-decoration: none; transition: color .3s; }
     .nav-links a:hover, .nav-links a.active { color: var(--gold); }
-    .nav-cta { font-size: .74rem; font-weight: 600; text-transform: uppercase; letter-spacing: .14em; color: var(--navy); background: var(--gold); padding: .5rem 1.35rem; border-radius: 2px; text-decoration: none; transition: opacity .3s; }
+    .nav-cta { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--navy); background: var(--gold); padding: .45rem 1.1rem; border-radius: 2px; text-decoration: none; transition: opacity .3s; white-space: nowrap; }
     .nav-cta:hover { opacity: .82; }
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; z-index: 110; }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 160;
+  position: relative;
+  background: transparent;
+  border: 0;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
     .hamburger span { display: block; width: 26px; height: 2px; background: var(--white); transition: .3s; }
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    .side-dots { position: fixed; right: 1.6rem; top: 50%; transform: translateY(-50%); z-index: 99; display: flex; flex-direction: column; gap: .7rem; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.22); cursor: pointer; transition: background .3s, transform .3s; }
+    /* ── SIDE DOTS ── */
+    .side-dots { position: fixed; right: 1.4rem; top: 50%; transform: translateY(-50%); z-index: 99; display: flex; flex-direction: column; gap: .55rem; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.22); cursor: pointer; transition: background .3s, transform .3s; border: 0; padding: 0; appearance: none; -webkit-appearance: none; }
     .dot.active { background: var(--gold); transform: scale(1.35); }
 
-    .mobile-nav { position: fixed; inset: 0; z-index: 95; background: rgba(7,5,30,.97); backdrop-filter: blur(14px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.25rem; transform: translateX(100%); transition: transform .45s cubic-bezier(.77,0,.175,1); }
-    .mobile-nav.open { transform: translateX(0); }
-    .mobile-nav a { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--white); text-decoration: none; letter-spacing: .15em; transition: color .3s; }
-    .mobile-nav a:hover { color: var(--gold); }
+    /* ── MOBILE NAV ── */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 140;
+  background: rgba(7,5,30,.98);
+  backdrop-filter: blur(14px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.1rem;
+  padding: 1.5rem 1.25rem 2.5rem;
+  overflow-y: auto;
+}
 
+.mobile-nav.open {
+  display: flex;
+}
+
+.mobile-nav a {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: .12em;
+  transition: color .3s;
+}
+
+.mobile-nav a:hover,
+.mobile-nav a.active {
+  color: var(--gold);
+}
+
+    /* ── REVEAL ── */
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s ease, transform .75s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
-    .d1 { transition-delay: .1s; }
-    .d2 { transition-delay: .2s; }
-    .d3 { transition-delay: .3s; }
-    .d4 { transition-delay: .45s; }
+    .d1 { transition-delay: .1s; } .d2 { transition-delay: .2s; } .d3 { transition-delay: .3s; } .d4 { transition-delay: .45s; }
 
+    /* ── SHARED ── */
     .gold-line { width: 46px; height: 2px; background: var(--gold); margin: 1.1rem auto; }
     .gold-line.left { margin: 1.1rem 0; }
     .section-label { font-size: .68rem; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
     .section-title { font-family: 'Cinzel', serif; font-size: clamp(1.9rem, 3.5vw, 2.9rem); font-weight: 600; line-height: 1.15; margin-top: .85rem; }
     .page-num { position: absolute; bottom: 1.75rem; right: 2.5rem; font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .3em; color: rgba(255,255,255,.18); }
 
+    /* ── INICIO ── */
     #inicio { background: var(--navy-deep); }
     #inicio canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
     .hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 65% 55% at 50% 60%, rgba(15,11,50,.0) 0%, rgba(7,5,30,.9) 100%); pointer-events: none; }
     .hero-content { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .hero-logo { width: 400px; height: 400px; margin-bottom: 2rem; font-size: clamp(1.6rem, 4vw, 3rem); animation: fadeDown 1.2s ease both; filter: drop-shadow(0 0 24px rgba(201,169,110,.35)); }
-    .hero-name { font-family: 'Cinzel', serif;  font-weight: 700; letter-spacing: .18em; line-height: 1; animation: fadeUp 1.2s ease .2s both; }
-    .hero-sub { font-size: clamp(.8rem, 1.3vw, 1rem); font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-top: .7rem; animation: fadeUp 1.2s ease .35s both; }
-    .hero-verse { font-style: italic; font-size: clamp(.8rem, 1.1vw, .95rem); color: var(--muted); max-width: 440px; margin-top: 2rem; line-height: 1.8; animation: fadeUp 1.2s ease .5s both; }
+    .hero-logo { width: 340px; height: 340px; margin-bottom: 1.5rem; animation: fadeDown 1.2s ease both; filter: drop-shadow(0 0 24px rgba(201,169,110,.35)); }
+    .hero-name { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .18em; line-height: 1; animation: fadeUp 1.2s ease .2s both; font-size: clamp(1.2rem, 2.5vw, 2rem); max-width: 600px; }
+    .hero-sub { font-size: clamp(.75rem, 1.2vw, .95rem); font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-top: .7rem; animation: fadeUp 1.2s ease .35s both; }
+    .hero-verse { font-style: italic; font-size: clamp(.78rem, 1vw, .92rem); color: var(--muted); max-width: 420px; margin-top: 1.75rem; line-height: 1.8; animation: fadeUp 1.2s ease .5s both; }
     .hero-verse cite { color: var(--gold); font-style: normal; font-size: .8em; letter-spacing: .08em; }
-    .scroll-cue { position: absolute; bottom: 2.25rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; opacity: .35; animation: cueBounce 2.5s ease infinite; }
+    .scroll-cue { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; opacity: .35; animation: cueBounce 2.5s ease infinite; }
     .scroll-cue span { font-size: .6rem; letter-spacing: .25em; text-transform: uppercase; }
     .scroll-cue::after { content: ''; width: 1px; height: 36px; background: var(--white); }
 
+    /* ── NOSOTROS ── */
     #nosotros { background: var(--navy); }
     .nos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; padding: 2rem 6rem; max-width: 1200px; width: 100%; }
     .nos-body { font-size: .92rem; line-height: 1.9; color: var(--muted); margin-top: 1.4rem; }
@@ -137,8 +178,9 @@
     .stat-num { font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); animation: spin 30s linear infinite reverse; }
     .stat-lbl { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: .18rem; animation: spin 30s linear infinite reverse; }
 
+    /* ── CULTOS ── */
     #cultos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
-    .cultos-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
+    .cultos-wrap { text-align: center; max-width: 1180px; width: 100%; padding: 2rem 3rem; }
     .culto-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
     .culto-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
     .culto-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); transform: scaleX(0); transition: transform .4s; }
@@ -148,20 +190,55 @@
     .culto-nombre { font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 600; margin-top: .65rem; }
     .culto-hora { font-size: 2.1rem; font-weight: 300; margin-top: .85rem; }
     .culto-desc { font-size: .78rem; color: var(--muted); margin-top: .65rem; line-height: 1.65; }
-    .sermon-row { margin-top: 2rem; background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.25rem 1.75rem; display: flex; align-items: center; gap: 1.75rem; text-align: left; }
-    .sermon-badge { font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .28rem .7rem; border-radius: 2px; white-space: nowrap; flex-shrink: 0; }
-    .sermon-title { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 600; }
-    .sermon-meta { font-size: .74rem; color: var(--muted); margin-top: .25rem; }
-    .play-btn { margin-left: auto; flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%; background: var(--gold-dim); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .3s; }
-    .play-btn:hover { background: rgba(201,169,110,.45); }
-    .play-btn svg { fill: var(--gold); margin-left: 2px; }
 
-    #sermonPlayerWrap {
-      display: none;
-      margin-top: 1rem;
-      width: 100%;
-    }
+    .video-library { margin-top: 2rem; text-align: left; background: rgba(255,255,255,.03); border: 1px solid var(--glass-b); border-radius: 10px; padding: 1.6rem; }
+    .video-library-head { display: flex; flex-direction: column; gap: .55rem; }
+    .video-library-kicker { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+    .video-library-title { margin-top: .2rem; font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 600; color: var(--white); }
+    .video-library-sub { font-size: .82rem; color: var(--muted); line-height: 1.75; max-width: 860px; }
+    .video-controls { display: flex; flex-direction: column; gap: .95rem; margin-top: 1.25rem; }
+    .video-filter-group { display: flex; flex-direction: column; gap: .5rem; }
+    .video-filter-label { font-size: .67rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+    .video-filter-chips, .video-month-chips { display: flex; gap: .55rem; flex-wrap: wrap; }
+    .video-chip, .video-month-chip { background: rgba(255,255,255,.04); color: var(--muted); border: 1px solid var(--glass-b); border-radius: 999px; padding: .56rem .9rem; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: .25s ease; }
+    .video-chip:hover, .video-chip.active, .video-month-chip:hover, .video-month-chip.active { color: var(--navy); background: var(--gold); border-color: var(--gold); }
+    .video-feature { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1.2rem; margin-top: 1.35rem; }
+    .video-player-stage { min-height: 340px; border-radius: 8px; overflow: hidden; border: 1px solid var(--glass-b); background: linear-gradient(160deg, rgba(255,255,255,.03), rgba(7,5,30,.6)); }
+    .video-player-stage iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .video-player-placeholder { min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; color: var(--muted); }
+    .video-player-icon { width: 76px; height: 76px; border-radius: 50%; border: 1px solid rgba(201,169,110,.5); display: inline-flex; align-items: center; justify-content: center; color: var(--gold); margin-bottom: 1rem; background: rgba(201,169,110,.08); }
+    .video-player-placeholder strong { color: var(--white); display: block; margin-bottom: .45rem; font-family: 'Cinzel', serif; font-weight: 600; }
+    .video-player-placeholder p { max-width: 420px; line-height: 1.7; font-size: .85rem; }
+    .video-feature-body { background: rgba(255,255,255,.03); border: 1px solid var(--glass-b); border-radius: 8px; padding: 1.2rem; display: flex; flex-direction: column; }
+    .video-feature-topline { display: flex; gap: .65rem; align-items: center; flex-wrap: wrap; }
+    .video-tag { display: inline-flex; align-items: center; gap: .35rem; padding: .32rem .62rem; border-radius: 999px; background: rgba(201,169,110,.14); border: 1px solid rgba(201,169,110,.25); color: var(--gold); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; }
+    .video-date { font-size: .72rem; color: var(--muted); }
+    .video-feature-title { margin-top: .8rem; font-family: 'Cinzel', serif; font-size: 1.3rem; line-height: 1.35; color: var(--white); }
+    .video-feature-meta { margin-top: .5rem; font-size: .78rem; color: var(--gold); letter-spacing: .06em; }
+    .video-feature-desc { margin-top: .9rem; color: var(--muted); font-size: .84rem; line-height: 1.7; }
+    .video-feature-actions { margin-top: auto; display: flex; gap: .7rem; flex-wrap: wrap; padding-top: 1.2rem; }
+    .video-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: .75rem 1.05rem; border-radius: 4px; text-decoration: none; font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; border: 1px solid transparent; cursor: pointer; }
+    .video-btn-primary { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+    .video-btn-secondary { background: transparent; color: var(--white); border-color: var(--glass-b); }
+    .video-btn-disabled { background: rgba(255,255,255,.04); color: var(--muted); border-color: var(--glass-b); cursor: not-allowed; }
+    .video-btn-large { min-width: 220px; }
+    .video-note { font-size: .74rem; color: var(--muted); }
+    .video-strip-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.35rem; flex-wrap: wrap; }
+    .video-strip-title { font-family: 'Cinzel', serif; font-size: .92rem; color: var(--white); }
+    .video-strip-count { font-size: .72rem; color: var(--muted); }
+    .video-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .95rem; margin-top: .9rem; }
+    .video-list-item { background: rgba(255,255,255,.03); border: 1px solid var(--glass-b); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; transition: .25s ease; }
+    .video-list-item.active { border-color: var(--gold-dim); box-shadow: 0 0 0 1px rgba(201,169,110,.12) inset; }
+    .video-list-topline { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+    .video-list-title { font-family: 'Cinzel', serif; font-size: .96rem; color: var(--white); line-height: 1.45; }
+    .video-list-desc { font-size: .8rem; color: var(--muted); line-height: 1.7; }
+    .video-list-actions { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+    .video-empty { margin-top: 1rem; padding: 1.25rem; text-align: center; color: var(--muted); border: 1px dashed var(--glass-b); border-radius: 6px; }
 
+
+    /* ── EN VIVO ── */
+
+    /* ── EN VIVO ── */
     #envivo { background: var(--navy-deep); }
     .envivo-wrap { text-align: center; max-width: 880px; width: 100%; padding: 2rem 3rem; }
     .live-pill { display: inline-flex; align-items: center; gap: .5rem; background: rgba(220,50,50,.12); border: 1px solid rgba(220,50,50,.35); border-radius: 100px; padding: .35rem .9rem; font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: #ff7070; margin-bottom: 1.4rem; }
@@ -174,7 +251,190 @@
     .next-txt { margin-top: 1.4rem; font-size: .8rem; color: var(--muted); }
     .next-txt strong { color: var(--gold); }
 
-    #contacto { background: var(--navy); }
+    /* ── GALERÍA ── */
+    #galeria { background: var(--navy); }
+    .galeria-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
+    .album-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
+    .album-card {
+      position: relative; cursor: pointer; border-radius: 3px; overflow: hidden;
+      border: 1px solid var(--glass-b); aspect-ratio: 4/3;
+      transition: border-color .3s, transform .3s;
+    }
+    .album-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .album-card:hover .album-overlay { opacity: 1; }
+    .album-card:hover .album-cover-img { transform: scale(1.04); }
+    .album-cover-img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .5s ease;
+      display: block;
+    }
+    .album-cover-ph {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .5s ease;
+    }
+    .album-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(7,5,30,.92) 0%, rgba(7,5,30,.25) 60%, transparent 100%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.25rem 1rem; opacity: .85; transition: opacity .3s;
+    }
+    .album-count {
+      position: absolute; top: .75rem; right: .75rem;
+      font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--navy); background: var(--gold); padding: .2rem .55rem; border-radius: 2px;
+    }
+    .album-name { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 600; color: var(--white); line-height: 1.3; }
+    .album-date { font-size: .65rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-top: .3rem; }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(7,5,30,.97); backdrop-filter: blur(16px);
+      display: none; flex-direction: column;
+      overflow-y: auto;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-header {
+      position: sticky; top: 0; z-index: 10;
+      padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(7,5,30,.8); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--glass-b);
+    }
+    .lightbox-title { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 600; }
+    .lightbox-date { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: .2rem; }
+    .lightbox-close {
+      width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--glass-b);
+      background: var(--glass); cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-size: 1.2rem; transition: background .3s; flex-shrink: 0;
+    }
+    .lightbox-close:hover { background: var(--gold-dim); }
+    .lightbox-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 3px;
+      padding: 1.5rem 2rem 3rem;
+      max-width: 1100px; width: 100%; margin: 0 auto;
+    }
+    .lightbox-photo {
+      aspect-ratio: 1; background: var(--glass); border: 1px solid var(--glass-b);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; cursor: pointer; transition: opacity .3s;
+    }
+    .lightbox-photo:hover { opacity: .82; }
+    .lightbox-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .lightbox-photo-ph {
+      width: 100%; height: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .4rem;
+      color: rgba(255,255,255,.15); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .lightbox-photo-ph svg { opacity: .2; }
+    .lightbox-empty {
+      grid-column: 1/-1; text-align: center; padding: 3rem 1rem;
+      color: var(--muted); font-size: .84rem; line-height: 1.8;
+    }
+    .lightbox-empty span { color: var(--gold); }
+    .lb-upload-hint {
+      margin-top: 1.25rem; display: inline-flex; align-items: center; gap: .5rem;
+      border: 1px dashed rgba(201,169,110,.35); padding: .65rem 1.25rem; border-radius: 3px;
+      font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold);
+    }
+
+    /* ── AVISOS ── */
+    #avisos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
+    .avisos-wrap { text-align: center; max-width: 880px; width: 100%; padding: 2rem 3rem; }
+    .aviso-list { display: flex; flex-direction: column; gap: .85rem; margin-top: 2rem; text-align: left; }
+    .aviso-card {
+      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
+      padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1.25rem;
+      transition: border-color .3s;
+    }
+    .aviso-card:hover { border-color: var(--gold-dim); }
+    .aviso-card.urgente { border-left: 3px solid #ff7070; }
+    .aviso-card.info { border-left: 3px solid var(--gold); }
+    .aviso-card.normal { border-left: 3px solid rgba(255,255,255,.18); }
+    .aviso-ico {
+      width: 36px; height: 36px; flex-shrink: 0; border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .aviso-ico.urgente { background: rgba(255,112,112,.1); }
+    .aviso-ico.info { background: var(--gold-dim); }
+    .aviso-ico.normal { background: var(--glass); }
+    .aviso-tag { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; padding: .18rem .55rem; border-radius: 2px; font-weight: 600; }
+    .aviso-tag.urgente { color: #ff7070; background: rgba(255,112,112,.1); }
+    .aviso-tag.info { color: var(--gold); background: var(--gold-dim); }
+    .aviso-tag.normal { color: var(--muted); background: var(--glass); }
+    .aviso-body { flex: 1; }
+    .aviso-titulo { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; margin-bottom: .35rem; }
+    .aviso-texto { font-size: .82rem; color: var(--muted); line-height: 1.65; }
+    .aviso-footer { display: flex; align-items: center; gap: .75rem; margin-top: .6rem; }
+    .aviso-fecha { font-size: .62rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+
+    /* ── EVENTOS ── */
+    #eventos { background: var(--navy-deep); }
+    .eventos-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
+    .evento-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
+    .evento-card {
+      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
+      padding: 0; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left;
+    }
+    .evento-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .evento-date-bar {
+      background: linear-gradient(90deg, rgba(201,169,110,.15), transparent);
+      border-bottom: 1px solid var(--glass-b);
+      padding: .75rem 1.25rem; display: flex; align-items: center; gap: .75rem;
+    }
+    .evento-dia { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); line-height: 1; }
+    .evento-mes-hora { display: flex; flex-direction: column; }
+    .evento-mes { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+    .evento-hora { font-size: .72rem; color: var(--muted); margin-top: .15rem; }
+    .evento-body { padding: 1.1rem 1.25rem 1.4rem; }
+    .evento-tag { font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .18rem .55rem; border-radius: 2px; display: inline-block; margin-bottom: .6rem; }
+    .evento-titulo { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; line-height: 1.3; }
+    .evento-desc { font-size: .78rem; color: var(--muted); margin-top: .55rem; line-height: 1.65; }
+    .evento-lugar { display: flex; align-items: center; gap: .4rem; font-size: .68rem; color: var(--muted); margin-top: .75rem; }
+    .evento-lugar svg { flex-shrink: 0; }
+
+    /* ── BLOG ── */
+    #blog { background: var(--navy); }
+    .blog-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
+    .blog-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
+    .blog-card {
+      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
+      overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; cursor: pointer;
+    }
+    .blog-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .blog-cover {
+      width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .blog-cover-ph {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    }
+    .blog-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .blog-card-body { padding: 1.25rem 1.4rem 1.5rem; }
+    .blog-cat { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+    .blog-titulo { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; line-height: 1.35; margin-top: .45rem; }
+    .blog-excerpt { font-size: .78rem; color: var(--muted); margin-top: .55rem; line-height: 1.7; }
+    .blog-meta { display: flex; align-items: center; gap: .5rem; margin-top: .85rem; font-size: .62rem; color: var(--muted); }
+    .blog-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+    .blog-side { display: flex; flex-direction: column; gap: 1.25rem; }
+    .blog-card-sm {
+      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
+      display: flex; gap: .9rem; padding: .9rem; overflow: hidden;
+      transition: border-color .3s; cursor: pointer; text-align: left; flex: 1;
+    }
+    .blog-card-sm:hover { border-color: var(--gold-dim); }
+    .blog-thumb-sm {
+      width: 72px; flex-shrink: 0; border-radius: 2px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .blog-thumb-sm img { width: 100%; height: 100%; object-fit: cover; }
+    .blog-thumb-ph { width: 72px; aspect-ratio: 1; flex-shrink: 0; border-radius: 2px; overflow: hidden; }
+    .blog-sm-body { flex: 1; min-width: 0; }
+    .blog-sm-titulo { font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 600; line-height: 1.35; }
+    .blog-sm-meta { font-size: .62rem; color: var(--muted); margin-top: .4rem; }
+
+    /* ── CONTACTO ── */
+    #contacto { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
     .cont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 2rem 6rem; max-width: 1100px; width: 100%; }
     .cont-items { display: flex; flex-direction: column; gap: 1.5rem; }
     .cont-item { display: flex; align-items: flex-start; gap: 1.1rem; }
@@ -189,6 +449,7 @@
     .cont-map { border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.28); min-height: 260px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .65rem; color: var(--muted); font-size: .78rem; }
     .cont-map iframe { width: 100%; height: 100%; border: none; }
 
+    /* ── OFRENDAR ── */
     #ofrendar { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy-light) 100%); }
     .ofr-wrap { text-align: center; max-width: 680px; width: 100%; padding: 2rem 3rem; }
     .ofr-verse { font-style: italic; font-size: .84rem; color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.85; }
@@ -201,315 +462,191 @@
     .qr-ph { width: 96px; height: 96px; margin: 0 auto 1rem; background: rgba(255,255,255,.07); border: 1px dashed rgba(201,169,110,.3); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
     .ofr-footnote { font-size: .72rem; color: var(--muted); margin-top: 1.75rem; }
 
+    /* ── KEYFRAMES ── */
     @keyframes fadeDown  { from{opacity:0;transform:translateY(-22px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeUp    { from{opacity:0;transform:translateY(22px)}  to{opacity:1;transform:translateY(0)} }
     @keyframes cueBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(9px)} }
     @keyframes pulse     { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(.68)} }
     @keyframes spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
-@media (max-width: 900px) {
-  html, body {
-    overflow: auto;
-  }
+    /* ── MOBILE ── */
 
-  .scroll-wrap {
-    height: auto;
-    min-height: 100dvh;
-    overflow-y: auto;
-    scroll-snap-type: none;
-  }
+    @media (max-width: 1100px) {
+      .video-feature { grid-template-columns: 1fr; }
+      .video-list { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 900px) {
+      html, body { overflow: hidden; }
 
-  .page {
-    min-height: auto;
-    height: auto;
-    overflow: visible;
-    justify-content: flex-start;
-    padding: 5.8rem 0 2.2rem;
-  }
-
-  .page-num {
-    display: none;
-  }
-
-  .topnav {
-    padding: 1rem 1.1rem;
-  }
-
-  .nav-links,
-  .nav-cta {
-    display: none;
-  }
-
-  .hamburger {
-    display: flex;
-  }
-
-  .side-dots {
-    display: none;
-  }
-
-  #inicio {
-    min-height: 100dvh;
-    justify-content: center;
-    padding-top: 5.5rem;
-    padding-bottom: 2rem;
-  }
-
-  .hero-content {
-    width: 100%;
-    padding: 0 1.2rem;
-  }
-
-  .hero-logo {
-    width: min(58vw, 220px);
-    height: min(58vw, 220px);
-    margin-bottom: 1.1rem;
-  }
-
-  .hero-name {
-    font-size: clamp(1.35rem, 7vw, 2.1rem);
-    line-height: 1.15;
-    letter-spacing: .08em;
-  }
-
-  .hero-sub {
-    font-size: .72rem;
-    letter-spacing: .16em;
-    line-height: 1.7;
-    margin-top: .8rem;
-    text-align: center;
-  }
-
-  .hero-verse {
-    font-size: .82rem;
-    line-height: 1.7;
-    max-width: 92%;
-    margin-top: 1.35rem;
-  }
-
-  .scroll-cue {
-    bottom: 1rem;
-  }
-
-  .nos-grid {
-    grid-template-columns: 1fr;
-    padding: 0 1.2rem;
-    gap: 1.7rem;
-    max-width: 100%;
-  }
-
-  .nos-visual {
-    display: none;
-  }
-
-  .section-title {
-    font-size: clamp(1.6rem, 7vw, 2.3rem);
-    line-height: 1.15;
-  }
-
-  .nos-body {
-    font-size: .9rem;
-    line-height: 1.8;
-  }
-
-  .nos-list li span {
-    font-size: .86rem;
-  }
-
-  .cultos-wrap {
-    width: 100%;
-    max-width: 100%;
-    padding: 0 1.2rem;
-  }
-
-  .culto-cards {
-    grid-template-columns: 1fr;
-    gap: .9rem;
-    margin-top: 1.6rem;
-  }
-
-  .culto-card {
-    padding: 1.3rem 1rem;
-  }
-
-  .culto-hora {
-    font-size: 1.7rem;
-  }
-
-  .sermon-row {
-    margin-top: 1.2rem;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: .9rem;
-    padding: 1rem;
-  }
-
-  .sermon-badge {
-    order: 1;
-  }
-
-  .sermon-row > div:not(.play-btn) {
-    order: 2;
-    width: calc(100% - 56px);
-    min-width: 0;
-  }
-
-  .sermon-title {
-    font-size: .9rem;
-    line-height: 1.45;
-    word-break: break-word;
-  }
-
-  .sermon-meta {
-    font-size: .74rem;
-    line-height: 1.5;
-  }
-
-  .play-btn {
-    order: 3;
-    margin-left: auto;
-    width: 40px;
-    height: 40px;
-  }
-
-  #sermonPlayerWrap {
-    margin-top: .9rem;
-  }
-
-  .envivo-wrap {
-    width: 100%;
-    max-width: 100%;
-    padding: 0 1.2rem;
-  }
-
-  .stream-box {
-    margin-top: 1.3rem;
-    max-height: none;
-    min-height: 220px;
-  }
-
-  .next-txt {
-    font-size: .8rem;
-    line-height: 1.6;
-  }
-
-  .cont-grid {
-    grid-template-columns: 1fr;
-    padding: 0 1.2rem;
-    gap: 1.6rem;
-    max-width: 100%;
-  }
-
-  .cont-items {
-    gap: 1.2rem;
-  }
-
-  .cont-item {
-    gap: .9rem;
-  }
-
-  .cont-val {
-    font-size: .86rem;
-  }
-
-  .cont-map {
-    min-height: 220px;
-  }
-
-  .ofr-wrap {
-    width: 100%;
-    max-width: 100%;
-    padding: 0 1.2rem;
-  }
-
-  .ofr-cards {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .ofr-card {
-    padding: 1.3rem 1rem;
-  }
-
-  .ofr-verse {
-    font-size: .82rem;
-    line-height: 1.75;
-  }
+.scroll-wrap {
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 480px) {
-  .hero-name {
-    font-size: clamp(1.2rem, 8vw, 1.7rem);
-  }
-
-  .hero-sub {
-    font-size: .66rem;
-    letter-spacing: .12em;
-  }
-
-  .section-title {
-    font-size: clamp(1.4rem, 8vw, 2rem);
-  }
-
-  .culto-card,
-  .ofr-card {
-    padding: 1.1rem .9rem;
-  }
-
-  .sermon-row {
-    padding: .9rem;
-  }
-
-  .topnav {
-    padding: .9rem 1rem;
-  }
+.page {
+  min-height: 100dvh;
+  height: auto;
+  overflow: visible;
+  justify-content: flex-start;
+  padding: 5.5rem 0 2.5rem;
 }
-    
+      .page-num { display: none; }
+      .topnav { padding: .9rem 1.1rem; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .side-dots { display: none; }
+
+      #inicio { min-height: 100dvh; justify-content: center; padding-top: 5rem; padding-bottom: 2rem; }
+      .hero-content { width: 100%; padding: 0 1.2rem; }
+      .hero-logo { width: min(55vw, 200px); height: min(55vw, 200px); margin-bottom: 1rem; }
+      .hero-name { font-size: clamp(1.1rem, 6vw, 1.8rem); letter-spacing: .06em; max-width: 90%; }
+      .hero-sub { font-size: .68rem; letter-spacing: .14em; line-height: 1.7; margin-top: .75rem; }
+      .hero-verse { font-size: .8rem; line-height: 1.7; max-width: 92%; margin-top: 1.2rem; }
+      .scroll-cue { bottom: .8rem; }
+
+      .nos-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; max-width: 100%; }
+      .nos-visual { display: none; }
+      .section-title { font-size: clamp(1.5rem, 7vw, 2.2rem); line-height: 1.15; }
+      .nos-body { font-size: .88rem; }
+      .nos-list li span { font-size: .84rem; }
+
+      .cultos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .culto-cards { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
+      .culto-card { padding: 1.2rem 1rem; }
+      .culto-hora { font-size: 1.65rem; }
+      .video-library { margin-top: 1.2rem; padding: 1rem; }
+      .video-library-head { align-items: stretch; }
+      .video-library-title { font-size: 1rem; }
+      .video-controls { width: 100%; justify-content: flex-start; }
+      .video-filter-chips, .video-month-chips { gap: .45rem; }
+      .video-chip, .video-month-chip { padding: .5rem .7rem; font-size: .62rem; }
+      .video-feature { grid-template-columns: 1fr; }
+      .video-player-stage, .video-player-placeholder { min-height: 220px; }
+      .video-feature-title { font-size: 1.05rem; }
+      .video-feature-actions { padding-top: .95rem; }
+      .video-btn { width: 100%; }
+      .video-list { grid-template-columns: 1fr; }
+
+      .envivo-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .stream-box { margin-top: 1.2rem; max-height: none; min-height: 200px; }
+
+      /* Galería mobile */
+      .galeria-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .album-grid { grid-template-columns: 1fr 1fr; gap: .85rem; margin-top: 1.5rem; }
+      .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: 1rem; gap: 2px; }
+      .lightbox-header { padding: 1rem 1.1rem; }
+      .lightbox-title { font-size: .95rem; }
+
+      /* Avisos mobile */
+      .avisos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .aviso-list { margin-top: 1.5rem; gap: .7rem; }
+      .aviso-card { padding: 1rem 1.1rem; gap: 1rem; }
+      .aviso-titulo { font-size: .88rem; }
+      .aviso-texto { font-size: .8rem; }
+
+      /* Eventos mobile */
+      .eventos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .evento-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
+      .evento-card { }
+
+      /* Blog mobile */
+      .blog-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .blog-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
+      .blog-cover { aspect-ratio: 16/9; }
+      .blog-side { gap: .85rem; }
+      .blog-card-body { padding: 1rem 1.1rem 1.2rem; }
+
+      .cont-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; max-width: 100%; }
+      .cont-map { min-height: 220px; }
+      .cont-items { gap: 1.1rem; }
+
+      .ofr-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .ofr-cards { grid-template-columns: 1fr; gap: .9rem; margin-top: 1.4rem; }
+      .ofr-card { padding: 1.2rem 1rem; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-name { font-size: clamp(1rem, 7.5vw, 1.5rem); }
+      .section-title { font-size: clamp(1.3rem, 8vw, 1.9rem); }
+      .album-grid { grid-template-columns: 1fr 1fr; gap: .6rem; }
+      .album-name { font-size: .78rem; }
+      .blog-titulo { font-size: .88rem; }
+      .evento-titulo { font-size: .9rem; }
+    }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav class="topnav" id="topnav">
-  <a class="nav-logo" href="#" onclick="goTo('inicio');return false;">
+  <a class="nav-logo" href="#inicio" data-target="inicio">
     <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
       <path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/>
     </svg>
     <span class="nav-logo-text">PIEBA</span>
   </a>
   <ul class="nav-links">
-    <li><a href="#" data-section="inicio"   onclick="goTo('inicio');return false;"   class="active">Inicio</a></li>
-    <li><a href="#" data-section="nosotros" onclick="goTo('nosotros');return false;">Nosotros</a></li>
-    <li><a href="#" data-section="cultos"   onclick="goTo('cultos');return false;">Cultos</a></li>
-    <li><a href="#" data-section="envivo"   onclick="goTo('envivo');return false;">En Vivo</a></li>
-    <li><a href="#" data-section="contacto" onclick="goTo('contacto');return false;">Contacto</a></li>
+    <li><a href="#inicio" data-target="inicio" data-section="inicio" class="active">Inicio</a></li>
+    <li><a href="#nosotros" data-target="nosotros" data-section="nosotros">Nosotros</a></li>
+    <li><a href="#cultos" data-target="cultos" data-section="cultos">Cultos</a></li>
+    <li><a href="#envivo" data-target="envivo" data-section="envivo">En Vivo</a></li>
+    <li><a href="#galeria" data-target="galeria" data-section="galeria">Galería</a></li>
+    <li><a href="#eventos" data-target="eventos" data-section="eventos">Eventos</a></li>
+    <li><a href="#blog" data-target="blog" data-section="blog">Blog</a></li>
+    <li><a href="#contacto" data-target="contacto" data-section="contacto">Contacto</a></li>
   </ul>
-  <a class="nav-cta" href="#" onclick="goTo('ofrendar');return false;">Ofrendar</a>
-  <div class="hamburger" id="ham" onclick="toggleNav()">
-    <span></span><span></span><span></span>
-  </div>
+  <a class="nav-cta" href="#ofrendar" data-target="ofrendar">Ofrendar</a>
+<button class="hamburger" id="ham" type="button" aria-label="Abrir menú" aria-controls="mobileNav" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
 </nav>
 
+<!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav">
-  <a href="#" onclick="goTo('inicio');closeNav();return false;">Inicio</a>
-  <a href="#" onclick="goTo('nosotros');closeNav();return false;">Nosotros</a>
-  <a href="#" onclick="goTo('cultos');closeNav();return false;">Cultos</a>
-  <a href="#" onclick="goTo('envivo');closeNav();return false;">En Vivo</a>
-  <a href="#" onclick="goTo('contacto');closeNav();return false;">Contacto</a>
-  <a href="#" onclick="goTo('ofrendar');closeNav();return false;" style="color:var(--gold)">Ofrendar</a>
+  <a href="#inicio" data-target="inicio" data-section="inicio">Inicio</a>
+  <a href="#nosotros" data-target="nosotros" data-section="nosotros">Nosotros</a>
+  <a href="#cultos" data-target="cultos" data-section="cultos">Cultos</a>
+  <a href="#envivo" data-target="envivo" data-section="envivo">En Vivo</a>
+  <a href="#galeria" data-target="galeria" data-section="galeria">Galería</a>
+  <a href="#avisos" data-target="avisos" data-section="avisos">Avisos</a>
+  <a href="#eventos" data-target="eventos" data-section="eventos">Eventos</a>
+  <a href="#blog" data-target="blog" data-section="blog">Blog</a>
+  <a href="#contacto" data-target="contacto" data-section="contacto">Contacto</a>
+  <a href="#ofrendar" data-target="ofrendar" data-section="ofrendar" style="color:var(--gold)">Ofrendar</a>
 </div>
 
+<!-- SIDE DOTS -->
 <div class="side-dots" id="sideDots">
-  <div class="dot active" data-t="inicio"   onclick="goTo('inicio')"   title="Inicio"></div>
-  <div class="dot"        data-t="nosotros" onclick="goTo('nosotros')" title="Nosotros"></div>
-  <div class="dot"        data-t="cultos"   onclick="goTo('cultos')"   title="Cultos"></div>
-  <div class="dot"        data-t="envivo"   onclick="goTo('envivo')"   title="En Vivo"></div>
-  <div class="dot"        data-t="contacto" onclick="goTo('contacto')" title="Contacto"></div>
-  <div class="dot"        data-t="ofrendar" onclick="goTo('ofrendar')" title="Ofrendar"></div>
+  <button class="dot active" type="button" data-target="inicio" data-t="inicio" title="Inicio" aria-label="Ir a Inicio"></button>
+  <button class="dot" type="button" data-target="nosotros" data-t="nosotros" title="Nosotros" aria-label="Ir a Nosotros"></button>
+  <button class="dot" type="button" data-target="cultos" data-t="cultos" title="Cultos" aria-label="Ir a Cultos"></button>
+  <button class="dot" type="button" data-target="envivo" data-t="envivo" title="En Vivo" aria-label="Ir a En Vivo"></button>
+  <button class="dot" type="button" data-target="galeria" data-t="galeria" title="Galería" aria-label="Ir a Galería"></button>
+  <button class="dot" type="button" data-target="avisos" data-t="avisos" title="Avisos" aria-label="Ir a Avisos"></button>
+  <button class="dot" type="button" data-target="eventos" data-t="eventos" title="Eventos" aria-label="Ir a Eventos"></button>
+  <button class="dot" type="button" data-target="blog" data-t="blog" title="Blog" aria-label="Ir a Blog"></button>
+  <button class="dot" type="button" data-target="contacto" data-t="contacto" title="Contacto" aria-label="Ir a Contacto"></button>
+  <button class="dot" type="button" data-target="ofrendar" data-t="ofrendar" title="Ofrendar" aria-label="Ir a Ofrendar"></button>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-header">
+    <div>
+      <p class="lightbox-title" id="lbTitle">Álbum</p>
+      <p class="lightbox-date" id="lbDate"></p>
+    </div>
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  </div>
+  <div class="lightbox-grid" id="lbGrid"></div>
 </div>
 
 <div class="scroll-wrap" id="scrollWrap">
 
+  <!-- 01 INICIO -->
   <section class="page" id="inicio">
     <canvas id="starCanvas"></canvas>
     <div class="hero-glow"></div>
@@ -520,160 +657,473 @@
       <h1 class="hero-name">Primera Iglesia Evangélica Bautista de Asunción</h1>
       <p class="hero-sub">Comunidad de Fe &nbsp;&middot;&nbsp; Esperanza &nbsp;&middot;&nbsp; Amor</p>
       <p class="hero-verse">
-        &ldquo;Porque yo s&eacute; los pensamientos que tengo acerca de vosotros,<br>pensamientos de paz y no de mal.&rdquo;
-        <br><cite>&mdash; Jerem&iacute;as 29:11</cite>
+        &ldquo;Porque yo sé los pensamientos que tengo acerca de vosotros,<br>pensamientos de paz y no de mal.&rdquo;
+        <br><cite>&mdash; Jeremías 29:11</cite>
       </p>
     </div>
     <div class="scroll-cue"><span>Deslizar</span></div>
-    <span class="page-num">01 / 06</span>
+    <span class="page-num">01 / 10</span>
   </section>
 
+  <!-- 02 NOSOTROS -->
   <section class="page" id="nosotros">
     <div class="nos-grid">
       <div>
-        <p class="section-label reveal">Qui&eacute;nes Somos</p>
-        <h2 class="section-title reveal d1">Una iglesia<br>con prop&oacute;sito</h2>
+        <p class="section-label reveal">Quiénes Somos</p>
+        <h2 class="section-title reveal d1">Una iglesia<br>con propósito</h2>
         <div class="gold-line left reveal d2"></div>
-        <p class="nos-body reveal d2">Somos una comunidad de creyentes comprometidos con el evangelio de Jesucristo. Nos reunimos para adorar, crecer en la fe y servir a nuestra comunidad con amor genuino.<br><br>Nuestra misi&oacute;n es hacer disc&iacute;pulos que transformen sus hogares, su ciudad y el mundo.</p>
+        <p class="nos-body reveal d2">Somos una comunidad de creyentes comprometidos con el evangelio de Jesucristo. Nos reunimos para adorar, crecer en la fe y servir a nuestra comunidad con amor genuino.<br><br>Nuestra misión es hacer discípulos que transformen sus hogares, su ciudad y el mundo.</p>
         <ul class="nos-list">
-          <li class="reveal d2"><span><strong style="color:var(--white)">Fe B&iacute;blica</strong> &mdash; Fundamentados en la Palabra de Dios</span></li>
+          <li class="reveal d2"><span><strong style="color:var(--white)">Fe Bíblica</strong> &mdash; Fundamentados en la Palabra de Dios</span></li>
           <li class="reveal d3"><span><strong style="color:var(--white)">Comunidad</strong> &mdash; Un lugar donde todos son bienvenidos</span></li>
-          <li class="reveal d3"><span><strong style="color:var(--white)">Misi&oacute;n</strong> &mdash; Alcanzando vidas para Cristo</span></li>
-          <li class="reveal d4"><span><strong style="color:var(--white)">Adoraci&oacute;n</strong> &mdash; Con todo nuestro coraz&oacute;n</span></li>
+          <li class="reveal d3"><span><strong style="color:var(--white)">Misión</strong> &mdash; Alcanzando vidas para Cristo</span></li>
+          <li class="reveal d4"><span><strong style="color:var(--white)">Adoración</strong> &mdash; Con todo nuestro corazón</span></li>
         </ul>
       </div>
       <div class="nos-visual">
         <div class="ring">
           <div class="ring-inner">
-            <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
-              <path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/>
-            </svg>
+            <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/></svg>
           </div>
         </div>
-        <div class="stat">
-          <div class="stat-num">+105</div>
-          <div class="stat-lbl">A&ntilde;os de<br>Ministerio</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">Dom.</div>
-          <div class="stat-lbl">Culto<br>Principal</div>
-        </div>
+        <div class="stat"><div class="stat-num">+105</div><div class="stat-lbl">Años de<br>Ministerio</div></div>
+        <div class="stat"><div class="stat-num">Dom.</div><div class="stat-lbl">Culto<br>Principal</div></div>
       </div>
     </div>
-    <span class="page-num">02 / 06</span>
+    <span class="page-num">02 / 10</span>
   </section>
 
+  <!-- 03 CULTOS -->
   <section class="page" id="cultos">
     <div class="cultos-wrap">
-      <p class="section-label reveal">Horarios</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Cultos &amp; Sermones</h2>
+      <p class="section-label reveal">Programación &amp; Canal</p>
+      <h2 class="section-title reveal d1" style="text-align:center">Mensajes &amp; Videos</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="culto-cards">
         <div class="culto-card reveal d1">
           <p class="culto-dia">Domingo</p>
           <h3 class="culto-nombre">Culto Principal</h3>
           <p class="culto-hora">10:15 AM</p>
-          <p class="culto-desc">Servicio de adoraci&oacute;n, alabanza y predicaci&oacute;n de la Palabra. Toda la familia es bienvenida.</p>
+          <p class="culto-desc">Servicio de adoración, alabanza y predicación de la Palabra. Toda la familia es bienvenida.</p>
         </div>
-
         <div class="culto-card reveal d2">
-          <p class="culto-dia">Mi&eacute;rcoles</p>
-          <h3 class="culto-nombre">Estudio B&iacute;blico</h3>
+          <p class="culto-dia">Miércoles</p>
+          <h3 class="culto-nombre">Estudio Bíblico</h3>
           <p class="culto-hora">19:30</p>
-          <p class="culto-desc">Profundizamos en la Palabra de Dios en un ambiente &iacute;ntimo y de comunidad.</p>
+          <p class="culto-desc">Profundizamos en la Palabra de Dios en un ambiente íntimo y de comunidad.</p>
         </div>
-
         <div class="culto-card reveal d3">
           <p class="culto-dia">Sábado</p>
           <h3 class="culto-nombre">MJ Pieba</h3>
           <p class="culto-hora">18:30</p>
-          <p class="culto-desc">Reuni&oacute;n especial para j&oacute;venes con alabanza contempor&aacute;nea y mensaje relevante.</p>
+          <p class="culto-desc">Reunión especial para jóvenes con alabanza contemporánea y mensaje relevante.</p>
         </div>
       </div>
 
-      <div class="sermon-row reveal d4">
-        <span class="sermon-badge">Última Prédica</span>
-        <div>
-          <p class="sermon-title">Cargando último culto...</p>
-          <p class="sermon-meta">Conectando con YouTube...</p>
-        </div>
-        <div class="play-btn">
-          <svg width="13" height="15" viewBox="0 0 13 15"><path d="M0 0l13 7.5L0 15V0z"/></svg>
-        </div>
-      </div>
-
-      <div id="sermonPlayerWrap" class="reveal d4">
-        <div style="display:flex; justify-content:flex-end; margin-bottom:.5rem;">
-          <button
-            type="button"
-            onclick="closeSermonPlayer()"
-            style="background:transparent; color:var(--muted); border:1px solid var(--glass-b); padding:.35rem .7rem; cursor:pointer; border-radius:3px;">
-            Cerrar video
-          </button>
+      <div class="video-library reveal d4">
+        <div class="video-library-head">
+          <div>
+            <p class="video-library-kicker">Biblioteca del canal</p>
+            <h3 class="video-library-title">Video principal y mensajes para reproducir aquí</h3>
+            <p class="video-library-sub">El video destacado se prepara con un botón grande y los demás aparecen como tarjetas de texto con nombre, descripción y botón. Se excluyen shorts y reels, y puedes filtrar por tipo o por mes con botones.</p>
+          </div>
         </div>
 
-        <div style="position:relative; width:100%; aspect-ratio:16/9; border:1px solid var(--glass-b); border-radius:5px; overflow:hidden; background:#000;">
-          <iframe
-            id="sermonPlayer"
-            src=""
-            title="Última prédica"
-            style="width:100%; height:100%; border:none;"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowfullscreen>
-          </iframe>
+        <div class="video-controls">
+          <div class="video-filter-group">
+            <span class="video-filter-label">Tipo</span>
+            <div class="video-filter-chips" id="videoTypeFilters">
+              <button type="button" class="video-chip active" data-video-type="all">Todos</button>
+              <button type="button" class="video-chip" data-video-type="Cultos">Cultos</button>
+              <button type="button" class="video-chip" data-video-type="Estudios">Estudios</button>
+              <button type="button" class="video-chip" data-video-type="Charlas">Charlas</button>
+              <button type="button" class="video-chip" data-video-type="Debates">Debates</button>
+              <button type="button" class="video-chip" data-video-type="Avisos">Avisos</button>
+              <button type="button" class="video-chip" data-video-type="Jóvenes">Jóvenes</button>
+              <button type="button" class="video-chip" data-video-type="Otros">Otros</button>
+            </div>
+          </div>
+
+          <div class="video-filter-group">
+            <span class="video-filter-label">Mes</span>
+            <div class="video-month-chips" id="videoMonthFilters">
+              <button type="button" class="video-month-chip active" data-video-month="all">Todos</button>
+            </div>
+          </div>
         </div>
+
+        <div class="video-feature" id="videoFeature">
+          <div class="video-player-stage" id="videoFeatureMedia">
+            <div class="video-player-placeholder">
+              <div class="video-player-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <strong>Selecciona el mensaje principal</strong>
+              <p>Presiona el botón grande para reproducir el video destacado dentro del sitio. No se mostrarán miniaturas ni enlaces externos en esta sección.</p>
+            </div>
+          </div>
+          <div class="video-feature-body">
+            <div class="video-feature-topline">
+              <span class="video-tag" id="videoFeatureType">Canal</span>
+              <span class="video-date" id="videoFeatureDate">Conectando con YouTube...</span>
+            </div>
+            <h3 class="video-feature-title" id="videoFeatureTitle">Cargando video principal...</h3>
+            <p class="video-feature-meta" id="videoFeatureMeta">Preparando biblioteca del canal.</p>
+            <p class="video-feature-desc" id="videoFeatureDesc">Aquí aparecerá el mensaje principal del canal con su descripción resumida.</p>
+            <div class="video-feature-actions" id="videoFeatureActions"></div>
+          </div>
+        </div>
+
+        <div class="video-strip-head">
+          <p class="video-strip-title">Más mensajes del canal</p>
+          <p class="video-strip-count" id="videoStripCount">Cargando…</p>
+        </div>
+        <div class="video-list" id="videoStrip"></div>
       </div>
     </div>
-    <span class="page-num">03 / 06</span>
+    <span class="page-num">03 / 10</span>
   </section>
 
+  <!-- 04 EN VIVO -->
   <section class="page" id="envivo">
     <div class="envivo-wrap">
       <div class="live-pill reveal"><span class="live-dot-r"></span>En Vivo</div>
-      <h2 class="section-title reveal d1" style="text-align:center">Transmisi&oacute;n<br>en Directo</h2>
+      <h2 class="section-title reveal d1" style="text-align:center">Transmisión<br>en Directo</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="stream-box reveal d2">
         <div class="stream-ph">
           <div class="stream-icon">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5">
-              <polygon points="5 3 19 12 5 21 5 3"/>
-            </svg>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
-          <p style="font-size:.84rem;">La transmisi&oacute;n estar&aacute; disponible<br>durante el culto</p>
+          <p style="font-size:.84rem;">La transmisión estará disponible<br>durante el culto</p>
           <p class="stream-hint">Cargando estado del canal...</p>
         </div>
       </div>
-
-      <p class="next-txt reveal d3">Pr&oacute;xima transmisi&oacute;n: <strong>Consultando canal...</strong></p>
+      <p class="next-txt reveal d3">Próxima transmisión: <strong>Consultando canal...</strong></p>
     </div>
-    <span class="page-num">04 / 06</span>
+    <span class="page-num">04 / 10</span>
   </section>
 
+  <!-- 05 GALERÍA -->
+  <section class="page" id="galeria">
+    <div class="galeria-wrap">
+      <p class="section-label reveal">Momentos</p>
+      <h2 class="section-title reveal d1" style="text-align:center">Galería</h2>
+      <div class="gold-line reveal d2"></div>
+
+      <div class="album-grid" id="albumGrid">
+
+        <!-- Álbum 1 -->
+        <div class="album-card reveal d1" onclick="openAlbum('Culto de Navidad 2024','Diciembre 2024',0)">
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+          </div>
+          <div class="album-overlay">
+            <p class="album-name">Culto de Navidad 2024</p>
+            <p class="album-date">Diciembre 2024</p>
+          </div>
+          <span class="album-count">0 fotos</span>
+        </div>
+
+        <!-- Álbum 2 -->
+        <div class="album-card reveal d2" onclick="openAlbum('Retiro Anual 2024','Octubre 2024',0)">
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#1c1760 100%);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          </div>
+          <div class="album-overlay">
+            <p class="album-name">Retiro Anual 2024</p>
+            <p class="album-date">Octubre 2024</p>
+          </div>
+          <span class="album-count">0 fotos</span>
+        </div>
+
+        <!-- Álbum 3 -->
+        <div class="album-card reveal d3" onclick="openAlbum('MJ Pieba — Agosto','Agosto 2024',0)">
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#07051e 60%,#1c1760 100%);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <div class="album-overlay">
+            <p class="album-name">MJ Pieba — Agosto</p>
+            <p class="album-date">Agosto 2024</p>
+          </div>
+          <span class="album-count">0 fotos</span>
+        </div>
+
+        <!-- Álbum 4 -->
+        <div class="album-card reveal d1" onclick="openAlbum('Bautismos 2024','Julio 2024',0)">
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 100%);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M18.364 5.636a9 9 0 0 1 0 12.728M15.536 8.464a5 5 0 0 1 0 7.072"/><circle cx="12" cy="12" r="1"/></svg>
+          </div>
+          <div class="album-overlay">
+            <p class="album-name">Bautismos 2024</p>
+            <p class="album-date">Julio 2024</p>
+          </div>
+          <span class="album-count">0 fotos</span>
+        </div>
+
+        <!-- Álbum 5 -->
+        <div class="album-card reveal d2" onclick="openAlbum('Día de la Madre','Mayo 2024',0)">
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#0f0b32 50%,#1c1760 100%);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div class="album-overlay">
+            <p class="album-name">Día de la Madre</p>
+            <p class="album-date">Mayo 2024</p>
+          </div>
+          <span class="album-count">0 fotos</span>
+        </div>
+
+        <!-- Álbum 6 -->
+        <div class="album-card reveal d3" onclick="openAlbum('Aniversario PIEBA +105','Marzo 2024',0)">
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#1c1760 100%);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="album-overlay">
+            <p class="album-name">Aniversario PIEBA +105</p>
+            <p class="album-date">Marzo 2024</p>
+          </div>
+          <span class="album-count">0 fotos</span>
+        </div>
+
+      </div>
+    </div>
+    <span class="page-num">05 / 10</span>
+  </section>
+
+  <!-- 06 AVISOS -->
+  <section class="page" id="avisos">
+    <div class="avisos-wrap">
+      <p class="section-label reveal">Comunicados</p>
+      <h2 class="section-title reveal d1" style="text-align:center">Avisos</h2>
+      <div class="gold-line reveal d2"></div>
+
+      <div class="aviso-list">
+
+        <div class="aviso-card urgente reveal d1">
+          <div class="aviso-ico urgente">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#ff7070"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zm-1 5v5h2v-5h-2zm0 6v2h2v-2h-2z"/></svg>
+          </div>
+          <div class="aviso-body">
+            <span class="aviso-tag urgente">Urgente</span>
+            <p class="aviso-titulo">Cambio de horario — Culto del Domingo 30</p>
+            <p class="aviso-texto">Por motivo de la conferencia de pastores, el culto dominical del 30 de marzo comenzará a las 11:00 AM en lugar del horario habitual.</p>
+            <div class="aviso-footer">
+              <span class="aviso-fecha">23 de marzo, 2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="aviso-card info reveal d2">
+          <div class="aviso-ico info">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          </div>
+          <div class="aviso-body">
+            <span class="aviso-tag info">Información</span>
+            <p class="aviso-titulo">Inscripciones abiertas — Escuela Bíblica Dominical</p>
+            <p class="aviso-texto">Ya están disponibles las inscripciones para el nuevo ciclo de la Escuela Bíblica Dominical. Dirigida a niños de 4 a 12 años. Informes en secretaría.</p>
+            <div class="aviso-footer">
+              <span class="aviso-fecha">18 de marzo, 2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="aviso-card normal reveal d3">
+          <div class="aviso-ico normal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+          </div>
+          <div class="aviso-body">
+            <span class="aviso-tag normal">General</span>
+            <p class="aviso-titulo">Llamado a voluntarios — Ministerio de Alabanza</p>
+            <p class="aviso-texto">El ministerio de alabanza está buscando músicos e integrantes para el coro. Si tenés un talento musical y deseo de servir, acercate al pastor.</p>
+            <div class="aviso-footer">
+              <span class="aviso-fecha">10 de marzo, 2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="aviso-card normal reveal d4">
+          <div class="aviso-ico normal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+          </div>
+          <div class="aviso-body">
+            <span class="aviso-tag normal">General</span>
+            <p class="aviso-titulo">No habrá estudio bíblico el miércoles 26</p>
+            <p class="aviso-texto">El estudio bíblico del miércoles 26 de marzo queda suspendido por feriado nacional. Nos reencontramos el miércoles 2 de abril.</p>
+            <div class="aviso-footer">
+              <span class="aviso-fecha">8 de marzo, 2025</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <span class="page-num">06 / 10</span>
+  </section>
+
+  <!-- 07 EVENTOS -->
+  <section class="page" id="eventos">
+    <div class="eventos-wrap">
+      <p class="section-label reveal">Agenda</p>
+      <h2 class="section-title reveal d1" style="text-align:center">Próximos Eventos</h2>
+      <div class="gold-line reveal d2"></div>
+
+      <div class="evento-grid">
+
+        <div class="evento-card reveal d1">
+          <div class="evento-date-bar">
+            <div class="evento-dia">30</div>
+            <div class="evento-mes-hora">
+              <span class="evento-mes">Marzo 2025</span>
+              <span class="evento-hora">11:00 AM</span>
+            </div>
+          </div>
+          <div class="evento-body">
+            <span class="evento-tag">Culto Especial</span>
+            <p class="evento-titulo">Conferencia de Pastores — Culto Especial</p>
+            <p class="evento-desc">Culto dominical con horario modificado por la presencia de pastores invitados. Toda la congregación es bienvenida.</p>
+            <div class="evento-lugar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              Templo Central PIEBA
+            </div>
+          </div>
+        </div>
+
+        <div class="evento-card reveal d2">
+          <div class="evento-date-bar">
+            <div class="evento-dia">12</div>
+            <div class="evento-mes-hora">
+              <span class="evento-mes">Abril 2025</span>
+              <span class="evento-hora">09:00 AM</span>
+            </div>
+          </div>
+          <div class="evento-body">
+            <span class="evento-tag">Retiro</span>
+            <p class="evento-titulo">Retiro de Damas — Renovando la Esperanza</p>
+            <p class="evento-desc">Un fin de semana de descanso, reflexión y comunidad para las mujeres de la iglesia. Cupos limitados, inscribirse en secretaría.</p>
+            <div class="evento-lugar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              Centro Campestre &mdash; San Bernardino
+            </div>
+          </div>
+        </div>
+
+        <div class="evento-card reveal d3">
+          <div class="evento-date-bar">
+            <div class="evento-dia">26</div>
+            <div class="evento-mes-hora">
+              <span class="evento-mes">Abril 2025</span>
+              <span class="evento-hora">18:30</span>
+            </div>
+          </div>
+          <div class="evento-body">
+            <span class="evento-tag">Jóvenes</span>
+            <p class="evento-titulo">Noche de Alabanza MJ Pieba</p>
+            <p class="evento-desc">Noche especial de alabanza y adoración para jóvenes. Con bandas invitadas y dinámica de comunidad. Entrada libre.</p>
+            <div class="evento-lugar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              Templo Central PIEBA
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <span class="page-num">07 / 10</span>
+  </section>
+
+  <!-- 08 BLOG -->
+  <section class="page" id="blog">
+    <div class="blog-wrap">
+      <p class="section-label reveal">Reflexiones</p>
+      <h2 class="section-title reveal d1" style="text-align:center">Blog</h2>
+      <div class="gold-line reveal d2"></div>
+
+      <div class="blog-grid">
+
+        <!-- Artículo principal -->
+        <div class="blog-card reveal d1">
+          <div class="blog-cover">
+            <div class="blog-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 60%,#0f0b32 100%);position:relative;overflow:hidden;">
+              <svg width="80" height="80" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" style="opacity:.08;position:absolute;"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64 27.61-2.61,41.47-4.53z"/></svg>
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.35)" stroke-width="1" style="z-index:1;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <p class="blog-cat">Reflexión · Pastor</p>
+            <p class="blog-titulo">La fe que mueve montañas: una mirada a Mateo 17:20</p>
+            <p class="blog-excerpt">En tiempos de incertidumbre, la fe no es la ausencia de dudas sino la decisión de confiar a pesar de ellas. El Señor nos invita a ver más allá de las circunstancias...</p>
+            <div class="blog-meta">
+              <span>Pr. Carlos Méndez</span>
+              <span class="blog-meta-dot"></span>
+              <span>20 de marzo, 2025</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artículos secundarios -->
+        <div class="blog-side">
+
+          <div class="blog-card-sm reveal d2">
+            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#0f0b32,#1c1760);display:flex;align-items:center;justify-content:center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="blog-sm-body">
+              <p class="blog-cat" style="font-size:.58rem;">Comunidad</p>
+              <p class="blog-sm-titulo">Testimonio: Cómo la iglesia transformó mi familia</p>
+              <p class="blog-sm-meta">Marta González · 15 mar, 2025</p>
+            </div>
+          </div>
+
+          <div class="blog-card-sm reveal d3">
+            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#07051e,#0f0b32);display:flex;align-items:center;justify-content:center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="blog-sm-body">
+              <p class="blog-cat" style="font-size:.58rem;">Estudio Bíblico</p>
+              <p class="blog-sm-titulo">Entendiendo el libro de Job: el sufrimiento y la gracia</p>
+              <p class="blog-sm-meta">Pr. Luis Almada · 8 mar, 2025</p>
+            </div>
+          </div>
+
+          <div class="blog-card-sm reveal d4">
+            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#1c1760,#07051e);display:flex;align-items:center;justify-content:center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="blog-sm-body">
+              <p class="blog-cat" style="font-size:.58rem;">Jóvenes</p>
+              <p class="blog-sm-titulo">5 razones para servir desde joven en la iglesia</p>
+              <p class="blog-sm-meta">Equipo MJ Pieba · 1 mar, 2025</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <span class="page-num">08 / 10</span>
+  </section>
+
+  <!-- 09 CONTACTO -->
   <section class="page" id="contacto">
     <div class="cont-grid">
       <div>
-        <p class="section-label reveal">Encu&eacute;ntranos</p>
+        <p class="section-label reveal">Encuéntranos</p>
         <h2 class="section-title reveal d1">Contacto</h2>
         <div class="gold-line left reveal d2"></div>
         <div class="cont-items">
           <div class="cont-item reveal d2">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
             <div>
-              <p class="cont-lbl">Direcci&oacute;n</p>
-              <p class="cont-val">Calle Principal 123<br>Asunci&oacute;n, Paraguay</p>
+              <p class="cont-lbl">Dirección</p>
+              <p class="cont-val">Calle Principal 123<br>Asunción, Paraguay</p>
             </div>
           </div>
-
           <div class="cont-item reveal d2">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
             <div>
-              <p class="cont-lbl">Tel&eacute;fono / WhatsApp</p>
+              <p class="cont-lbl">Teléfono / WhatsApp</p>
               <p class="cont-val">+595 XXX XXX XXX</p>
             </div>
           </div>
-
           <div class="cont-item reveal d3">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
             <div>
@@ -681,46 +1131,35 @@
               <p class="cont-val">contacto@pieba.org</p>
             </div>
           </div>
-
           <div class="cont-item reveal d4">
             <div class="cont-ico" style="background:transparent;border-color:transparent;"></div>
             <div>
               <p class="cont-lbl">Redes Sociales</p>
               <div class="social-row">
-                <a href="#" class="soc-btn" title="Facebook">
-                  <svg width="15" height="15" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                </a>
-                <a href="#" class="soc-btn" title="Instagram">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                </a>
-                <a href="#" class="soc-btn" title="YouTube">
-                  <svg width="15" height="15" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0f0b32" stroke="none"/></svg>
-                </a>
-                <a href="#" class="soc-btn" title="WhatsApp">
-                  <svg width="15" height="15" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                </a>
+                <a href="#" class="soc-btn" title="Facebook"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                <a href="#" class="soc-btn" title="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                <a href="#" class="soc-btn" title="YouTube"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0f0b32" stroke="none"/></svg></a>
+                <a href="#" class="soc-btn" title="WhatsApp"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <div class="cont-map reveal d3">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.25)" stroke-width="1">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-        </svg>
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.25)" stroke-width="1"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
         <span>Reemplazar con<br>Google Maps iframe</span>
       </div>
     </div>
-    <span class="page-num">05 / 06</span>
+    <span class="page-num">09 / 10</span>
   </section>
 
+  <!-- 10 OFRENDAR -->
   <section class="page" id="ofrendar">
     <div class="ofr-wrap">
       <p class="section-label reveal">Generosidad</p>
       <h2 class="section-title reveal d1" style="text-align:center">Ofrendar</h2>
       <div class="gold-line reveal d2"></div>
-      <p class="ofr-verse reveal d2">&ldquo;Cada uno d&eacute; como propuso en su coraz&oacute;n; no con tristeza, ni por necesidad, porque Dios ama al dador alegre.&rdquo; &mdash; 2 Corintios 9:7</p>
+      <p class="ofr-verse reveal d2">&ldquo;Cada uno dé como propuso en su corazón; no con tristeza, ni por necesidad, porque Dios ama al dador alegre.&rdquo; &mdash; 2 Corintios 9:7</p>
       <div class="ofr-cards">
         <div class="ofr-card reveal d2">
           <p class="ofr-card-title">Transferencia Bancaria</p>
@@ -732,38 +1171,32 @@
           </div>
         </div>
         <div class="ofr-card reveal d3">
-          <p class="ofr-card-title">Pago M&oacute;vil / QR</p>
+          <p class="ofr-card-title">Pago Móvil / QR</p>
           <div class="qr-ph">QR</div>
-          <p class="ofr-detail">Escanea el c&oacute;digo con<br>tu app de pagos</p>
+          <p class="ofr-detail">Escanea el código con<br>tu app de pagos</p>
         </div>
       </div>
-      <p class="ofr-footnote reveal d4">Tambi&eacute;n puedes ofrendar presencialmente durante nuestros cultos. &iexcl;Gracias por tu generosidad!</p>
+      <p class="ofr-footnote reveal d4">También puedes ofrendar presencialmente durante nuestros cultos. ¡Gracias por tu generosidad!</p>
     </div>
-    <span class="page-num">06 / 06</span>
+    <span class="page-num">10 / 10</span>
   </section>
 
 </div>
 
 <script>
+/* ── CANVAS STARS ── */
 const canvas = document.getElementById('starCanvas');
-const ctx    = canvas.getContext('2d');
-
-function resize() {
-  canvas.width  = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-}
+const ctx = canvas.getContext('2d');
+function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
 resize();
 window.addEventListener('resize', resize);
-
 const stars = Array.from({ length: 140 }, () => ({
-  x:     Math.random(),
-  y:     Math.random(),
-  r:     Math.random() * 1.4 + 0.25,
-  vy:    Math.random() * 0.00012 + 0.00004,
+  x: Math.random(), y: Math.random(),
+  r: Math.random() * 1.4 + 0.25,
+  vy: Math.random() * 0.00012 + 0.00004,
   phase: Math.random() * Math.PI * 2,
-  base:  Math.random() * 0.55 + 0.1
+  base: Math.random() * 0.55 + 0.1
 }));
-
 (function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   stars.forEach(s => {
@@ -779,135 +1212,316 @@ const stars = Array.from({ length: 140 }, () => ({
   requestAnimationFrame(loop);
 })();
 
-const wrap     = document.getElementById('scrollWrap');
-const topnav   = document.getElementById('topnav');
-const dots     = document.querySelectorAll('.dot');
-const navLinks = document.querySelectorAll('.nav-links a');
+/* ── NAV / SCROLL ── */
+const wrap = document.getElementById('scrollWrap');
+const topnav = document.getElementById('topnav');
+const ham = document.getElementById('ham');
+const mobileNav = document.getElementById('mobileNav');
 
-function goTo(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
+const dots = [...document.querySelectorAll('.dot')];
+const navLinks = [...document.querySelectorAll('.nav-links a[data-section]')];
+const mobileNavLinks = [...document.querySelectorAll('.mobile-nav a[data-section]')];
+const allNavLinks = [...navLinks, ...mobileNavLinks];
+const sections = [...document.querySelectorAll('.page')];
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function getTargetTop(target) {
+  const wrapRect = wrap.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  return wrap.scrollTop + (targetRect.top - wrapRect.top);
+}
+
+function openNav() {
+  mobileNav.classList.add('open');
+  ham.classList.add('open');
+  ham.setAttribute('aria-expanded', 'true');
+}
+
+function closeNav() {
+  mobileNav.classList.remove('open');
+  ham.classList.remove('open');
+  ham.setAttribute('aria-expanded', 'false');
+}
+
+function toggleNav(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (mobileNav.classList.contains('open')) {
+    closeNav();
+  } else {
+    openNav();
+  }
 }
 
 function setActive(id) {
-  dots.forEach(d => d.classList.toggle('active', d.dataset.t === id));
-  navLinks.forEach(a => a.classList.toggle('active', a.dataset.section === id));
+  dots.forEach((dot) => {
+    dot.classList.toggle('active', dot.dataset.target === id);
+  });
+
+  allNavLinks.forEach((link) => {
+    const isActive = link.dataset.section === id;
+    link.classList.toggle('active', isActive);
+
+    if (isActive) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
 }
+
+function goTo(id) {
+  const target = document.getElementById(id);
+  if (!target || !wrap) return;
+
+  closeNav();
+  setActive(id);
+
+  wrap.scrollTo({
+    top: getTargetTop(target),
+    behavior: prefersReducedMotion ? 'auto' : 'smooth'
+  });
+
+  if (history.replaceState) {
+    history.replaceState(null, '', `#${id}`);
+  }
+}
+
+ham.addEventListener('click', toggleNav);
+
+document.addEventListener('click', (event) => {
+  const trigger = event.target.closest('[data-target]');
+
+  if (trigger) {
+    event.preventDefault();
+    const id = trigger.dataset.target;
+    if (id) goTo(id);
+    return;
+  }
+
+  if (
+    mobileNav.classList.contains('open') &&
+    !mobileNav.contains(event.target) &&
+    !ham.contains(event.target)
+  ) {
+    closeNav();
+  }
+});
 
 wrap.addEventListener('scroll', () => {
   topnav.classList.toggle('scrolled', wrap.scrollTop > 60);
 });
 
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      setActive(e.target.id);
-      e.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      setActive(entry.target.id);
+      entry.target.querySelectorAll('.reveal').forEach((el) => {
+        el.classList.add('visible');
+      });
     }
   });
-}, { root: wrap, threshold: 0.45 });
+}, {
+  root: wrap,
+  threshold: 0.45
+});
 
-document.querySelectorAll('.page').forEach(s => io.observe(s));
-document.querySelectorAll('#inicio .reveal').forEach(el => el.classList.add('visible'));
+sections.forEach((section) => io.observe(section));
+document.querySelectorAll('#inicio .reveal').forEach((el) => el.classList.add('visible'));
 
-function toggleNav() {
-  const ham = document.getElementById('ham');
-  const nav = document.getElementById('mobileNav');
-  ham.classList.toggle('open');
-  nav.classList.toggle('open');
+if (location.hash) {
+  const initialId = location.hash.replace('#', '');
+  const initialTarget = document.getElementById(initialId);
+  if (initialTarget) {
+    requestAnimationFrame(() => goTo(initialId));
+  }
 }
-function closeNav() {
-  document.getElementById('ham').classList.remove('open');
-  document.getElementById('mobileNav').classList.remove('open');
+
+/* ── LIGHTBOX ── */
+function openAlbum(name, date, photoCount) {
+  document.getElementById('lbTitle').textContent = name;
+  document.getElementById('lbDate').textContent = date;
+  const grid = document.getElementById('lbGrid');
+  grid.innerHTML = '';
+
+  if (photoCount === 0) {
+    grid.innerHTML = `
+      <div class="lightbox-empty">
+        <p>Este álbum aún no tiene fotos.</p>
+        <p style="margin-top:.5rem;font-size:.75rem;">Cuando integres Sanity CMS, las fotos aparecerán aquí automáticamente.</p>
+        <div class="lb-upload-hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Agregar fotos desde el panel CMS
+        </div>
+      </div>`;
+  } else {
+    for (let i = 0; i < photoCount; i++) {
+      grid.innerHTML += `<div class="lightbox-photo"><div class="lightbox-photo-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
+    }
+  }
+
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
 </script>
 
 <script>
-const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
+/* ── YOUTUBE ── */
+const YT_API_KEY = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
-const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
-
+const YT_BASE = 'https://www.googleapis.com/youtube/v3';
 const ytOK = () => Boolean(YT_API_KEY && YT_CHANNEL_ID);
-const qs = (s) => document.querySelector(s);
+const qs = s => document.querySelector(s);
+const bibleRefRe = /(genesis|exodo|levitico|numeros|deuteronomio|josue|jueces|rut|samuel|reyes|cronicas|esdras|nehemias|ester|job|salmo|salmos|proverbios|eclesiastes|cantares|isaias|jeremias|lamentaciones|ezequiel|daniel|oseas|joel|amos|abdias|jonas|miqueas|nahum|habacuc|sofonias|hageo|zacarias|malaquias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|tito|filemon|hebreos|santiago|pedro|judas|apocalipsis)/;
+const videoState = {
+  all: [],
+  filtered: [],
+  selectedId: null,
+  playingId: null,
+  type: 'all',
+  month: 'all',
+  latestEmbeddable: null
+};
 
 async function ytFetch(path, params = {}) {
   const url = new URL(`${YT_BASE}/${path}`);
   Object.entries({ ...params, key: YT_API_KEY }).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== '') {
-      url.searchParams.set(k, v);
-    }
+    if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v);
   });
-
   const res = await fetch(url);
   const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error?.message || 'Error consultando YouTube');
-  }
-
+  if (!res.ok) throw new Error(data.error?.message || 'Error YouTube');
   return data;
 }
 
 function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString('es-PY', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
+  return new Date(iso).toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
 }
-
 function fmtDateTime(iso) {
-  return new Date(iso).toLocaleString('es-PY', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  return new Date(iso).toLocaleString('es-PY', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+}
+function escapeHtml(str = '') {
+  return String(str).replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
+}
+function normalizeText(str = '') {
+  return String(str)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s#]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function summarizeDescription(str = '', max = 170) {
+  const clean = String(str).replace(/\s+/g, ' ').trim();
+  if (!clean) return 'Contenido del canal disponible para reproducir dentro del sitio.';
+  return clean.length > max ? `${clean.slice(0, max).trim()}…` : clean;
+}
+function parseISODuration(iso = '') {
+  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
+  if (!match) return 0;
+  const [, h, m, s] = match;
+  return (Number(h || 0) * 3600) + (Number(m || 0) * 60) + Number(s || 0);
+}
+function buildEmbedUrl(videoId, autoplay = false) {
+  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}&controls=1&rel=0&playsinline=1`;
 }
 
-function openVideo(videoId) {
-  window.open(`https://youtube.com/watch?v=${videoId}`, '_blank');
+function classifyVideo(video) {
+  const title = normalizeText(video.title || '');
+  const desc = normalizeText((video.description || '').split('\n').slice(0, 4).join(' '));
+
+  if (/(^|\s)(aviso|avisos|anuncio|anuncios|informativo|informacion|comunicado|agenda)(\s|$)/.test(title) || /\baviso\b/.test(desc)) return 'Avisos';
+  if (/(^|\s)(mj|jovenes|juvenil|juventud|adolescentes)(\s|$)/.test(title) || /\bjuventud\b/.test(desc)) return 'Jóvenes';
+  if (/(debate|panel|conversatorio|mesa redonda|dialogo|preguntas y respuestas|q a)/.test(title)) return 'Debates';
+  if (/(charla|conferencia|seminario|entrevista|testimonio|taller)/.test(title)) return 'Charlas';
+  if (/(estudio biblico|escuela dominical|discipulado|devocional|ensenanza|serie biblica|clase biblica)/.test(title)) return 'Estudios';
+  if (/(culto|predic|sermon|mensaje|adoracion|santa cena|domingo|miercoles|pr |pastor)/.test(title) || bibleRefRe.test(title)) return 'Cultos';
+  if (/(estudio biblico|escuela dominical|discipulado)/.test(desc)) return 'Estudios';
+  if (video.durationSeconds >= 1200) return 'Cultos';
+  return 'Otros';
 }
 
-function closeSermonPlayer() {
-  const wrap = document.getElementById('sermonPlayerWrap');
-  const frame = document.getElementById('sermonPlayer');
-  if (frame) frame.src = '';
-  if (wrap) wrap.style.display = 'none';
+function toVideoItem(v) {
+  if (!v) return null;
+  const durationSeconds = parseISODuration(v.contentDetails?.duration || '');
+  const item = {
+    videoId: v.id,
+    title: v.snippet?.title || '',
+    description: v.snippet?.description || '',
+    publishedAt: v.snippet?.publishedAt || null,
+    scheduledStartTime: v.liveStreamingDetails?.scheduledStartTime || null,
+    actualStartTime: v.liveStreamingDetails?.actualStartTime || null,
+    embeddable: v.status?.embeddable !== false,
+    privacyStatus: v.status?.privacyStatus || 'public',
+    durationSeconds
+  };
+  item.category = classifyVideo(item);
+  item.monthKey = item.publishedAt ? item.publishedAt.slice(0, 7) : 'unknown';
+  item.monthLabel = item.publishedAt
+    ? new Date(`${item.monthKey}-01T00:00:00`).toLocaleDateString('es-PY', { month: 'long', year: 'numeric' })
+    : 'Sin fecha';
+  return item;
+}
+
+function isLongFormPlayable(video) {
+  const text = normalizeText(`${video.title} ${video.description}`);
+  if (video.privacyStatus === 'private' || !video.embeddable) return false;
+  if (video.durationSeconds > 0 && video.durationSeconds < 90) return false;
+  if (/(^|\s)(#shorts|shorts|short|reel|reels|clip)(\s|$)/.test(text)) return false;
+  return true;
 }
 
 async function getUploadsPlaylistId() {
-  const data = await ytFetch('channels', {
-    part: 'contentDetails',
-    id: YT_CHANNEL_ID
-  });
-
+  const data = await ytFetch('channels', { part: 'contentDetails', id: YT_CHANNEL_ID });
   return data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads || null;
 }
 
-async function getLatestUpload() {
+async function getRecentUploads(limit = 40) {
   const uploadsId = await getUploadsPlaylistId();
-  if (!uploadsId) return null;
+  if (!uploadsId) return [];
 
-  const data = await ytFetch('playlistItems', {
-    part: 'snippet',
-    playlistId: uploadsId,
-    maxResults: 1
-  });
+  const items = [];
+  let pageToken = '';
+  while (items.length < limit) {
+    const data = await ytFetch('playlistItems', {
+      part: 'snippet',
+      playlistId: uploadsId,
+      maxResults: Math.min(50, limit - items.length),
+      pageToken
+    });
+    items.push(...(data.items || []));
+    if (!data.nextPageToken || !(data.items || []).length) break;
+    pageToken = data.nextPageToken;
+  }
 
-  const item = data.items?.[0];
-  if (!item?.snippet?.resourceId?.videoId) return null;
+  const ids = items.map(item => item?.snippet?.resourceId?.videoId).filter(Boolean);
+  if (!ids.length) return [];
 
-  return {
-    videoId: item.snippet.resourceId.videoId,
-    title: item.snippet.title,
-    publishedAt: item.snippet.publishedAt,
-    thumb:
-      item.snippet.thumbnails?.high?.url ||
-      item.snippet.thumbnails?.medium?.url ||
-      item.snippet.thumbnails?.default?.url
-  };
+  const chunks = [];
+  for (let i = 0; i < ids.length; i += 50) chunks.push(ids.slice(i, i + 50).join(','));
+
+  const detailBatches = await Promise.all(chunks.map((idChunk) => ytFetch('videos', {
+    part: 'snippet,status,liveStreamingDetails,contentDetails',
+    id: idChunk
+  })));
+
+  return detailBatches
+    .flatMap(batch => batch.items || [])
+    .map(toVideoItem)
+    .filter(Boolean)
+    .filter(isLongFormPlayable)
+    .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
 }
 
 async function getBroadcast(eventType) {
@@ -919,225 +1533,282 @@ async function getBroadcast(eventType) {
     videoEmbeddable: 'true',
     maxResults: 5
   });
-
-  const ids = (search.items || [])
-    .map(item => item.id?.videoId)
-    .filter(Boolean);
-
+  const ids = (search.items || []).map(i => i.id?.videoId).filter(Boolean);
   if (!ids.length) return null;
 
-  const videos = await ytFetch('videos', {
-    part: 'snippet,liveStreamingDetails',
-    id: ids.join(',')
-  });
-
-  const items = (videos.items || []).map(v => ({
-    videoId: v.id,
-    title: v.snippet?.title || '',
-    thumb:
-      v.snippet?.thumbnails?.high?.url ||
-      v.snippet?.thumbnails?.medium?.url ||
-      v.snippet?.thumbnails?.default?.url,
-    publishedAt: v.snippet?.publishedAt || null,
-    scheduledStartTime: v.liveStreamingDetails?.scheduledStartTime || null,
-    actualStartTime: v.liveStreamingDetails?.actualStartTime || null
-  }));
+  const videos = await ytFetch('videos', { part: 'snippet,status,liveStreamingDetails,contentDetails', id: ids.join(',') });
+  const items = (videos.items || [])
+    .map(toVideoItem)
+    .filter(Boolean)
+    .filter(isLongFormPlayable);
 
   if (!items.length) return null;
-
-  if (eventType === 'live') {
-    items.sort((a, b) =>
-      new Date(b.actualStartTime || b.publishedAt) - new Date(a.actualStartTime || a.publishedAt)
-    );
-  } else {
-    items.sort((a, b) =>
-      new Date(a.scheduledStartTime || a.publishedAt) - new Date(b.scheduledStartTime || b.publishedAt)
-    );
-  }
-
+  if (eventType === 'live') items.sort((a,b) => new Date(b.actualStartTime || b.publishedAt) - new Date(a.actualStartTime || a.publishedAt));
+  else items.sort((a,b) => new Date(a.scheduledStartTime || a.publishedAt) - new Date(b.scheduledStartTime || b.publishedAt));
   return items[0];
 }
 
-function renderLatestCulto(video) {
-  if (!video) return;
+function populateMonthButtons(videos) {
+  const wrap = document.getElementById('videoMonthFilters');
+  if (!wrap) return;
 
-  const title = qs('.sermon-title');
-  const meta  = qs('.sermon-meta');
-  const row   = qs('.sermon-row');
+  const months = [...new Map(videos
+    .filter(v => v.monthKey && v.monthKey !== 'unknown')
+    .map(v => [v.monthKey, v.monthLabel]))]
+    .sort((a, b) => b[0].localeCompare(a[0]));
 
-  if (title) {
-    title.textContent =
-      video.title.length > 70 ? video.title.slice(0, 67) + '…' : video.title;
-  }
-
-  if (meta) {
-    meta.textContent = `YouTube · ${fmtDate(video.publishedAt)} · Último culto publicado`;
-  }
-
-  if (row) {
-    row.style.cursor = 'pointer';
-    row.onclick = () => {
-      const wrap = document.getElementById('sermonPlayerWrap');
-      const frame = document.getElementById('sermonPlayer');
-      if (!wrap || !frame) return;
-
-      const embedUrl = `https://www.youtube.com/embed/${video.videoId}?autoplay=1&rel=0&playsinline=1&controls=1`;
-
-      if (wrap.style.display !== 'none' && frame.src.includes(video.videoId)) {
-        closeSermonPlayer();
-        return;
-      }
-
-      frame.src = embedUrl;
-      wrap.style.display = 'block';
-      wrap.classList.add('visible');
-      wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    };
-  }
+  wrap.innerHTML = `<button type="button" class="video-month-chip ${videoState.month === 'all' ? 'active' : ''}" data-video-month="all">Todos</button>` +
+    months.map(([key, label]) => `<button type="button" class="video-month-chip ${videoState.month === key ? 'active' : ''}" data-video-month="${escapeHtml(key)}">${escapeHtml(label)}</button>`).join('');
 }
 
-function renderLive(video) {
-  const box  = qs('.stream-box');
-  const pill = qs('.live-pill');
-  const next = qs('.next-txt');
-
-  if (!box || !video) return;
-
-  box.innerHTML = `
-    <iframe
-      src="https://www.youtube.com/embed/${video.videoId}?autoplay=1&controls=1&rel=0&playsinline=1"
-      allowfullscreen
-      allow="autoplay; encrypted-media; picture-in-picture"
-      style="width:100%;height:100%;border:none">
-    </iframe>
-  `;
-
-  if (pill) {
-    pill.innerHTML = '<span class="live-dot-r"></span>EN VIVO AHORA';
-  }
-
-  if (next) {
-    next.innerHTML = `📺 <strong>${video.title}</strong> · Transmisión en curso`;
-  }
+function getFilteredVideos() {
+  return videoState.all.filter(video => {
+    const matchType = videoState.type === 'all' || video.category === videoState.type;
+    const matchMonth = videoState.month === 'all' || video.monthKey === videoState.month;
+    return matchType && matchMonth;
+  });
 }
 
-function renderUpcoming(video) {
-  const box  = qs('.stream-box');
-  const next = qs('.next-txt');
-  const pill = qs('.live-pill');
+function renderFeature(video, autoplay = false) {
+  const media = document.getElementById('videoFeatureMedia');
+  const type = document.getElementById('videoFeatureType');
+  const date = document.getElementById('videoFeatureDate');
+  const title = document.getElementById('videoFeatureTitle');
+  const meta = document.getElementById('videoFeatureMeta');
+  const desc = document.getElementById('videoFeatureDesc');
+  const actions = document.getElementById('videoFeatureActions');
+  if (!media || !type || !date || !title || !meta || !desc || !actions) return;
 
-  if (!box || !video) return;
-
-  box.innerHTML = `
-    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:1.25rem">
-      <div style="max-width:520px;width:100%;text-align:center">
-        ${
-          video.thumb
-            ? `<img src="${video.thumb}"
-                    alt="${video.title.replace(/"/g, '&quot;')}"
-                    style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,.08);margin-bottom:1rem">`
-            : ''
-        }
-        <p style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem">
-          Próxima transmisión programada
-        </p>
-        <p style="font-size:.95rem;line-height:1.5;color:var(--white);margin-bottom:.85rem">
-          ${video.title}
-        </p>
-        <p style="font-size:.82rem;color:var(--muted);margin-bottom:1rem">
-          ${video.scheduledStartTime ? fmtDateTime(video.scheduledStartTime) : 'Horario pendiente'}
-        </p>
-        <button
-          type="button"
-          onclick="openVideo('${video.videoId}')"
-          style="background:var(--gold);color:#0f0b32;border:none;padding:.6rem 1.3rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">
-          Ver en YouTube
-        </button>
-      </div>
-    </div>
-  `;
-
-  if (pill) {
-    pill.innerHTML = '<span class="live-dot-r"></span>PRÓXIMO EN VIVO';
-  }
-
-  if (next) {
-    next.innerHTML = `Próxima transmisión: <strong>${video.scheduledStartTime ? fmtDateTime(video.scheduledStartTime) : 'Programada'}</strong>`;
-  }
-}
-
-function renderLastServiceFallback(video) {
-  const box  = qs('.stream-box');
-  const next = qs('.next-txt');
-  const pill = qs('.live-pill');
-
-  if (!box || !video) return;
-
-  box.innerHTML = `
-    <div class="stream-ph">
-      <div class="stream-icon">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
-      </div>
-      <p style="font-size:.84rem;">No hay una transmisión en vivo activa<br>ni programada en este momento</p>
-      <button
-        type="button"
-        onclick="openVideo('${video.videoId}')"
-        style="background:var(--gold);color:#0f0b32;border:none;padding:.6rem 1.3rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">
-        ▶ Ver último culto
-      </button>
-    </div>
-  `;
-
-  if (pill) {
-    pill.innerHTML = '<span class="live-dot-r"></span>EN VIVO';
-  }
-
-  if (next) {
-    next.innerHTML = `Último culto publicado: <strong>${fmtDate(video.publishedAt)}</strong>`;
-  }
-}
-
-async function initYouTubeSections() {
-  if (!ytOK()) {
-    console.warn('Falta YT_API_KEY o YT_CHANNEL_ID');
+  if (!video) {
+    type.textContent = 'Canal';
+    date.textContent = 'Sin resultados';
+    title.textContent = 'No hay videos para este filtro';
+    meta.textContent = 'Prueba con otro tipo o mes.';
+    desc.textContent = 'La biblioteca no encontró videos largos y reproducibles para los filtros elegidos.';
+    media.innerHTML = `<div class="video-player-placeholder"><div class="video-player-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><strong>Sin video disponible</strong><p>No se encontraron videos que coincidan con ese filtro.</p></div>`;
+    actions.innerHTML = '';
     return;
   }
 
-  try {
-    const latest = await getLatestUpload();
-    renderLatestCulto(latest);
+  const isPlaying = autoplay || videoState.playingId === video.videoId;
+  type.textContent = video.category;
+  date.textContent = video.publishedAt ? fmtDate(video.publishedAt) : 'Sin fecha';
+  title.textContent = video.title;
+  meta.textContent = isPlaying
+    ? 'Reproduciendo dentro del sitio'
+    : 'Listo para reproducir dentro del sitio';
+  desc.textContent = summarizeDescription(video.description, 220);
 
-    const live = await getBroadcast('live');
-    if (live) {
-      renderLive(live);
-      return;
-    }
+  if (isPlaying) {
+    media.innerHTML = `<iframe src="${buildEmbedUrl(video.videoId, true)}" title="${escapeHtml(video.title)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
+  } else {
+    media.innerHTML = `<div class="video-player-placeholder"><div class="video-player-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><strong>${escapeHtml(video.title)}</strong><p>Presiona el botón grande para reproducir este mensaje aquí mismo, sin salir del sitio.</p></div>`;
+  }
 
-    const upcoming = await getBroadcast('upcoming');
-    if (upcoming) {
-      renderUpcoming(upcoming);
-      return;
-    }
+  actions.innerHTML = `<button type="button" class="video-btn video-btn-primary video-btn-large" data-play-featured="${escapeHtml(video.videoId)}">${isPlaying ? 'Reproducir de nuevo' : 'Reproducir aquí'}</button>`;
+}
 
-    if (latest) {
-      renderLastServiceFallback(latest);
-    }
-  } catch (e) {
-    console.warn('YouTube:', e);
-    const title = qs('.sermon-title');
-    const meta  = qs('.sermon-meta');
-    const next  = qs('.next-txt');
+function renderVideoStrip(videos) {
+  const strip = document.getElementById('videoStrip');
+  const count = document.getElementById('videoStripCount');
+  if (!strip || !count) return;
 
-    if (title) title.textContent = 'No se pudo cargar el último culto';
-    if (meta)  meta.textContent = 'Revisá la API key, el channel ID o las restricciones de YouTube';
-    if (next)  next.innerHTML = 'No se pudo consultar el estado del canal';
+  count.textContent = `${videos.length} video${videos.length === 1 ? '' : 's'} disponibles`;
+
+  if (!videos.length) {
+    strip.innerHTML = `<div class="video-empty">No hay videos para ese filtro todavía.</div>`;
+    return;
+  }
+
+  strip.innerHTML = videos.map(video => `
+    <article class="video-list-item ${video.videoId === videoState.selectedId ? 'active' : ''}">
+      <div class="video-list-topline">
+        <span class="video-tag">${escapeHtml(video.category)}</span>
+        <span class="video-date">${escapeHtml(fmtDate(video.publishedAt))}</span>
+      </div>
+      <h4 class="video-list-title">${escapeHtml(video.title)}</h4>
+      <p class="video-list-desc">${escapeHtml(summarizeDescription(video.description, 150))}</p>
+      <div class="video-list-actions">
+        <span class="video-note">${video.videoId === videoState.selectedId ? 'Seleccionado como principal' : 'Disponible para reproducir aquí'}</span>
+        <button type="button" class="video-btn video-btn-primary" data-play-video="${escapeHtml(video.videoId)}">Reproducir aquí</button>
+      </div>
+    </article>
+  `).join('');
+}
+
+function applyVideoFilters({ preserveSelection = true } = {}) {
+  videoState.filtered = getFilteredVideos();
+
+  let featured = null;
+  if (preserveSelection && videoState.selectedId) {
+    featured = videoState.filtered.find(v => v.videoId === videoState.selectedId) || null;
+  }
+  if (!featured) {
+    featured = videoState.filtered[0] || null;
+  }
+
+  videoState.selectedId = featured?.videoId || null;
+  if (videoState.playingId && featured?.videoId !== videoState.playingId) {
+    videoState.playingId = null;
+  }
+
+  renderFeature(featured, false);
+  renderVideoStrip(videoState.filtered);
+}
+
+function setVideoTypeFilter(type) {
+  videoState.type = type;
+  document.querySelectorAll('.video-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.videoType === type);
+  });
+  applyVideoFilters({ preserveSelection: false });
+}
+
+function setVideoMonthFilter(month) {
+  videoState.month = month;
+  document.querySelectorAll('.video-month-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.videoMonth === month);
+  });
+  applyVideoFilters({ preserveSelection: false });
+}
+
+function initVideoLibrary(videos) {
+  videoState.all = videos;
+  videoState.latestEmbeddable = videos[0] || null;
+  populateMonthButtons(videos);
+  applyVideoFilters({ preserveSelection: false });
+}
+
+function playFeatured(videoId, { scrollIntoView = true } = {}) {
+  const video = videoState.all.find(v => v.videoId === videoId);
+  if (!video) return;
+  videoState.selectedId = video.videoId;
+  videoState.playingId = video.videoId;
+  renderFeature(video, true);
+  renderVideoStrip(videoState.filtered);
+
+  if (scrollIntoView) {
+    document.getElementById('videoFeature')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
-window.addEventListener('DOMContentLoaded', initYouTubeSections);
-</script>
+function mountLivePlayer(video) {
+  const box = qs('.stream-box');
+  const next = qs('.next-txt');
+  const pill = qs('.live-pill');
+  if (!box || !video) return;
 
+  box.innerHTML = `<iframe src="${buildEmbedUrl(video.videoId, true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escapeHtml(video.title)}"></iframe>`;
+  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>CANAL';
+  if (next) next.innerHTML = `Reproduciendo ahora: <strong>${escapeHtml(video.title)}</strong>`;
+}
+
+function renderLive(video) {
+  const box = qs('.stream-box'), pill = qs('.live-pill'), next = qs('.next-txt');
+  if (!box || !video) return;
+  box.innerHTML = `<iframe src="${buildEmbedUrl(video.videoId, true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escapeHtml(video.title)}"></iframe>`;
+  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>EN VIVO AHORA';
+  if (next) next.innerHTML = `📺 <strong>${escapeHtml(video.title)}</strong> · Transmisión en curso`;
+}
+
+function renderUpcoming(video, fallbackVideo) {
+  const box = qs('.stream-box'), next = qs('.next-txt'), pill = qs('.live-pill');
+  if (!box || !video) return;
+
+  const fallbackButton = fallbackVideo
+    ? `<button type="button" data-play-live-fallback="${escapeHtml(fallbackVideo.videoId)}" style="display:inline-flex;background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button>`
+    : `<span style="font-size:.78rem;color:var(--muted)">Sin video reciente disponible</span>`;
+
+  box.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:1.4rem"><div style="max-width:560px;width:100%;text-align:center"><p style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem">Próxima transmisión programada</p><p style="font-size:.98rem;line-height:1.55;color:var(--white);margin-bottom:.85rem">${escapeHtml(video.title)}</p><p style="font-size:.82rem;color:var(--muted);margin-bottom:1.15rem">${video.scheduledStartTime ? escapeHtml(fmtDateTime(video.scheduledStartTime)) : 'Horario pendiente'}</p>${fallbackButton}</div></div>`;
+  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>PRÓXIMO EN VIVO';
+  if (next) next.innerHTML = `Próxima transmisión: <strong>${video.scheduledStartTime ? escapeHtml(fmtDateTime(video.scheduledStartTime)) : 'Programada'}</strong>`;
+}
+
+function renderLastServiceFallback(video) {
+  const box = qs('.stream-box'), next = qs('.next-txt'), pill = qs('.live-pill');
+  if (!box || !video) return;
+  box.innerHTML = `<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión en vivo activa en este momento.<br>Puedes reproducir el mensaje más reciente aquí mismo.</p><button type="button" data-play-live-fallback="${escapeHtml(video.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button></div>`;
+  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>CANAL';
+  if (next) next.innerHTML = `Destacado reciente: <strong>${escapeHtml(video.title)}</strong>`;
+}
+
+document.addEventListener('click', (event) => {
+  const typeBtn = event.target.closest('[data-video-type]');
+  if (typeBtn) {
+    setVideoTypeFilter(typeBtn.dataset.videoType || 'all');
+    return;
+  }
+
+  const monthBtn = event.target.closest('[data-video-month]');
+  if (monthBtn) {
+    setVideoMonthFilter(monthBtn.dataset.videoMonth || 'all');
+    return;
+  }
+
+  const listPlayBtn = event.target.closest('[data-play-video]');
+  if (listPlayBtn) {
+    playFeatured(listPlayBtn.dataset.playVideo);
+    return;
+  }
+
+  const featuredPlayBtn = event.target.closest('[data-play-featured]');
+  if (featuredPlayBtn) {
+    playFeatured(featuredPlayBtn.dataset.playFeatured, { scrollIntoView: false });
+    return;
+  }
+
+  const liveFallbackBtn = event.target.closest('[data-play-live-fallback]');
+  if (liveFallbackBtn) {
+    const videoId = liveFallbackBtn.dataset.playLiveFallback;
+    const video = videoState.all.find(v => v.videoId === videoId) || videoState.latestEmbeddable;
+    if (video) mountLivePlayer(video);
+  }
+});
+
+async function initYouTubeSections() {
+  if (!ytOK()) return;
+  try {
+    const recentVideos = await getRecentUploads(36);
+    const latest = recentVideos[0] || null;
+    if (recentVideos.length) initVideoLibrary(recentVideos);
+
+    const live = await getBroadcast('live');
+    if (live) { renderLive(live); return; }
+
+    const upcoming = await getBroadcast('upcoming');
+    if (upcoming) { renderUpcoming(upcoming, latest); return; }
+
+    if (latest) {
+      renderLastServiceFallback(latest);
+    } else {
+      const box = qs('.stream-box');
+      const next = qs('.next-txt');
+      if (box) {
+        box.innerHTML = `<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No se encontraron transmisiones ni videos largos embebibles del canal.</p></div>`;
+      }
+      if (next) next.innerHTML = 'No se pudo encontrar un video reciente del canal';
+    }
+  } catch (e) {
+    console.warn('YouTube:', e);
+    const featureTitle = document.getElementById('videoFeatureTitle');
+    const featureMeta = document.getElementById('videoFeatureMeta');
+    const featureDesc = document.getElementById('videoFeatureDesc');
+    const media = document.getElementById('videoFeatureMedia');
+    const next = qs('.next-txt');
+    const strip = document.getElementById('videoStrip');
+    const count = document.getElementById('videoStripCount');
+
+    if (featureTitle) featureTitle.textContent = 'No se pudieron cargar los videos';
+    if (featureMeta) featureMeta.textContent = 'Verificá la API key y el channel ID';
+    if (featureDesc) featureDesc.textContent = 'La biblioteca del canal no pudo conectarse con YouTube.';
+    if (media) media.innerHTML = '<div class="video-player-placeholder"><div class="video-player-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><strong>No se pudo cargar el reproductor</strong><p>La conexión con YouTube falló.</p></div>';
+    if (strip) strip.innerHTML = '<div class="video-empty">No se pudo consultar la lista de videos.</div>';
+    if (count) count.textContent = 'Sin datos';
+    if (next) next.innerHTML = 'No se pudo consultar el canal';
+  }
+}
+
+initYouTubeSections();
+</script>
 </body>
 </html>
