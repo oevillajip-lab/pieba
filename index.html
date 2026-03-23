@@ -142,7 +142,10 @@
     .stat-lbl { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: .18rem; animation: spin 30s linear infinite reverse; }
 
     /* ── MENSAJES ── */
-    #mensajes { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
+   #mensajes { 
+      background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); 
+      min-height: 100vh; 
+    }
     .mensajes-wrap { text-align: center; max-width: 1180px; width: 100%; padding: 2rem 3rem; }
     .culto-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
     .culto-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
@@ -686,7 +689,7 @@
       </div>
 
       <!-- ── VIDEO SECTION ── -->
-      <div class="video-section reveal d4">
+      <div class="video-section">
 
         <!-- Featured card -->
         <div class="video-featured-card is-loading" id="videoFeaturedCard">
@@ -1443,46 +1446,49 @@ function renderNoLive(fallback) {
 
 /* ─── INIT ─── */
 async function initYouTube() {
-  if (!YT_API_KEY || !YT_CHANNEL_ID) return;
-  try {
-    const recent = await getRecent(40);
-    const latest = recent[0] || null;
+  const card = document.getElementById('videoFeaturedCard');
+  if(card) card.classList.add('is-loading');
 
-    // Populate video section
+  try {
+    if (!YT_API_KEY || !YT_CHANNEL_ID) throw new Error("Faltan datos de la API");
+
+    const recent = await getRecent(40);
     if (recent.length) {
       vtState.all = recent;
-      vtState.latestEmbeddable = latest;
+      vtState.latestEmbeddable = recent[0];
       vtState.filtered = recent;
-      vtState.selectedId = latest?.videoId || null;
-      renderFeaturedCard(latest);
+      vtState.selectedId = recent[0].videoId;
+      renderFeaturedCard(recent[0]);
       renderVideoRows(recent);
-      const count = $id('videoTotalCount');
+      const count = document.getElementById('videoTotalCount');
       if(count) count.textContent = `${recent.length} videos disponibles`;
     } else {
-      const card = $id('videoFeaturedCard');
-      if(card) card.classList.remove('is-loading');
-      const title = $id('videoFeatTitle');
-      if(title) title.textContent = 'No se encontraron videos largos en el canal';
+      throw new Error("Canal vacío");
     }
 
-    // Live section
     const live = await getBroadcast('live');
-    if (live) { renderLive(live); return; }
-    const upcoming = await getBroadcast('upcoming');
-    if (upcoming) { renderUpcoming(upcoming, latest); return; }
-    renderNoLive(latest);
-
+    if (live) { 
+      renderLive(live); 
+    } else {
+      const upcoming = await getBroadcast('upcoming');
+      if (upcoming) renderUpcoming(upcoming, recent[0]);
+      else renderNoLive(recent[0]);
+    }
   } catch(err) {
     console.warn('YouTube:', err);
-    const card = $id('videoFeaturedCard');
-    if(card) card.classList.remove('is-loading');
-    const title = $id('videoFeatTitle');
-    if(title) title.textContent = 'No se pudo cargar el canal';
-    const desc = $id('videoFeatDesc');
-    if(desc) desc.textContent = 'Verificá la API key y el ID del canal.';
-    const rows = $id('videoRowList');
-    if(rows) rows.innerHTML='<div class="video-empty-msg">No se pudo conectar con YouTube.</div>';
+    const title = document.getElementById('videoFeatTitle');
+    if(title) title.textContent = 'Mensajes en YouTube';
+    const desc = document.getElementById('videoFeatDesc');
+    if(desc) desc.textContent = 'Haz clic abajo para ir directamente a nuestro canal y ver las últimas predicaciones.';
+    const btn = document.getElementById('videoPlayBtn');
+    if(btn) {
+      btn.innerHTML = 'Ir al Canal de PIEBA';
+      btn.onclick = () => window.open('https://www.youtube.com/@PIEBA', '_blank');
+      btn.disabled = false;
+    }
     renderNoLive(null);
+  } finally {
+    if(card) card.classList.remove('is-loading');
   }
 }
 
