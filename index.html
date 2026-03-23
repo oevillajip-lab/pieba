@@ -142,10 +142,7 @@
     .stat-lbl { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: .18rem; animation: spin 30s linear infinite reverse; }
 
     /* ── MENSAJES ── */
-   #mensajes { 
-      background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); 
-      min-height: 100vh; 
-    }
+    #mensajes { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
     .mensajes-wrap { text-align: center; max-width: 1180px; width: 100%; padding: 2rem 3rem; }
     .culto-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
     .culto-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
@@ -546,7 +543,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="topnav" id="topnav">
   <a class="nav-logo" href="#inicio" data-target="inicio">
     <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
@@ -570,7 +566,6 @@
   </button>
 </nav>
 
-<!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav">
   <a href="#inicio"    data-target="inicio"    data-section="inicio">Inicio</a>
   <a href="#nosotros"  data-target="nosotros"  data-section="nosotros">Nosotros</a>
@@ -584,7 +579,6 @@
   <a href="#ofrendar"  data-target="ofrendar"  data-section="ofrendar" style="color:var(--gold)">Ofrendar</a>
 </div>
 
-<!-- SIDE DOTS -->
 <div class="side-dots" id="sideDots">
   <button class="dot active" type="button" data-target="inicio"   title="Inicio"    aria-label="Ir a Inicio"></button>
   <button class="dot"        type="button" data-target="nosotros" title="Nosotros"  aria-label="Ir a Nosotros"></button>
@@ -598,7 +592,6 @@
   <button class="dot"        type="button" data-target="ofrendar" title="Ofrendar"  aria-label="Ir a Ofrendar"></button>
 </div>
 
-<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
   <div class="lightbox-header">
     <div>
@@ -612,7 +605,6 @@
 
 <div class="scroll-wrap" id="scrollWrap">
 
-  <!-- 01 INICIO -->
   <section class="page" id="inicio">
     <canvas id="starCanvas"></canvas>
     <div class="hero-glow"></div>
@@ -631,7 +623,6 @@
     <span class="page-num">01 / 10</span>
   </section>
 
-  <!-- 02 NOSOTROS -->
   <section class="page" id="nosotros">
     <div class="nos-grid">
       <div>
@@ -659,14 +650,12 @@
     <span class="page-num">02 / 10</span>
   </section>
 
-  <!-- 03 MENSAJES -->
   <section class="page" id="mensajes">
     <div class="mensajes-wrap">
       <p class="section-label reveal">Programación &amp; Canal</p>
       <h2 class="section-title reveal d1" style="text-align:center">Mensajes</h2>
       <div class="gold-line reveal d2"></div>
 
-      <!-- Schedule cards -->
       <div class="culto-cards">
         <div class="culto-card reveal d1">
           <p class="culto-dia">Domingo</p>
@@ -688,10 +677,8 @@
         </div>
       </div>
 
-      <!-- ── VIDEO SECTION ── -->
       <div class="video-section reveal d4">
 
-        <!-- Featured card -->
         <div class="video-featured-card is-loading" id="videoFeaturedCard">
           <div class="video-featured-eyebrow">
             <span class="video-featured-label" id="videoFeatCat">Canal</span>
@@ -700,7 +687,6 @@
           <h3 class="video-featured-title" id="videoFeatTitle">Cargando último mensaje…</h3>
           <p class="video-featured-desc" id="videoFeatDesc">Aquí aparecerá el mensaje más reciente del canal.</p>
 
-          <!-- Inline player – expands on play -->
           <div class="video-inline-player" id="videoInlinePlayer"></div>
 
           <div class="video-featured-actions">
@@ -712,7 +698,6 @@
           </div>
         </div>
 
-        <!-- Type filter chips -->
         <div class="video-filter-row" id="videoTypeFilters">
           <span class="video-filter-label-sm">Filtrar</span>
           <button type="button" class="vchip active" data-video-type="all">Todos</button>
@@ -725,15 +710,12 @@
           <button type="button" class="vchip" data-video-type="Otros">Otros</button>
         </div>
 
-        <!-- Month-grouped rows -->
         <div id="videoRowList"></div>
 
-      </div><!-- /video-section -->
-    </div>
+      </div></div>
     <span class="page-num">03 / 10</span>
   </section>
 
-  <!-- 04 EN VIVO -->
   <section class="page" id="envivo">
     <div class="envivo-wrap">
       <div class="live-pill reveal"><span class="live-dot-r"></span>En Vivo</div>
@@ -753,7 +735,6 @@
     <span class="page-num">04 / 10</span>
   </section>
 
-  <!-- 05 GALERÍA -->
   <section class="page" id="galeria">
     <div class="galeria-wrap">
       <p class="section-label reveal">Momentos</p>
@@ -795,7 +776,6 @@
     <span class="page-num">05 / 10</span>
   </section>
 
-  <!-- 06 AVISOS -->
   <section class="page" id="avisos">
     <div class="avisos-wrap">
       <p class="section-label reveal">Comunicados</p>
@@ -843,7 +823,6 @@
     <span class="page-num">06 / 10</span>
   </section>
 
-  <!-- 07 EVENTOS -->
   <section class="page" id="eventos">
     <div class="eventos-wrap">
       <p class="section-label reveal">Agenda</p>
@@ -867,7 +846,6 @@
     <span class="page-num">07 / 10</span>
   </section>
 
-  <!-- 08 BLOG -->
   <section class="page" id="blog">
     <div class="blog-wrap">
       <p class="section-label reveal">Reflexiones</p>
@@ -907,7 +885,6 @@
     <span class="page-num">08 / 10</span>
   </section>
 
-  <!-- 09 CONTACTO -->
   <section class="page" id="contacto">
     <div class="cont-grid">
       <div>
@@ -949,7 +926,6 @@
     <span class="page-num">09 / 10</span>
   </section>
 
-  <!-- 10 OFRENDAR -->
   <section class="page" id="ofrendar">
     <div class="ofr-wrap">
       <p class="section-label reveal">Generosidad</p>
@@ -972,9 +948,7 @@
     <span class="page-num">10 / 10</span>
   </section>
 
-</div><!-- /scroll-wrap -->
-
-<script>
+</div><script>
 /* ── CANVAS STARS ── */
 const canvas = document.getElementById('starCanvas');
 const ctx = canvas.getContext('2d');
@@ -1061,6 +1035,7 @@ document.addEventListener('click', e => {
 
 wrap.addEventListener('scroll', () => { topnav.classList.toggle('scrolled', wrap.scrollTop > 60); });
 
+/* ESTE FUE EL PROBLEMA: HE BAJADO EL THRESHOLD A 0.15 PARA QUE NO FALLE CON SECCIONES ALTAS */
 const io = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -1068,7 +1043,7 @@ const io = new IntersectionObserver(entries => {
       entry.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
     }
   });
-}, { root: wrap, threshold: 0.45 });
+}, { root: wrap, threshold: 0.15 });
 
 sections.forEach(s => io.observe(s));
 document.querySelectorAll('#inicio .reveal').forEach(el => el.classList.add('visible'));
@@ -1164,7 +1139,7 @@ function classify(v) {
   if (/(charla|conferencia|seminario|entrevista|testimonio|taller)/.test(t))                             return 'Charlas';
   if (/(estudio biblico|escuela dominical|discipulado|devocional|ensenanza|serie biblica)/.test(t))      return 'Estudios';
   if (/(culto|predic|sermon|mensaje|adoracion|santa cena|domingo|miercoles|pr |pastor)/.test(t)||bibleRe.test(t)) return 'Cultos';
-  if (/(estudio biblico|escuela dominical|discipulado)/.test(d))                                          return 'Estudios';
+  if (/(estudio biblico|escuela dominical|discipulado)/.test(d))                                         return 'Estudios';
   if (v.durationSeconds >= 1200) return 'Cultos';
   return 'Otros';
 }
