@@ -39,19 +39,19 @@
       -webkit-overflow-scrolling: touch;
     }
 
-.page {
-  min-height: 100dvh;
-  height: auto;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  position: relative;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 6.5rem 0 2.5rem;
-}
+    .page {
+      min-height: 100dvh;
+      height: auto;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      position: relative;
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6.5rem 0 2.5rem;
+    }
 
     /* ── NAV ── */
     .topnav {
@@ -70,22 +70,11 @@
     .nav-links a:hover, .nav-links a.active { color: var(--gold); }
     .nav-cta { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--navy); background: var(--gold); padding: .45rem 1.1rem; border-radius: 2px; text-decoration: none; transition: opacity .3s; white-space: nowrap; }
     .nav-cta:hover { opacity: .82; }
-.hamburger {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  cursor: pointer;
-  padding: 4px;
-  z-index: 160;
-  position: relative;
-  background: transparent;
-  border: 0;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-}
+    .hamburger {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; cursor: pointer; padding: 4px; z-index: 160; position: relative;
+      background: transparent; border: 0; outline: none; appearance: none; -webkit-appearance: none;
+    }
     .hamburger span { display: block; width: 26px; height: 2px; background: var(--white); transition: .3s; }
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
@@ -97,41 +86,15 @@
     .dot.active { background: var(--gold); transform: scale(1.35); }
 
     /* ── MOBILE NAV ── */
-.mobile-nav {
-  display: none;
-  position: fixed;
-  top: 64px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 140;
-  background: rgba(7,5,30,.98);
-  backdrop-filter: blur(14px);
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1.1rem;
-  padding: 1.5rem 1.25rem 2.5rem;
-  overflow-y: auto;
-}
-
-.mobile-nav.open {
-  display: flex;
-}
-
-.mobile-nav a {
-  font-family: 'Cinzel', serif;
-  font-size: 1.1rem;
-  color: var(--white);
-  text-decoration: none;
-  letter-spacing: .12em;
-  transition: color .3s;
-}
-
-.mobile-nav a:hover,
-.mobile-nav a.active {
-  color: var(--gold);
-}
+    .mobile-nav {
+      display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0; z-index: 140;
+      background: rgba(7,5,30,.98); backdrop-filter: blur(14px);
+      flex-direction: column; align-items: center; justify-content: flex-start;
+      gap: 1.1rem; padding: 1.5rem 1.25rem 2.5rem; overflow-y: auto;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--white); text-decoration: none; letter-spacing: .12em; transition: color .3s; }
+    .mobile-nav a:hover, .mobile-nav a.active { color: var(--gold); }
 
     /* ── REVEAL ── */
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s ease, transform .75s ease; }
@@ -178,9 +141,9 @@
     .stat-num { font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); animation: spin 30s linear infinite reverse; }
     .stat-lbl { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: .18rem; animation: spin 30s linear infinite reverse; }
 
-    /* ── CULTOS ── */
-    #cultos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
-    .cultos-wrap { text-align: center; max-width: 1180px; width: 100%; padding: 2rem 3rem; }
+    /* ── MENSAJES ── */
+    #mensajes { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
+    .mensajes-wrap { text-align: center; max-width: 1180px; width: 100%; padding: 2rem 3rem; }
     .culto-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
     .culto-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
     .culto-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); transform: scaleX(0); transition: transform .4s; }
@@ -191,52 +154,164 @@
     .culto-hora { font-size: 2.1rem; font-weight: 300; margin-top: .85rem; }
     .culto-desc { font-size: .78rem; color: var(--muted); margin-top: .65rem; line-height: 1.65; }
 
-    .video-library { margin-top: 2rem; text-align: left; background: rgba(255,255,255,.03); border: 1px solid var(--glass-b); border-radius: 10px; padding: 1.6rem; }
-    .video-library-head { display: flex; flex-direction: column; gap: .55rem; }
-    .video-library-kicker { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
-    .video-library-title { margin-top: .2rem; font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 600; color: var(--white); }
-    .video-library-sub { font-size: .82rem; color: var(--muted); line-height: 1.75; max-width: 860px; }
-    .video-controls { display: flex; flex-direction: column; gap: .95rem; margin-top: 1.25rem; }
-    .video-filter-group { display: flex; flex-direction: column; gap: .5rem; }
-    .video-filter-label { font-size: .67rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
-    .video-filter-chips, .video-month-chips { display: flex; gap: .55rem; flex-wrap: wrap; }
-    .video-chip, .video-month-chip { background: rgba(255,255,255,.04); color: var(--muted); border: 1px solid var(--glass-b); border-radius: 999px; padding: .56rem .9rem; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: .25s ease; }
-    .video-chip:hover, .video-chip.active, .video-month-chip:hover, .video-month-chip.active { color: var(--navy); background: var(--gold); border-color: var(--gold); }
-    .video-feature { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1.2rem; margin-top: 1.35rem; }
-    .video-player-stage { min-height: 340px; border-radius: 8px; overflow: hidden; border: 1px solid var(--glass-b); background: linear-gradient(160deg, rgba(255,255,255,.03), rgba(7,5,30,.6)); }
-    .video-player-stage iframe { width: 100%; height: 100%; border: 0; display: block; }
-    .video-player-placeholder { min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; color: var(--muted); }
-    .video-player-icon { width: 76px; height: 76px; border-radius: 50%; border: 1px solid rgba(201,169,110,.5); display: inline-flex; align-items: center; justify-content: center; color: var(--gold); margin-bottom: 1rem; background: rgba(201,169,110,.08); }
-    .video-player-placeholder strong { color: var(--white); display: block; margin-bottom: .45rem; font-family: 'Cinzel', serif; font-weight: 600; }
-    .video-player-placeholder p { max-width: 420px; line-height: 1.7; font-size: .85rem; }
-    .video-feature-body { background: rgba(255,255,255,.03); border: 1px solid var(--glass-b); border-radius: 8px; padding: 1.2rem; display: flex; flex-direction: column; }
-    .video-feature-topline { display: flex; gap: .65rem; align-items: center; flex-wrap: wrap; }
-    .video-tag { display: inline-flex; align-items: center; gap: .35rem; padding: .32rem .62rem; border-radius: 999px; background: rgba(201,169,110,.14); border: 1px solid rgba(201,169,110,.25); color: var(--gold); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; }
-    .video-date { font-size: .72rem; color: var(--muted); }
-    .video-feature-title { margin-top: .8rem; font-family: 'Cinzel', serif; font-size: 1.3rem; line-height: 1.35; color: var(--white); }
-    .video-feature-meta { margin-top: .5rem; font-size: .78rem; color: var(--gold); letter-spacing: .06em; }
-    .video-feature-desc { margin-top: .9rem; color: var(--muted); font-size: .84rem; line-height: 1.7; }
-    .video-feature-actions { margin-top: auto; display: flex; gap: .7rem; flex-wrap: wrap; padding-top: 1.2rem; }
-    .video-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: .75rem 1.05rem; border-radius: 4px; text-decoration: none; font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; border: 1px solid transparent; cursor: pointer; }
-    .video-btn-primary { background: var(--gold); color: var(--navy); border-color: var(--gold); }
-    .video-btn-secondary { background: transparent; color: var(--white); border-color: var(--glass-b); }
-    .video-btn-disabled { background: rgba(255,255,255,.04); color: var(--muted); border-color: var(--glass-b); cursor: not-allowed; }
-    .video-btn-large { min-width: 220px; }
-    .video-note { font-size: .74rem; color: var(--muted); }
-    .video-strip-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.35rem; flex-wrap: wrap; }
-    .video-strip-title { font-family: 'Cinzel', serif; font-size: .92rem; color: var(--white); }
-    .video-strip-count { font-size: .72rem; color: var(--muted); }
-    .video-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .95rem; margin-top: .9rem; }
-    .video-list-item { background: rgba(255,255,255,.03); border: 1px solid var(--glass-b); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; transition: .25s ease; }
-    .video-list-item.active { border-color: var(--gold-dim); box-shadow: 0 0 0 1px rgba(201,169,110,.12) inset; }
-    .video-list-topline { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
-    .video-list-title { font-family: 'Cinzel', serif; font-size: .96rem; color: var(--white); line-height: 1.45; }
-    .video-list-desc { font-size: .8rem; color: var(--muted); line-height: 1.7; }
-    .video-list-actions { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
-    .video-empty { margin-top: 1rem; padding: 1.25rem; text-align: center; color: var(--muted); border: 1px dashed var(--glass-b); border-radius: 6px; }
+    /* ─── VIDEO SECTION (nueva) ─── */
+    .video-section { margin-top: 2.25rem; text-align: left; }
 
+    /* Featured card */
+    .video-featured-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-b);
+      border-radius: 3px;
+      padding: 1.75rem 2rem 1.6rem;
+      position: relative;
+      transition: border-color .4s;
+    }
+    .video-featured-card.is-playing { border-color: rgba(201,169,110,.38); }
+    .video-featured-card.is-loading .video-featured-title::after {
+      content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gold); margin-left: .6rem; vertical-align: middle;
+      animation: pulse 1.2s ease infinite;
+    }
+    .video-featured-eyebrow {
+      display: flex; align-items: center; gap: .75rem; margin-bottom: .9rem; flex-wrap: wrap;
+    }
+    .video-featured-label {
+      font-size: .58rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--navy); background: var(--gold); padding: .2rem .6rem; border-radius: 1px;
+      font-weight: 700;
+    }
+    .video-featured-label.cat-Estudios { background: rgba(130,185,255,.85); }
+    .video-featured-label.cat-Jóvenes  { background: rgba(185,130,255,.8); }
+    .video-featured-label.cat-Charlas  { background: rgba(130,230,185,.8); }
+    .video-featured-label.cat-Debates  { background: rgba(255,165,100,.85); }
+    .video-featured-label.cat-Avisos   { background: rgba(255,100,100,.8); color: #fff; }
+    .video-featured-label.cat-Otros    { background: rgba(255,255,255,.18); color: var(--white); }
+    .video-featured-date {
+      font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+    }
+    .video-featured-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 2.2vw, 1.55rem);
+      font-weight: 600; line-height: 1.3; color: var(--white);
+    }
+    .video-featured-desc {
+      margin-top: .6rem; font-size: .79rem; color: var(--muted); line-height: 1.7;
+      max-width: 700px;
+    }
 
-    /* ── EN VIVO ── */
+    /* Inline player – expands smoothly */
+    .video-inline-player {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .55s cubic-bezier(.4,0,.2,1), margin-top .55s;
+      margin-top: 0;
+    }
+    .video-inline-player.open {
+      max-height: 560px;
+      margin-top: 1.5rem;
+    }
+    .video-inline-player iframe {
+      width: 100%; aspect-ratio: 16/9; display: block; border: 0; border-radius: 2px;
+    }
+
+    /* Play button */
+    .video-featured-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.3rem; flex-wrap: wrap; }
+    .video-play-btn {
+      display: inline-flex; align-items: center; gap: .6rem;
+      background: transparent; border: 1px solid var(--gold);
+      color: var(--gold); padding: .58rem 1.25rem;
+      font-family: 'Raleway', sans-serif;
+      font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      cursor: pointer; border-radius: 2px; transition: .22s ease;
+    }
+    .video-play-btn:hover { background: var(--gold); color: var(--navy); }
+    .video-play-btn.is-playing { background: var(--gold); color: var(--navy); }
+    .video-play-btn svg { flex-shrink: 0; transition: transform .2s; }
+    .video-play-btn:hover svg { transform: scale(1.2); }
+    .video-total-count { font-size: .68rem; color: var(--muted); letter-spacing: .06em; }
+
+    /* Filter chips row */
+    .video-filter-row {
+      display: flex; align-items: center; gap: .45rem; flex-wrap: wrap;
+      margin-top: 1.75rem; padding-bottom: .9rem;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .video-filter-label-sm {
+      font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+      margin-right: .25rem;
+    }
+    .vchip {
+      background: transparent; border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.45); border-radius: 1px; padding: .34rem .75rem;
+      font-family: 'Raleway', sans-serif;
+      font-size: .6rem; letter-spacing: .12em; text-transform: uppercase;
+      cursor: pointer; transition: .18s ease;
+    }
+    .vchip:hover { border-color: rgba(201,169,110,.5); color: var(--gold); }
+    .vchip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.08); }
+
+    /* Month-grouped video rows */
+    .video-month-group { margin-top: 1.4rem; }
+    .video-month-header {
+      font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: var(--gold);
+      display: flex; align-items: center; gap: .75rem; margin-bottom: .2rem;
+    }
+    .video-month-header::after { content: ''; flex: 1; height: 1px; background: rgba(201,169,110,.14); }
+
+    .video-row {
+      display: grid;
+      grid-template-columns: 4.2rem 5.2rem 1fr 2rem;
+      align-items: center; gap: 0 1.1rem;
+      padding: .72rem .3rem .72rem .5rem;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      cursor: pointer; transition: background .18s;
+      position: relative;
+    }
+    .video-row::before {
+      content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+      width: 2px; background: var(--gold);
+      transform: scaleY(0); transition: transform .2s; transform-origin: center;
+    }
+    .video-row:hover { background: rgba(255,255,255,.025); }
+    .video-row.vr-active { background: rgba(201,169,110,.04); }
+    .video-row.vr-active::before { transform: scaleY(1); }
+
+    .vr-day {
+      font-size: .66rem; color: var(--muted); letter-spacing: .06em; white-space: nowrap;
+    }
+    .vr-cat {
+      font-size: .55rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--navy); background: var(--gold);
+      padding: .16rem .48rem; border-radius: 1px;
+      white-space: nowrap; display: inline-block; font-weight: 700;
+    }
+    .vr-cat.cat-Estudios { background: rgba(130,185,255,.85); }
+    .vr-cat.cat-Jóvenes  { background: rgba(185,130,255,.8); }
+    .vr-cat.cat-Charlas  { background: rgba(130,230,185,.8); }
+    .vr-cat.cat-Debates  { background: rgba(255,165,100,.85); }
+    .vr-cat.cat-Avisos   { background: rgba(255,100,100,.8); color: #fff; }
+    .vr-cat.cat-Otros    { background: rgba(255,255,255,.18); color: var(--white); }
+
+    .vr-title {
+      font-size: .82rem; color: rgba(255,255,255,.8); line-height: 1.35;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      transition: color .18s;
+    }
+    .video-row:hover .vr-title, .video-row.vr-active .vr-title { color: var(--white); }
+
+    .vr-play {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: .18s ease; color: var(--muted);
+    }
+    .video-row:hover .vr-play { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.1); }
+    .video-row.vr-active .vr-play { border-color: var(--gold); background: var(--gold); color: var(--navy); }
+
+    .video-empty-msg {
+      text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: .8rem;
+      border: 1px dashed rgba(255,255,255,.08); border-radius: 3px; margin-top: 1.25rem;
+    }
 
     /* ── EN VIVO ── */
     #envivo { background: var(--navy-deep); }
@@ -255,106 +330,45 @@
     #galeria { background: var(--navy); }
     .galeria-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
     .album-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
-    .album-card {
-      position: relative; cursor: pointer; border-radius: 3px; overflow: hidden;
-      border: 1px solid var(--glass-b); aspect-ratio: 4/3;
-      transition: border-color .3s, transform .3s;
-    }
+    .album-card { position: relative; cursor: pointer; border-radius: 3px; overflow: hidden; border: 1px solid var(--glass-b); aspect-ratio: 4/3; transition: border-color .3s, transform .3s; }
     .album-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
     .album-card:hover .album-overlay { opacity: 1; }
     .album-card:hover .album-cover-img { transform: scale(1.04); }
-    .album-cover-img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform .5s ease;
-      display: block;
-    }
-    .album-cover-ph {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform .5s ease;
-    }
-    .album-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(7,5,30,.92) 0%, rgba(7,5,30,.25) 60%, transparent 100%);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 1.25rem 1rem; opacity: .85; transition: opacity .3s;
-    }
-    .album-count {
-      position: absolute; top: .75rem; right: .75rem;
-      font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
-      color: var(--navy); background: var(--gold); padding: .2rem .55rem; border-radius: 2px;
-    }
+    .album-cover-img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; display: block; }
+    .album-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform .5s ease; }
+    .album-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,5,30,.92) 0%, rgba(7,5,30,.25) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem 1rem; opacity: .85; transition: opacity .3s; }
+    .album-count { position: absolute; top: .75rem; right: .75rem; font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .2rem .55rem; border-radius: 2px; }
     .album-name { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 600; color: var(--white); line-height: 1.3; }
     .album-date { font-size: .65rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-top: .3rem; }
 
     /* Lightbox */
-    .lightbox {
-      position: fixed; inset: 0; z-index: 300;
-      background: rgba(7,5,30,.97); backdrop-filter: blur(16px);
-      display: none; flex-direction: column;
-      overflow-y: auto;
-    }
+    .lightbox { position: fixed; inset: 0; z-index: 300; background: rgba(7,5,30,.97); backdrop-filter: blur(16px); display: none; flex-direction: column; overflow-y: auto; }
     .lightbox.open { display: flex; }
-    .lightbox-header {
-      position: sticky; top: 0; z-index: 10;
-      padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between;
-      background: rgba(7,5,30,.8); backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--glass-b);
-    }
+    .lightbox-header { position: sticky; top: 0; z-index: 10; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(7,5,30,.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--glass-b); }
     .lightbox-title { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 600; }
     .lightbox-date { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: .2rem; }
-    .lightbox-close {
-      width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--glass-b);
-      background: var(--glass); cursor: pointer; display: flex; align-items: center; justify-content: center;
-      color: var(--white); font-size: 1.2rem; transition: background .3s; flex-shrink: 0;
-    }
+    .lightbox-close { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--glass-b); background: var(--glass); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 1.2rem; transition: background .3s; flex-shrink: 0; }
     .lightbox-close:hover { background: var(--gold-dim); }
-    .lightbox-grid {
-      display: grid; grid-template-columns: repeat(4,1fr); gap: 3px;
-      padding: 1.5rem 2rem 3rem;
-      max-width: 1100px; width: 100%; margin: 0 auto;
-    }
-    .lightbox-photo {
-      aspect-ratio: 1; background: var(--glass); border: 1px solid var(--glass-b);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; cursor: pointer; transition: opacity .3s;
-    }
+    .lightbox-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; padding: 1.5rem 2rem 3rem; max-width: 1100px; width: 100%; margin: 0 auto; }
+    .lightbox-photo { aspect-ratio: 1; background: var(--glass); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: opacity .3s; }
     .lightbox-photo:hover { opacity: .82; }
     .lightbox-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .lightbox-photo-ph {
-      width: 100%; height: 100%; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: .4rem;
-      color: rgba(255,255,255,.15); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase;
-    }
+    .lightbox-photo-ph { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; color: rgba(255,255,255,.15); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; }
     .lightbox-photo-ph svg { opacity: .2; }
-    .lightbox-empty {
-      grid-column: 1/-1; text-align: center; padding: 3rem 1rem;
-      color: var(--muted); font-size: .84rem; line-height: 1.8;
-    }
+    .lightbox-empty { grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: .84rem; line-height: 1.8; }
     .lightbox-empty span { color: var(--gold); }
-    .lb-upload-hint {
-      margin-top: 1.25rem; display: inline-flex; align-items: center; gap: .5rem;
-      border: 1px dashed rgba(201,169,110,.35); padding: .65rem 1.25rem; border-radius: 3px;
-      font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold);
-    }
+    .lb-upload-hint { margin-top: 1.25rem; display: inline-flex; align-items: center; gap: .5rem; border: 1px dashed rgba(201,169,110,.35); padding: .65rem 1.25rem; border-radius: 3px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
 
     /* ── AVISOS ── */
     #avisos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
     .avisos-wrap { text-align: center; max-width: 880px; width: 100%; padding: 2rem 3rem; }
     .aviso-list { display: flex; flex-direction: column; gap: .85rem; margin-top: 2rem; text-align: left; }
-    .aviso-card {
-      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
-      padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1.25rem;
-      transition: border-color .3s;
-    }
+    .aviso-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: border-color .3s; }
     .aviso-card:hover { border-color: var(--gold-dim); }
     .aviso-card.urgente { border-left: 3px solid #ff7070; }
     .aviso-card.info { border-left: 3px solid var(--gold); }
     .aviso-card.normal { border-left: 3px solid rgba(255,255,255,.18); }
-    .aviso-ico {
-      width: 36px; height: 36px; flex-shrink: 0; border-radius: 3px;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .aviso-ico { width: 36px; height: 36px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
     .aviso-ico.urgente { background: rgba(255,112,112,.1); }
     .aviso-ico.info { background: var(--gold-dim); }
     .aviso-ico.normal { background: var(--glass); }
@@ -372,16 +386,9 @@
     #eventos { background: var(--navy-deep); }
     .eventos-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
     .evento-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
-    .evento-card {
-      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
-      padding: 0; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left;
-    }
+    .evento-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 0; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; }
     .evento-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
-    .evento-date-bar {
-      background: linear-gradient(90deg, rgba(201,169,110,.15), transparent);
-      border-bottom: 1px solid var(--glass-b);
-      padding: .75rem 1.25rem; display: flex; align-items: center; gap: .75rem;
-    }
+    .evento-date-bar { background: linear-gradient(90deg, rgba(201,169,110,.15), transparent); border-bottom: 1px solid var(--glass-b); padding: .75rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
     .evento-dia { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); line-height: 1; }
     .evento-mes-hora { display: flex; flex-direction: column; }
     .evento-mes { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
@@ -397,18 +404,10 @@
     #blog { background: var(--navy); }
     .blog-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
     .blog-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
-    .blog-card {
-      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
-      overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; cursor: pointer;
-    }
+    .blog-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; cursor: pointer; }
     .blog-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
-    .blog-cover {
-      width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-    .blog-cover-ph {
-      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-    }
+    .blog-cover { width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .blog-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
     .blog-cover img { width: 100%; height: 100%; object-fit: cover; }
     .blog-card-body { padding: 1.25rem 1.4rem 1.5rem; }
     .blog-cat { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
@@ -417,16 +416,9 @@
     .blog-meta { display: flex; align-items: center; gap: .5rem; margin-top: .85rem; font-size: .62rem; color: var(--muted); }
     .blog-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
     .blog-side { display: flex; flex-direction: column; gap: 1.25rem; }
-    .blog-card-sm {
-      background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px;
-      display: flex; gap: .9rem; padding: .9rem; overflow: hidden;
-      transition: border-color .3s; cursor: pointer; text-align: left; flex: 1;
-    }
+    .blog-card-sm { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; display: flex; gap: .9rem; padding: .9rem; overflow: hidden; transition: border-color .3s; cursor: pointer; text-align: left; flex: 1; }
     .blog-card-sm:hover { border-color: var(--gold-dim); }
-    .blog-thumb-sm {
-      width: 72px; flex-shrink: 0; border-radius: 2px; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .blog-thumb-sm { width: 72px; flex-shrink: 0; border-radius: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .blog-thumb-sm img { width: 100%; height: 100%; object-fit: cover; }
     .blog-thumb-ph { width: 72px; aspect-ratio: 1; flex-shrink: 0; border-radius: 2px; overflow: hidden; }
     .blog-sm-body { flex: 1; min-width: 0; }
@@ -470,29 +462,10 @@
     @keyframes spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
     /* ── MOBILE ── */
-
-    @media (max-width: 1100px) {
-      .video-feature { grid-template-columns: 1fr; }
-      .video-list { grid-template-columns: 1fr; }
-    }
     @media (max-width: 900px) {
       html, body { overflow: hidden; }
-
-.scroll-wrap {
-  height: 100dvh;
-  min-height: 100dvh;
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.page {
-  min-height: 100dvh;
-  height: auto;
-  overflow: visible;
-  justify-content: flex-start;
-  padding: 5.5rem 0 2.5rem;
-}
+      .scroll-wrap { height: 100dvh; min-height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
+      .page { min-height: 100dvh; height: auto; overflow: visible; justify-content: flex-start; padding: 5.5rem 0 2.5rem; }
       .page-num { display: none; }
       .topnav { padding: .9rem 1.1rem; }
       .nav-links, .nav-cta { display: none; }
@@ -513,46 +486,36 @@
       .nos-body { font-size: .88rem; }
       .nos-list li span { font-size: .84rem; }
 
-      .cultos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      /* Mensajes mobile */
+      .mensajes-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .culto-cards { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
       .culto-card { padding: 1.2rem 1rem; }
       .culto-hora { font-size: 1.65rem; }
-      .video-library { margin-top: 1.2rem; padding: 1rem; }
-      .video-library-head { align-items: stretch; }
-      .video-library-title { font-size: 1rem; }
-      .video-controls { width: 100%; justify-content: flex-start; }
-      .video-filter-chips, .video-month-chips { gap: .45rem; }
-      .video-chip, .video-month-chip { padding: .5rem .7rem; font-size: .62rem; }
-      .video-feature { grid-template-columns: 1fr; }
-      .video-player-stage, .video-player-placeholder { min-height: 220px; }
-      .video-feature-title { font-size: 1.05rem; }
-      .video-feature-actions { padding-top: .95rem; }
-      .video-btn { width: 100%; }
-      .video-list { grid-template-columns: 1fr; }
+      .video-section { margin-top: 1.5rem; }
+      .video-featured-card { padding: 1.2rem 1.1rem 1.1rem; }
+      .video-featured-title { font-size: clamp(.9rem, 5vw, 1.2rem); }
+      .video-inline-player.open { max-height: 240px; }
+      .video-row { grid-template-columns: auto 1fr 1.5rem; gap: 0 .65rem; padding: .65rem .3rem; }
+      .vr-day { display: none; }
 
       .envivo-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .stream-box { margin-top: 1.2rem; max-height: none; min-height: 200px; }
 
-      /* Galería mobile */
       .galeria-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .album-grid { grid-template-columns: 1fr 1fr; gap: .85rem; margin-top: 1.5rem; }
       .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: 1rem; gap: 2px; }
       .lightbox-header { padding: 1rem 1.1rem; }
       .lightbox-title { font-size: .95rem; }
 
-      /* Avisos mobile */
       .avisos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .aviso-list { margin-top: 1.5rem; gap: .7rem; }
       .aviso-card { padding: 1rem 1.1rem; gap: 1rem; }
       .aviso-titulo { font-size: .88rem; }
       .aviso-texto { font-size: .8rem; }
 
-      /* Eventos mobile */
       .eventos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .evento-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
-      .evento-card { }
 
-      /* Blog mobile */
       .blog-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .blog-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
       .blog-cover { aspect-ratio: 16/9; }
@@ -589,47 +552,47 @@
     <span class="nav-logo-text">PIEBA</span>
   </a>
   <ul class="nav-links">
-    <li><a href="#inicio" data-target="inicio" data-section="inicio" class="active">Inicio</a></li>
-    <li><a href="#nosotros" data-target="nosotros" data-section="nosotros">Nosotros</a></li>
-    <li><a href="#cultos" data-target="cultos" data-section="cultos">Cultos</a></li>
-    <li><a href="#envivo" data-target="envivo" data-section="envivo">En Vivo</a></li>
-    <li><a href="#galeria" data-target="galeria" data-section="galeria">Galería</a></li>
-    <li><a href="#eventos" data-target="eventos" data-section="eventos">Eventos</a></li>
-    <li><a href="#blog" data-target="blog" data-section="blog">Blog</a></li>
-    <li><a href="#contacto" data-target="contacto" data-section="contacto">Contacto</a></li>
+    <li><a href="#inicio"    data-target="inicio"    data-section="inicio"    class="active">Inicio</a></li>
+    <li><a href="#nosotros"  data-target="nosotros"  data-section="nosotros">Nosotros</a></li>
+    <li><a href="#mensajes"  data-target="mensajes"  data-section="mensajes">Mensajes</a></li>
+    <li><a href="#envivo"    data-target="envivo"    data-section="envivo">En Vivo</a></li>
+    <li><a href="#galeria"   data-target="galeria"   data-section="galeria">Galería</a></li>
+    <li><a href="#eventos"   data-target="eventos"   data-section="eventos">Eventos</a></li>
+    <li><a href="#blog"      data-target="blog"      data-section="blog">Blog</a></li>
+    <li><a href="#contacto"  data-target="contacto"  data-section="contacto">Contacto</a></li>
   </ul>
   <a class="nav-cta" href="#ofrendar" data-target="ofrendar">Ofrendar</a>
-<button class="hamburger" id="ham" type="button" aria-label="Abrir menú" aria-controls="mobileNav" aria-expanded="false">
-  <span></span><span></span><span></span>
-</button>
+  <button class="hamburger" id="ham" type="button" aria-label="Abrir menú" aria-controls="mobileNav" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav">
-  <a href="#inicio" data-target="inicio" data-section="inicio">Inicio</a>
-  <a href="#nosotros" data-target="nosotros" data-section="nosotros">Nosotros</a>
-  <a href="#cultos" data-target="cultos" data-section="cultos">Cultos</a>
-  <a href="#envivo" data-target="envivo" data-section="envivo">En Vivo</a>
-  <a href="#galeria" data-target="galeria" data-section="galeria">Galería</a>
-  <a href="#avisos" data-target="avisos" data-section="avisos">Avisos</a>
-  <a href="#eventos" data-target="eventos" data-section="eventos">Eventos</a>
-  <a href="#blog" data-target="blog" data-section="blog">Blog</a>
-  <a href="#contacto" data-target="contacto" data-section="contacto">Contacto</a>
-  <a href="#ofrendar" data-target="ofrendar" data-section="ofrendar" style="color:var(--gold)">Ofrendar</a>
+  <a href="#inicio"    data-target="inicio"    data-section="inicio">Inicio</a>
+  <a href="#nosotros"  data-target="nosotros"  data-section="nosotros">Nosotros</a>
+  <a href="#mensajes"  data-target="mensajes"  data-section="mensajes">Mensajes</a>
+  <a href="#envivo"    data-target="envivo"    data-section="envivo">En Vivo</a>
+  <a href="#galeria"   data-target="galeria"   data-section="galeria">Galería</a>
+  <a href="#avisos"    data-target="avisos"    data-section="avisos">Avisos</a>
+  <a href="#eventos"   data-target="eventos"   data-section="eventos">Eventos</a>
+  <a href="#blog"      data-target="blog"      data-section="blog">Blog</a>
+  <a href="#contacto"  data-target="contacto"  data-section="contacto">Contacto</a>
+  <a href="#ofrendar"  data-target="ofrendar"  data-section="ofrendar" style="color:var(--gold)">Ofrendar</a>
 </div>
 
 <!-- SIDE DOTS -->
 <div class="side-dots" id="sideDots">
-  <button class="dot active" type="button" data-target="inicio" data-t="inicio" title="Inicio" aria-label="Ir a Inicio"></button>
-  <button class="dot" type="button" data-target="nosotros" data-t="nosotros" title="Nosotros" aria-label="Ir a Nosotros"></button>
-  <button class="dot" type="button" data-target="cultos" data-t="cultos" title="Cultos" aria-label="Ir a Cultos"></button>
-  <button class="dot" type="button" data-target="envivo" data-t="envivo" title="En Vivo" aria-label="Ir a En Vivo"></button>
-  <button class="dot" type="button" data-target="galeria" data-t="galeria" title="Galería" aria-label="Ir a Galería"></button>
-  <button class="dot" type="button" data-target="avisos" data-t="avisos" title="Avisos" aria-label="Ir a Avisos"></button>
-  <button class="dot" type="button" data-target="eventos" data-t="eventos" title="Eventos" aria-label="Ir a Eventos"></button>
-  <button class="dot" type="button" data-target="blog" data-t="blog" title="Blog" aria-label="Ir a Blog"></button>
-  <button class="dot" type="button" data-target="contacto" data-t="contacto" title="Contacto" aria-label="Ir a Contacto"></button>
-  <button class="dot" type="button" data-target="ofrendar" data-t="ofrendar" title="Ofrendar" aria-label="Ir a Ofrendar"></button>
+  <button class="dot active" type="button" data-target="inicio"   title="Inicio"    aria-label="Ir a Inicio"></button>
+  <button class="dot"        type="button" data-target="nosotros" title="Nosotros"  aria-label="Ir a Nosotros"></button>
+  <button class="dot"        type="button" data-target="mensajes" title="Mensajes"  aria-label="Ir a Mensajes"></button>
+  <button class="dot"        type="button" data-target="envivo"   title="En Vivo"   aria-label="Ir a En Vivo"></button>
+  <button class="dot"        type="button" data-target="galeria"  title="Galería"   aria-label="Ir a Galería"></button>
+  <button class="dot"        type="button" data-target="avisos"   title="Avisos"    aria-label="Ir a Avisos"></button>
+  <button class="dot"        type="button" data-target="eventos"  title="Eventos"   aria-label="Ir a Eventos"></button>
+  <button class="dot"        type="button" data-target="blog"     title="Blog"      aria-label="Ir a Blog"></button>
+  <button class="dot"        type="button" data-target="contacto" title="Contacto"  aria-label="Ir a Contacto"></button>
+  <button class="dot"        type="button" data-target="ofrendar" title="Ofrendar"  aria-label="Ir a Ofrendar"></button>
 </div>
 
 <!-- LIGHTBOX -->
@@ -693,12 +656,14 @@
     <span class="page-num">02 / 10</span>
   </section>
 
-  <!-- 03 CULTOS -->
-  <section class="page" id="cultos">
-    <div class="cultos-wrap">
+  <!-- 03 MENSAJES -->
+  <section class="page" id="mensajes">
+    <div class="mensajes-wrap">
       <p class="section-label reveal">Programación &amp; Canal</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Mensajes &amp; Videos</h2>
+      <h2 class="section-title reveal d1" style="text-align:center">Mensajes</h2>
       <div class="gold-line reveal d2"></div>
+
+      <!-- Schedule cards -->
       <div class="culto-cards">
         <div class="culto-card reveal d1">
           <p class="culto-dia">Domingo</p>
@@ -720,66 +685,47 @@
         </div>
       </div>
 
-      <div class="video-library reveal d4">
-        <div class="video-library-head">
-          <div>
-            <p class="video-library-kicker">Biblioteca del canal</p>
-            <h3 class="video-library-title">Video principal y mensajes para reproducir aquí</h3>
-            <p class="video-library-sub">El video destacado se prepara con un botón grande y los demás aparecen como tarjetas de texto con nombre, descripción y botón. Se excluyen shorts y reels, y puedes filtrar por tipo o por mes con botones.</p>
+      <!-- ── VIDEO SECTION ── -->
+      <div class="video-section reveal d4">
+
+        <!-- Featured card -->
+        <div class="video-featured-card is-loading" id="videoFeaturedCard">
+          <div class="video-featured-eyebrow">
+            <span class="video-featured-label" id="videoFeatCat">Canal</span>
+            <span class="video-featured-date" id="videoFeatDate">Conectando con YouTube…</span>
+          </div>
+          <h3 class="video-featured-title" id="videoFeatTitle">Cargando último mensaje…</h3>
+          <p class="video-featured-desc" id="videoFeatDesc">Aquí aparecerá el mensaje más reciente del canal.</p>
+
+          <!-- Inline player – expands on play -->
+          <div class="video-inline-player" id="videoInlinePlayer"></div>
+
+          <div class="video-featured-actions">
+            <button type="button" class="video-play-btn" id="videoPlayBtn" data-play-featured="">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Reproducir aquí
+            </button>
+            <span class="video-total-count" id="videoTotalCount"></span>
           </div>
         </div>
 
-        <div class="video-controls">
-          <div class="video-filter-group">
-            <span class="video-filter-label">Tipo</span>
-            <div class="video-filter-chips" id="videoTypeFilters">
-              <button type="button" class="video-chip active" data-video-type="all">Todos</button>
-              <button type="button" class="video-chip" data-video-type="Cultos">Cultos</button>
-              <button type="button" class="video-chip" data-video-type="Estudios">Estudios</button>
-              <button type="button" class="video-chip" data-video-type="Charlas">Charlas</button>
-              <button type="button" class="video-chip" data-video-type="Debates">Debates</button>
-              <button type="button" class="video-chip" data-video-type="Avisos">Avisos</button>
-              <button type="button" class="video-chip" data-video-type="Jóvenes">Jóvenes</button>
-              <button type="button" class="video-chip" data-video-type="Otros">Otros</button>
-            </div>
-          </div>
-
-          <div class="video-filter-group">
-            <span class="video-filter-label">Mes</span>
-            <div class="video-month-chips" id="videoMonthFilters">
-              <button type="button" class="video-month-chip active" data-video-month="all">Todos</button>
-            </div>
-          </div>
+        <!-- Type filter chips -->
+        <div class="video-filter-row" id="videoTypeFilters">
+          <span class="video-filter-label-sm">Filtrar</span>
+          <button type="button" class="vchip active" data-video-type="all">Todos</button>
+          <button type="button" class="vchip" data-video-type="Cultos">Cultos</button>
+          <button type="button" class="vchip" data-video-type="Estudios">Estudios</button>
+          <button type="button" class="vchip" data-video-type="Charlas">Charlas</button>
+          <button type="button" class="vchip" data-video-type="Debates">Debates</button>
+          <button type="button" class="vchip" data-video-type="Avisos">Avisos</button>
+          <button type="button" class="vchip" data-video-type="Jóvenes">Jóvenes</button>
+          <button type="button" class="vchip" data-video-type="Otros">Otros</button>
         </div>
 
-        <div class="video-feature" id="videoFeature">
-          <div class="video-player-stage" id="videoFeatureMedia">
-            <div class="video-player-placeholder">
-              <div class="video-player-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-              <strong>Selecciona el mensaje principal</strong>
-              <p>Presiona el botón grande para reproducir el video destacado dentro del sitio. No se mostrarán miniaturas ni enlaces externos en esta sección.</p>
-            </div>
-          </div>
-          <div class="video-feature-body">
-            <div class="video-feature-topline">
-              <span class="video-tag" id="videoFeatureType">Canal</span>
-              <span class="video-date" id="videoFeatureDate">Conectando con YouTube...</span>
-            </div>
-            <h3 class="video-feature-title" id="videoFeatureTitle">Cargando video principal...</h3>
-            <p class="video-feature-meta" id="videoFeatureMeta">Preparando biblioteca del canal.</p>
-            <p class="video-feature-desc" id="videoFeatureDesc">Aquí aparecerá el mensaje principal del canal con su descripción resumida.</p>
-            <div class="video-feature-actions" id="videoFeatureActions"></div>
-          </div>
-        </div>
+        <!-- Month-grouped rows -->
+        <div id="videoRowList"></div>
 
-        <div class="video-strip-head">
-          <p class="video-strip-title">Más mensajes del canal</p>
-          <p class="video-strip-count" id="videoStripCount">Cargando…</p>
-        </div>
-        <div class="video-list" id="videoStrip"></div>
-      </div>
+      </div><!-- /video-section -->
     </div>
     <span class="page-num">03 / 10</span>
   </section>
@@ -810,81 +756,37 @@
       <p class="section-label reveal">Momentos</p>
       <h2 class="section-title reveal d1" style="text-align:center">Galería</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="album-grid" id="albumGrid">
-
-        <!-- Álbum 1 -->
         <div class="album-card reveal d1" onclick="openAlbum('Culto de Navidad 2024','Diciembre 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
-          </div>
-          <div class="album-overlay">
-            <p class="album-name">Culto de Navidad 2024</p>
-            <p class="album-date">Diciembre 2024</p>
-          </div>
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg></div>
+          <div class="album-overlay"><p class="album-name">Culto de Navidad 2024</p><p class="album-date">Diciembre 2024</p></div>
           <span class="album-count">0 fotos</span>
         </div>
-
-        <!-- Álbum 2 -->
         <div class="album-card reveal d2" onclick="openAlbum('Retiro Anual 2024','Octubre 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#1c1760 100%);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-          </div>
-          <div class="album-overlay">
-            <p class="album-name">Retiro Anual 2024</p>
-            <p class="album-date">Octubre 2024</p>
-          </div>
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div>
+          <div class="album-overlay"><p class="album-name">Retiro Anual 2024</p><p class="album-date">Octubre 2024</p></div>
           <span class="album-count">0 fotos</span>
         </div>
-
-        <!-- Álbum 3 -->
         <div class="album-card reveal d3" onclick="openAlbum('MJ Pieba — Agosto','Agosto 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#07051e 60%,#1c1760 100%);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          </div>
-          <div class="album-overlay">
-            <p class="album-name">MJ Pieba — Agosto</p>
-            <p class="album-date">Agosto 2024</p>
-          </div>
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#07051e 60%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="album-overlay"><p class="album-name">MJ Pieba — Agosto</p><p class="album-date">Agosto 2024</p></div>
           <span class="album-count">0 fotos</span>
         </div>
-
-        <!-- Álbum 4 -->
         <div class="album-card reveal d1" onclick="openAlbum('Bautismos 2024','Julio 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 100%);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M18.364 5.636a9 9 0 0 1 0 12.728M15.536 8.464a5 5 0 0 1 0 7.072"/><circle cx="12" cy="12" r="1"/></svg>
-          </div>
-          <div class="album-overlay">
-            <p class="album-name">Bautismos 2024</p>
-            <p class="album-date">Julio 2024</p>
-          </div>
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M18.364 5.636a9 9 0 0 1 0 12.728M15.536 8.464a5 5 0 0 1 0 7.072"/><circle cx="12" cy="12" r="1"/></svg></div>
+          <div class="album-overlay"><p class="album-name">Bautismos 2024</p><p class="album-date">Julio 2024</p></div>
           <span class="album-count">0 fotos</span>
         </div>
-
-        <!-- Álbum 5 -->
         <div class="album-card reveal d2" onclick="openAlbum('Día de la Madre','Mayo 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#0f0b32 50%,#1c1760 100%);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </div>
-          <div class="album-overlay">
-            <p class="album-name">Día de la Madre</p>
-            <p class="album-date">Mayo 2024</p>
-          </div>
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#07051e 0%,#0f0b32 50%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <div class="album-overlay"><p class="album-name">Día de la Madre</p><p class="album-date">Mayo 2024</p></div>
           <span class="album-count">0 fotos</span>
         </div>
-
-        <!-- Álbum 6 -->
         <div class="album-card reveal d3" onclick="openAlbum('Aniversario PIEBA +105','Marzo 2024',0)">
-          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#1c1760 100%);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-          <div class="album-overlay">
-            <p class="album-name">Aniversario PIEBA +105</p>
-            <p class="album-date">Marzo 2024</p>
-          </div>
+          <div class="album-cover-ph" style="background:linear-gradient(135deg,#0f0b32 0%,#1c1760 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="album-overlay"><p class="album-name">Aniversario PIEBA +105</p><p class="album-date">Marzo 2024</p></div>
           <span class="album-count">0 fotos</span>
         </div>
-
       </div>
     </div>
     <span class="page-num">05 / 10</span>
@@ -896,65 +798,43 @@
       <p class="section-label reveal">Comunicados</p>
       <h2 class="section-title reveal d1" style="text-align:center">Avisos</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="aviso-list">
-
         <div class="aviso-card urgente reveal d1">
-          <div class="aviso-ico urgente">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#ff7070"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zm-1 5v5h2v-5h-2zm0 6v2h2v-2h-2z"/></svg>
-          </div>
+          <div class="aviso-ico urgente"><svg width="18" height="18" viewBox="0 0 24 24" fill="#ff7070"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zm-1 5v5h2v-5h-2zm0 6v2h2v-2h-2z"/></svg></div>
           <div class="aviso-body">
             <span class="aviso-tag urgente">Urgente</span>
             <p class="aviso-titulo">Cambio de horario — Culto del Domingo 30</p>
             <p class="aviso-texto">Por motivo de la conferencia de pastores, el culto dominical del 30 de marzo comenzará a las 11:00 AM en lugar del horario habitual.</p>
-            <div class="aviso-footer">
-              <span class="aviso-fecha">23 de marzo, 2025</span>
-            </div>
+            <div class="aviso-footer"><span class="aviso-fecha">23 de marzo, 2025</span></div>
           </div>
         </div>
-
         <div class="aviso-card info reveal d2">
-          <div class="aviso-ico info">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-          </div>
+          <div class="aviso-ico info"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
           <div class="aviso-body">
             <span class="aviso-tag info">Información</span>
             <p class="aviso-titulo">Inscripciones abiertas — Escuela Bíblica Dominical</p>
             <p class="aviso-texto">Ya están disponibles las inscripciones para el nuevo ciclo de la Escuela Bíblica Dominical. Dirigida a niños de 4 a 12 años. Informes en secretaría.</p>
-            <div class="aviso-footer">
-              <span class="aviso-fecha">18 de marzo, 2025</span>
-            </div>
+            <div class="aviso-footer"><span class="aviso-fecha">18 de marzo, 2025</span></div>
           </div>
         </div>
-
         <div class="aviso-card normal reveal d3">
-          <div class="aviso-ico normal">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-          </div>
+          <div class="aviso-ico normal"><svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg></div>
           <div class="aviso-body">
             <span class="aviso-tag normal">General</span>
             <p class="aviso-titulo">Llamado a voluntarios — Ministerio de Alabanza</p>
             <p class="aviso-texto">El ministerio de alabanza está buscando músicos e integrantes para el coro. Si tenés un talento musical y deseo de servir, acercate al pastor.</p>
-            <div class="aviso-footer">
-              <span class="aviso-fecha">10 de marzo, 2025</span>
-            </div>
+            <div class="aviso-footer"><span class="aviso-fecha">10 de marzo, 2025</span></div>
           </div>
         </div>
-
         <div class="aviso-card normal reveal d4">
-          <div class="aviso-ico normal">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-          </div>
+          <div class="aviso-ico normal"><svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></div>
           <div class="aviso-body">
             <span class="aviso-tag normal">General</span>
             <p class="aviso-titulo">No habrá estudio bíblico el miércoles 26</p>
             <p class="aviso-texto">El estudio bíblico del miércoles 26 de marzo queda suspendido por feriado nacional. Nos reencontramos el miércoles 2 de abril.</p>
-            <div class="aviso-footer">
-              <span class="aviso-fecha">8 de marzo, 2025</span>
-            </div>
+            <div class="aviso-footer"><span class="aviso-fecha">8 de marzo, 2025</span></div>
           </div>
         </div>
-
       </div>
     </div>
     <span class="page-num">06 / 10</span>
@@ -966,66 +846,19 @@
       <p class="section-label reveal">Agenda</p>
       <h2 class="section-title reveal d1" style="text-align:center">Próximos Eventos</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="evento-grid">
-
         <div class="evento-card reveal d1">
-          <div class="evento-date-bar">
-            <div class="evento-dia">30</div>
-            <div class="evento-mes-hora">
-              <span class="evento-mes">Marzo 2025</span>
-              <span class="evento-hora">11:00 AM</span>
-            </div>
-          </div>
-          <div class="evento-body">
-            <span class="evento-tag">Culto Especial</span>
-            <p class="evento-titulo">Conferencia de Pastores — Culto Especial</p>
-            <p class="evento-desc">Culto dominical con horario modificado por la presencia de pastores invitados. Toda la congregación es bienvenida.</p>
-            <div class="evento-lugar">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              Templo Central PIEBA
-            </div>
-          </div>
+          <div class="evento-date-bar"><div class="evento-dia">30</div><div class="evento-mes-hora"><span class="evento-mes">Marzo 2025</span><span class="evento-hora">11:00 AM</span></div></div>
+          <div class="evento-body"><span class="evento-tag">Culto Especial</span><p class="evento-titulo">Conferencia de Pastores — Culto Especial</p><p class="evento-desc">Culto dominical con horario modificado por la presencia de pastores invitados. Toda la congregación es bienvenida.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Templo Central PIEBA</div></div>
         </div>
-
         <div class="evento-card reveal d2">
-          <div class="evento-date-bar">
-            <div class="evento-dia">12</div>
-            <div class="evento-mes-hora">
-              <span class="evento-mes">Abril 2025</span>
-              <span class="evento-hora">09:00 AM</span>
-            </div>
-          </div>
-          <div class="evento-body">
-            <span class="evento-tag">Retiro</span>
-            <p class="evento-titulo">Retiro de Damas — Renovando la Esperanza</p>
-            <p class="evento-desc">Un fin de semana de descanso, reflexión y comunidad para las mujeres de la iglesia. Cupos limitados, inscribirse en secretaría.</p>
-            <div class="evento-lugar">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              Centro Campestre &mdash; San Bernardino
-            </div>
-          </div>
+          <div class="evento-date-bar"><div class="evento-dia">12</div><div class="evento-mes-hora"><span class="evento-mes">Abril 2025</span><span class="evento-hora">09:00 AM</span></div></div>
+          <div class="evento-body"><span class="evento-tag">Retiro</span><p class="evento-titulo">Retiro de Damas — Renovando la Esperanza</p><p class="evento-desc">Un fin de semana de descanso, reflexión y comunidad para las mujeres de la iglesia. Cupos limitados, inscribirse en secretaría.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Centro Campestre &mdash; San Bernardino</div></div>
         </div>
-
         <div class="evento-card reveal d3">
-          <div class="evento-date-bar">
-            <div class="evento-dia">26</div>
-            <div class="evento-mes-hora">
-              <span class="evento-mes">Abril 2025</span>
-              <span class="evento-hora">18:30</span>
-            </div>
-          </div>
-          <div class="evento-body">
-            <span class="evento-tag">Jóvenes</span>
-            <p class="evento-titulo">Noche de Alabanza MJ Pieba</p>
-            <p class="evento-desc">Noche especial de alabanza y adoración para jóvenes. Con bandas invitadas y dinámica de comunidad. Entrada libre.</p>
-            <div class="evento-lugar">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              Templo Central PIEBA
-            </div>
-          </div>
+          <div class="evento-date-bar"><div class="evento-dia">26</div><div class="evento-mes-hora"><span class="evento-mes">Abril 2025</span><span class="evento-hora">18:30</span></div></div>
+          <div class="evento-body"><span class="evento-tag">Jóvenes</span><p class="evento-titulo">Noche de Alabanza MJ Pieba</p><p class="evento-desc">Noche especial de alabanza y adoración para jóvenes. Con bandas invitadas y dinámica de comunidad. Entrada libre.</p><div class="evento-lugar"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Templo Central PIEBA</div></div>
         </div>
-
       </div>
     </div>
     <span class="page-num">07 / 10</span>
@@ -1037,14 +870,11 @@
       <p class="section-label reveal">Reflexiones</p>
       <h2 class="section-title reveal d1" style="text-align:center">Blog</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="blog-grid">
-
-        <!-- Artículo principal -->
         <div class="blog-card reveal d1">
           <div class="blog-cover">
             <div class="blog-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#07051e 60%,#0f0b32 100%);position:relative;overflow:hidden;">
-              <svg width="80" height="80" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" style="opacity:.08;position:absolute;"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64 27.61-2.61,41.47-4.53z"/></svg>
+              <svg width="80" height="80" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" style="opacity:.08;position:absolute;"><path fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15z"/></svg>
               <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.35)" stroke-width="1" style="z-index:1;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             </div>
           </div>
@@ -1052,50 +882,22 @@
             <p class="blog-cat">Reflexión · Pastor</p>
             <p class="blog-titulo">La fe que mueve montañas: una mirada a Mateo 17:20</p>
             <p class="blog-excerpt">En tiempos de incertidumbre, la fe no es la ausencia de dudas sino la decisión de confiar a pesar de ellas. El Señor nos invita a ver más allá de las circunstancias...</p>
-            <div class="blog-meta">
-              <span>Pr. Carlos Méndez</span>
-              <span class="blog-meta-dot"></span>
-              <span>20 de marzo, 2025</span>
-            </div>
+            <div class="blog-meta"><span>Pr. Carlos Méndez</span><span class="blog-meta-dot"></span><span>20 de marzo, 2025</span></div>
           </div>
         </div>
-
-        <!-- Artículos secundarios -->
         <div class="blog-side">
-
           <div class="blog-card-sm reveal d2">
-            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#0f0b32,#1c1760);display:flex;align-items:center;justify-content:center;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <div class="blog-sm-body">
-              <p class="blog-cat" style="font-size:.58rem;">Comunidad</p>
-              <p class="blog-sm-titulo">Testimonio: Cómo la iglesia transformó mi familia</p>
-              <p class="blog-sm-meta">Marta González · 15 mar, 2025</p>
-            </div>
+            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#0f0b32,#1c1760);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.58rem;">Comunidad</p><p class="blog-sm-titulo">Testimonio: Cómo la iglesia transformó mi familia</p><p class="blog-sm-meta">Marta González · 15 mar, 2025</p></div>
           </div>
-
           <div class="blog-card-sm reveal d3">
-            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#07051e,#0f0b32);display:flex;align-items:center;justify-content:center;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            </div>
-            <div class="blog-sm-body">
-              <p class="blog-cat" style="font-size:.58rem;">Estudio Bíblico</p>
-              <p class="blog-sm-titulo">Entendiendo el libro de Job: el sufrimiento y la gracia</p>
-              <p class="blog-sm-meta">Pr. Luis Almada · 8 mar, 2025</p>
-            </div>
+            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#07051e,#0f0b32);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.58rem;">Estudio Bíblico</p><p class="blog-sm-titulo">Entendiendo el libro de Job: el sufrimiento y la gracia</p><p class="blog-sm-meta">Pr. Luis Almada · 8 mar, 2025</p></div>
           </div>
-
           <div class="blog-card-sm reveal d4">
-            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#1c1760,#07051e);display:flex;align-items:center;justify-content:center;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </div>
-            <div class="blog-sm-body">
-              <p class="blog-cat" style="font-size:.58rem;">Jóvenes</p>
-              <p class="blog-sm-titulo">5 razones para servir desde joven en la iglesia</p>
-              <p class="blog-sm-meta">Equipo MJ Pieba · 1 mar, 2025</p>
-            </div>
+            <div class="blog-thumb-ph" style="background:linear-gradient(135deg,#1c1760,#07051e);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.58rem;">Jóvenes</p><p class="blog-sm-titulo">5 razones para servir desde joven en la iglesia</p><p class="blog-sm-meta">Equipo MJ Pieba · 1 mar, 2025</p></div>
           </div>
-
         </div>
       </div>
     </div>
@@ -1112,24 +914,15 @@
         <div class="cont-items">
           <div class="cont-item reveal d2">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
-            <div>
-              <p class="cont-lbl">Dirección</p>
-              <p class="cont-val">Calle Principal 123<br>Asunción, Paraguay</p>
-            </div>
+            <div><p class="cont-lbl">Dirección</p><p class="cont-val">Calle Principal 123<br>Asunción, Paraguay</p></div>
           </div>
           <div class="cont-item reveal d2">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
-            <div>
-              <p class="cont-lbl">Teléfono / WhatsApp</p>
-              <p class="cont-val">+595 XXX XXX XXX</p>
-            </div>
+            <div><p class="cont-lbl">Teléfono / WhatsApp</p><p class="cont-val">+595 XXX XXX XXX</p></div>
           </div>
           <div class="cont-item reveal d3">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
-            <div>
-              <p class="cont-lbl">Correo</p>
-              <p class="cont-val">contacto@pieba.org</p>
-            </div>
+            <div><p class="cont-lbl">Correo</p><p class="cont-val">contacto@pieba.org</p></div>
           </div>
           <div class="cont-item reveal d4">
             <div class="cont-ico" style="background:transparent;border-color:transparent;"></div>
@@ -1163,12 +956,7 @@
       <div class="ofr-cards">
         <div class="ofr-card reveal d2">
           <p class="ofr-card-title">Transferencia Bancaria</p>
-          <div class="ofr-detail">
-            <strong>Banco:</strong> Nombre del Banco<br>
-            <strong>Cuenta:</strong> 0000-000000-0<br>
-            <strong>Titular:</strong> Iglesia PIEBA<br>
-            <strong>RUC:</strong> 00000000-0
-          </div>
+          <div class="ofr-detail"><strong>Banco:</strong> Nombre del Banco<br><strong>Cuenta:</strong> 0000-000000-0<br><strong>Titular:</strong> Iglesia PIEBA<br><strong>RUC:</strong> 00000000-0</div>
         </div>
         <div class="ofr-card reveal d3">
           <p class="ofr-card-title">Pago Móvil / QR</p>
@@ -1181,7 +969,7 @@
     <span class="page-num">10 / 10</span>
   </section>
 
-</div>
+</div><!-- /scroll-wrap -->
 
 <script>
 /* ── CANVAS STARS ── */
@@ -1213,602 +1001,492 @@ const stars = Array.from({ length: 140 }, () => ({
 })();
 
 /* ── NAV / SCROLL ── */
-const wrap = document.getElementById('scrollWrap');
-const topnav = document.getElementById('topnav');
-const ham = document.getElementById('ham');
+const wrap    = document.getElementById('scrollWrap');
+const topnav  = document.getElementById('topnav');
+const ham     = document.getElementById('ham');
 const mobileNav = document.getElementById('mobileNav');
 
-const dots = [...document.querySelectorAll('.dot')];
-const navLinks = [...document.querySelectorAll('.nav-links a[data-section]')];
-const mobileNavLinks = [...document.querySelectorAll('.mobile-nav a[data-section]')];
-const allNavLinks = [...navLinks, ...mobileNavLinks];
-const sections = [...document.querySelectorAll('.page')];
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dots         = [...document.querySelectorAll('.dot')];
+const navLinks     = [...document.querySelectorAll('.nav-links a[data-section]')];
+const mobileLinks  = [...document.querySelectorAll('.mobile-nav a[data-section]')];
+const allNavLinks  = [...navLinks, ...mobileLinks];
+const sections     = [...document.querySelectorAll('.page')];
+const prefersRM    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function getTargetTop(target) {
-  const wrapRect = wrap.getBoundingClientRect();
+  const wrapRect   = wrap.getBoundingClientRect();
   const targetRect = target.getBoundingClientRect();
   return wrap.scrollTop + (targetRect.top - wrapRect.top);
 }
-
-function openNav() {
-  mobileNav.classList.add('open');
-  ham.classList.add('open');
-  ham.setAttribute('aria-expanded', 'true');
+function setActive(id) {
+  dots.forEach(d => d.classList.toggle('active', d.dataset.target === id));
+  allNavLinks.forEach(a => {
+    const active = a.dataset.section === id;
+    a.classList.toggle('active', active);
+    active ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current');
+  });
 }
-
 function closeNav() {
   mobileNav.classList.remove('open');
   ham.classList.remove('open');
-  ham.setAttribute('aria-expanded', 'false');
+  ham.setAttribute('aria-expanded','false');
 }
-
-function toggleNav(event) {
-  event.preventDefault();
-  event.stopPropagation();
-
-  if (mobileNav.classList.contains('open')) {
-    closeNav();
-  } else {
-    openNav();
-  }
-}
-
-function setActive(id) {
-  dots.forEach((dot) => {
-    dot.classList.toggle('active', dot.dataset.target === id);
-  });
-
-  allNavLinks.forEach((link) => {
-    const isActive = link.dataset.section === id;
-    link.classList.toggle('active', isActive);
-
-    if (isActive) {
-      link.setAttribute('aria-current', 'page');
-    } else {
-      link.removeAttribute('aria-current');
-    }
-  });
-}
-
 function goTo(id) {
   const target = document.getElementById(id);
   if (!target || !wrap) return;
-
   closeNav();
   setActive(id);
-
-  wrap.scrollTo({
-    top: getTargetTop(target),
-    behavior: prefersReducedMotion ? 'auto' : 'smooth'
-  });
-
-  if (history.replaceState) {
-    history.replaceState(null, '', `#${id}`);
-  }
+  wrap.scrollTo({ top: getTargetTop(target), behavior: prefersRM ? 'auto' : 'smooth' });
+  if (history.replaceState) history.replaceState(null,'',`#${id}`);
 }
 
-ham.addEventListener('click', toggleNav);
+ham.addEventListener('click', e => {
+  e.preventDefault(); e.stopPropagation();
+  const open = mobileNav.classList.toggle('open');
+  ham.classList.toggle('open', open);
+  ham.setAttribute('aria-expanded', String(open));
+});
 
-document.addEventListener('click', (event) => {
-  const trigger = event.target.closest('[data-target]');
-
-  if (trigger) {
-    event.preventDefault();
+document.addEventListener('click', e => {
+  const trigger = e.target.closest('[data-target]');
+  if (trigger && !trigger.classList.contains('vchip') && !trigger.hasAttribute('data-video-type')) {
     const id = trigger.dataset.target;
-    if (id) goTo(id);
-    return;
+    if (id) { e.preventDefault(); goTo(id); return; }
   }
-
-  if (
-    mobileNav.classList.contains('open') &&
-    !mobileNav.contains(event.target) &&
-    !ham.contains(event.target)
-  ) {
-    closeNav();
-  }
+  if (mobileNav.classList.contains('open') && !mobileNav.contains(e.target) && !ham.contains(e.target)) closeNav();
 });
 
-wrap.addEventListener('scroll', () => {
-  topnav.classList.toggle('scrolled', wrap.scrollTop > 60);
-});
+wrap.addEventListener('scroll', () => { topnav.classList.toggle('scrolled', wrap.scrollTop > 60); });
 
-const io = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
+const io = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
     if (entry.isIntersecting) {
       setActive(entry.target.id);
-      entry.target.querySelectorAll('.reveal').forEach((el) => {
-        el.classList.add('visible');
-      });
+      entry.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
     }
   });
-}, {
-  root: wrap,
-  threshold: 0.45
-});
+}, { root: wrap, threshold: 0.45 });
 
-sections.forEach((section) => io.observe(section));
-document.querySelectorAll('#inicio .reveal').forEach((el) => el.classList.add('visible'));
+sections.forEach(s => io.observe(s));
+document.querySelectorAll('#inicio .reveal').forEach(el => el.classList.add('visible'));
 
 if (location.hash) {
-  const initialId = location.hash.replace('#', '');
-  const initialTarget = document.getElementById(initialId);
-  if (initialTarget) {
-    requestAnimationFrame(() => goTo(initialId));
-  }
+  const initId = location.hash.replace('#','');
+  if (document.getElementById(initId)) requestAnimationFrame(() => goTo(initId));
 }
 
 /* ── LIGHTBOX ── */
 function openAlbum(name, date, photoCount) {
   document.getElementById('lbTitle').textContent = name;
-  document.getElementById('lbDate').textContent = date;
+  document.getElementById('lbDate').textContent  = date;
   const grid = document.getElementById('lbGrid');
   grid.innerHTML = '';
-
   if (photoCount === 0) {
-    grid.innerHTML = `
-      <div class="lightbox-empty">
-        <p>Este álbum aún no tiene fotos.</p>
-        <p style="margin-top:.5rem;font-size:.75rem;">Cuando integres Sanity CMS, las fotos aparecerán aquí automáticamente.</p>
-        <div class="lb-upload-hint">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Agregar fotos desde el panel CMS
-        </div>
-      </div>`;
+    grid.innerHTML = `<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p><p style="margin-top:.5rem;font-size:.75rem;">Cuando integres Sanity CMS, las fotos aparecerán aquí automáticamente.</p><div class="lb-upload-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Agregar fotos desde el panel CMS</div></div>`;
   } else {
     for (let i = 0; i < photoCount; i++) {
       grid.innerHTML += `<div class="lightbox-photo"><div class="lightbox-photo-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
     }
   }
-
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
 }
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeLightbox();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
 
 <script>
-/* ── YOUTUBE ── */
-const YT_API_KEY = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
+/* ─────────────────────────────────────────────
+   YOUTUBE + VIDEO SECTION
+   ───────────────────────────────────────────── */
+const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
-const YT_BASE = 'https://www.googleapis.com/youtube/v3';
-const ytOK = () => Boolean(YT_API_KEY && YT_CHANNEL_ID);
-const qs = s => document.querySelector(s);
-const bibleRefRe = /(genesis|exodo|levitico|numeros|deuteronomio|josue|jueces|rut|samuel|reyes|cronicas|esdras|nehemias|ester|job|salmo|salmos|proverbios|eclesiastes|cantares|isaias|jeremias|lamentaciones|ezequiel|daniel|oseas|joel|amos|abdias|jonas|miqueas|nahum|habacuc|sofonias|hageo|zacarias|malaquias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|tito|filemon|hebreos|santiago|pedro|judas|apocalipsis)/;
-const videoState = {
-  all: [],
-  filtered: [],
-  selectedId: null,
-  playingId: null,
-  type: 'all',
-  month: 'all',
+const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
+
+const vtState = {
+  all:        [],     // all long-form videos fetched
+  filtered:   [],     // after type filter
+  selectedId: null,   // featured video id
+  playingId:  null,   // currently playing id
+  typeFilter: 'all',
   latestEmbeddable: null
 };
 
-async function ytFetch(path, params = {}) {
-  const url = new URL(`${YT_BASE}/${path}`);
-  Object.entries({ ...params, key: YT_API_KEY }).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v);
-  });
-  const res = await fetch(url);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || 'Error YouTube');
-  return data;
-}
+/* helpers */
+const qs   = s => document.querySelector(s);
+const $id  = id => document.getElementById(id);
 
+function escHtml(str = '') {
+  return String(str).replace(/[&<>"']/g, m =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function normalise(str = '') {
+  return String(str).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^\w\s#]/g,' ').replace(/\s+/g,' ').trim();
+}
 function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
+}
+function fmtShortDate(iso) {
+  return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'short'});
 }
 function fmtDateTime(iso) {
-  return new Date(iso).toLocaleString('es-PY', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
 }
-function escapeHtml(str = '') {
-  return String(str).replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
+function summarise(str = '', max = 180) {
+  const c = String(str).replace(/\s+/g,' ').trim();
+  return c.length > max ? c.slice(0,max).trim()+'…' : (c || 'Contenido del canal PIEBA.');
 }
-function normalizeText(str = '') {
-  return String(str)
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^\w\s#]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+function parseISO(iso = '') {
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
+  if (!m) return 0;
+  return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0));
 }
-function summarizeDescription(str = '', max = 170) {
-  const clean = String(str).replace(/\s+/g, ' ').trim();
-  if (!clean) return 'Contenido del canal disponible para reproducir dentro del sitio.';
-  return clean.length > max ? `${clean.slice(0, max).trim()}…` : clean;
-}
-function parseISODuration(iso = '') {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
-  if (!match) return 0;
-  const [, h, m, s] = match;
-  return (Number(h || 0) * 3600) + (Number(m || 0) * 60) + Number(s || 0);
-}
-function buildEmbedUrl(videoId, autoplay = false) {
-  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}&controls=1&rel=0&playsinline=1`;
+function embedUrl(id, autoplay=false) {
+  return `https://www.youtube-nocookie.com/embed/${id}?autoplay=${autoplay?1:0}&controls=1&rel=0&playsinline=1`;
 }
 
-function classifyVideo(video) {
-  const title = normalizeText(video.title || '');
-  const desc = normalizeText((video.description || '').split('\n').slice(0, 4).join(' '));
+const bibleRe = /(genesis|exodo|levitico|numeros|deuteronomio|josue|jueces|rut|samuel|reyes|cronicas|esdras|nehemias|ester|job|salmo|salmos|proverbios|eclesiastes|cantares|isaias|jeremias|lamentaciones|ezequiel|daniel|oseas|joel|amos|abdias|jonas|miqueas|nahum|habacuc|sofonias|hageo|zacarias|malaquias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|tito|filemon|hebreos|santiago|pedro|judas|apocalipsis)/;
 
-  if (/(^|\s)(aviso|avisos|anuncio|anuncios|informativo|informacion|comunicado|agenda)(\s|$)/.test(title) || /\baviso\b/.test(desc)) return 'Avisos';
-  if (/(^|\s)(mj|jovenes|juvenil|juventud|adolescentes)(\s|$)/.test(title) || /\bjuventud\b/.test(desc)) return 'Jóvenes';
-  if (/(debate|panel|conversatorio|mesa redonda|dialogo|preguntas y respuestas|q a)/.test(title)) return 'Debates';
-  if (/(charla|conferencia|seminario|entrevista|testimonio|taller)/.test(title)) return 'Charlas';
-  if (/(estudio biblico|escuela dominical|discipulado|devocional|ensenanza|serie biblica|clase biblica)/.test(title)) return 'Estudios';
-  if (/(culto|predic|sermon|mensaje|adoracion|santa cena|domingo|miercoles|pr |pastor)/.test(title) || bibleRefRe.test(title)) return 'Cultos';
-  if (/(estudio biblico|escuela dominical|discipulado)/.test(desc)) return 'Estudios';
-  if (video.durationSeconds >= 1200) return 'Cultos';
+function classify(v) {
+  const t = normalise(v.title||'');
+  const d = normalise((v.description||'').split('\n').slice(0,4).join(' '));
+  if (/(^|\s)(aviso|avisos|anuncio|anuncios|informativo|comunicado)(\s|$)/.test(t)||/\baviso\b/.test(d)) return 'Avisos';
+  if (/(^|\s)(mj|jovenes|juvenil|juventud|adolescentes)(\s|$)/.test(t)||/\bjuventud\b/.test(d))          return 'Jóvenes';
+  if (/(debate|panel|conversatorio|mesa redonda|dialogo|q a)/.test(t))                                   return 'Debates';
+  if (/(charla|conferencia|seminario|entrevista|testimonio|taller)/.test(t))                             return 'Charlas';
+  if (/(estudio biblico|escuela dominical|discipulado|devocional|ensenanza|serie biblica)/.test(t))      return 'Estudios';
+  if (/(culto|predic|sermon|mensaje|adoracion|santa cena|domingo|miercoles|pr |pastor)/.test(t)||bibleRe.test(t)) return 'Cultos';
+  if (/(estudio biblico|escuela dominical|discipulado)/.test(d))                                          return 'Estudios';
+  if (v.durationSeconds >= 1200) return 'Cultos';
   return 'Otros';
 }
 
-function toVideoItem(v) {
+function toItem(v) {
   if (!v) return null;
-  const durationSeconds = parseISODuration(v.contentDetails?.duration || '');
+  const ds = parseISO(v.contentDetails?.duration||'');
   const item = {
-    videoId: v.id,
-    title: v.snippet?.title || '',
-    description: v.snippet?.description || '',
-    publishedAt: v.snippet?.publishedAt || null,
-    scheduledStartTime: v.liveStreamingDetails?.scheduledStartTime || null,
-    actualStartTime: v.liveStreamingDetails?.actualStartTime || null,
-    embeddable: v.status?.embeddable !== false,
-    privacyStatus: v.status?.privacyStatus || 'public',
-    durationSeconds
+    videoId:       v.id,
+    title:         v.snippet?.title||'',
+    description:   v.snippet?.description||'',
+    publishedAt:   v.snippet?.publishedAt||null,
+    scheduledStart:v.liveStreamingDetails?.scheduledStartTime||null,
+    actualStart:   v.liveStreamingDetails?.actualStartTime||null,
+    embeddable:    v.status?.embeddable !== false,
+    privacy:       v.status?.privacyStatus||'public',
+    durationSeconds: ds
   };
-  item.category = classifyVideo(item);
-  item.monthKey = item.publishedAt ? item.publishedAt.slice(0, 7) : 'unknown';
-  item.monthLabel = item.publishedAt
-    ? new Date(`${item.monthKey}-01T00:00:00`).toLocaleDateString('es-PY', { month: 'long', year: 'numeric' })
+  item.category = classify(item);
+  item.monthKey  = item.publishedAt ? item.publishedAt.slice(0,7) : 'unknown';
+  item.monthLabel= item.publishedAt
+    ? new Date(`${item.monthKey}-01T00:00:00`).toLocaleDateString('es-PY',{month:'long',year:'numeric'})
     : 'Sin fecha';
   return item;
 }
 
-function isLongFormPlayable(video) {
-  const text = normalizeText(`${video.title} ${video.description}`);
-  if (video.privacyStatus === 'private' || !video.embeddable) return false;
-  if (video.durationSeconds > 0 && video.durationSeconds < 90) return false;
-  if (/(^|\s)(#shorts|shorts|short|reel|reels|clip)(\s|$)/.test(text)) return false;
+function isLongPlayable(v) {
+  if (!v || v.privacy==='private' || !v.embeddable) return false;
+  if (v.durationSeconds>0 && v.durationSeconds<90) return false;
+  const t = normalise(`${v.title} ${v.description}`);
+  if (/(^|\s)(#shorts|shorts|short|reel|reels|clip)(\s|$)/.test(t)) return false;
   return true;
 }
 
-async function getUploadsPlaylistId() {
-  const data = await ytFetch('channels', { part: 'contentDetails', id: YT_CHANNEL_ID });
-  return data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads || null;
+async function ytFetch(path, params={}) {
+  const url = new URL(`${YT_BASE}/${path}`);
+  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v])=>{ if(v!=null&&v!=='') url.searchParams.set(k,v); });
+  const res  = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message||'YouTube error');
+  return data;
 }
 
-async function getRecentUploads(limit = 40) {
-  const uploadsId = await getUploadsPlaylistId();
-  if (!uploadsId) return [];
+async function getUploadsId() {
+  const d = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
+  return d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads||null;
+}
 
-  const items = [];
-  let pageToken = '';
-  while (items.length < limit) {
-    const data = await ytFetch('playlistItems', {
-      part: 'snippet',
-      playlistId: uploadsId,
-      maxResults: Math.min(50, limit - items.length),
-      pageToken
-    });
-    items.push(...(data.items || []));
-    if (!data.nextPageToken || !(data.items || []).length) break;
-    pageToken = data.nextPageToken;
+async function getRecent(limit=40) {
+  const pid = await getUploadsId();
+  if (!pid) return [];
+  const items=[]; let pt='';
+  while(items.length<limit){
+    const d = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:Math.min(50,limit-items.length),pageToken:pt});
+    items.push(...(d.items||[]));
+    if(!d.nextPageToken||!d.items?.length) break;
+    pt=d.nextPageToken;
   }
-
-  const ids = items.map(item => item?.snippet?.resourceId?.videoId).filter(Boolean);
-  if (!ids.length) return [];
-
-  const chunks = [];
-  for (let i = 0; i < ids.length; i += 50) chunks.push(ids.slice(i, i + 50).join(','));
-
-  const detailBatches = await Promise.all(chunks.map((idChunk) => ytFetch('videos', {
-    part: 'snippet,status,liveStreamingDetails,contentDetails',
-    id: idChunk
-  })));
-
-  return detailBatches
-    .flatMap(batch => batch.items || [])
-    .map(toVideoItem)
-    .filter(Boolean)
-    .filter(isLongFormPlayable)
-    .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+  const ids = items.map(i=>i?.snippet?.resourceId?.videoId).filter(Boolean);
+  if(!ids.length) return [];
+  const chunks=[]; for(let i=0;i<ids.length;i+=50) chunks.push(ids.slice(i,i+50).join(','));
+  const batches = await Promise.all(chunks.map(c=>ytFetch('videos',{part:'snippet,status,liveStreamingDetails,contentDetails',id:c})));
+  return batches.flatMap(b=>b.items||[]).map(toItem).filter(Boolean).filter(isLongPlayable)
+    .sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0));
 }
 
 async function getBroadcast(eventType) {
-  const search = await ytFetch('search', {
-    part: 'snippet',
-    channelId: YT_CHANNEL_ID,
-    eventType,
-    type: 'video',
-    videoEmbeddable: 'true',
-    maxResults: 5
-  });
-  const ids = (search.items || []).map(i => i.id?.videoId).filter(Boolean);
-  if (!ids.length) return null;
-
-  const videos = await ytFetch('videos', { part: 'snippet,status,liveStreamingDetails,contentDetails', id: ids.join(',') });
-  const items = (videos.items || [])
-    .map(toVideoItem)
-    .filter(Boolean)
-    .filter(isLongFormPlayable);
-
-  if (!items.length) return null;
-  if (eventType === 'live') items.sort((a,b) => new Date(b.actualStartTime || b.publishedAt) - new Date(a.actualStartTime || a.publishedAt));
-  else items.sort((a,b) => new Date(a.scheduledStartTime || a.publishedAt) - new Date(b.scheduledStartTime || b.publishedAt));
-  return items[0];
+  const s = await ytFetch('search',{part:'snippet',channelId:YT_CHANNEL_ID,eventType,type:'video',videoEmbeddable:'true',maxResults:5});
+  const ids = (s.items||[]).map(i=>i.id?.videoId).filter(Boolean);
+  if(!ids.length) return null;
+  const vd = await ytFetch('videos',{part:'snippet,status,liveStreamingDetails,contentDetails',id:ids.join(',')});
+  const list = (vd.items||[]).map(toItem).filter(Boolean).filter(isLongPlayable);
+  if(!list.length) return null;
+  if(eventType==='live') list.sort((a,b)=>new Date(b.actualStart||b.publishedAt)-new Date(a.actualStart||a.publishedAt));
+  else list.sort((a,b)=>new Date(a.scheduledStart||a.publishedAt)-new Date(b.scheduledStart||b.publishedAt));
+  return list[0];
 }
 
-function populateMonthButtons(videos) {
-  const wrap = document.getElementById('videoMonthFilters');
-  if (!wrap) return;
+/* ─── VIDEO SECTION RENDER ─── */
 
-  const months = [...new Map(videos
-    .filter(v => v.monthKey && v.monthKey !== 'unknown')
-    .map(v => [v.monthKey, v.monthLabel]))]
-    .sort((a, b) => b[0].localeCompare(a[0]));
+function renderFeaturedCard(video) {
+  const card   = $id('videoFeaturedCard');
+  const cat    = $id('videoFeatCat');
+  const date   = $id('videoFeatDate');
+  const title  = $id('videoFeatTitle');
+  const desc   = $id('videoFeatDesc');
+  const btn    = $id('videoPlayBtn');
+  const count  = $id('videoTotalCount');
+  if (!card) return;
 
-  wrap.innerHTML = `<button type="button" class="video-month-chip ${videoState.month === 'all' ? 'active' : ''}" data-video-month="all">Todos</button>` +
-    months.map(([key, label]) => `<button type="button" class="video-month-chip ${videoState.month === key ? 'active' : ''}" data-video-month="${escapeHtml(key)}">${escapeHtml(label)}</button>`).join('');
-}
-
-function getFilteredVideos() {
-  return videoState.all.filter(video => {
-    const matchType = videoState.type === 'all' || video.category === videoState.type;
-    const matchMonth = videoState.month === 'all' || video.monthKey === videoState.month;
-    return matchType && matchMonth;
-  });
-}
-
-function renderFeature(video, autoplay = false) {
-  const media = document.getElementById('videoFeatureMedia');
-  const type = document.getElementById('videoFeatureType');
-  const date = document.getElementById('videoFeatureDate');
-  const title = document.getElementById('videoFeatureTitle');
-  const meta = document.getElementById('videoFeatureMeta');
-  const desc = document.getElementById('videoFeatureDesc');
-  const actions = document.getElementById('videoFeatureActions');
-  if (!media || !type || !date || !title || !meta || !desc || !actions) return;
+  card.classList.remove('is-loading');
 
   if (!video) {
-    type.textContent = 'Canal';
-    date.textContent = 'Sin resultados';
-    title.textContent = 'No hay videos para este filtro';
-    meta.textContent = 'Prueba con otro tipo o mes.';
-    desc.textContent = 'La biblioteca no encontró videos largos y reproducibles para los filtros elegidos.';
-    media.innerHTML = `<div class="video-player-placeholder"><div class="video-player-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><strong>Sin video disponible</strong><p>No se encontraron videos que coincidan con ese filtro.</p></div>`;
-    actions.innerHTML = '';
+    if(cat)   cat.textContent   = 'Canal';
+    if(date)  date.textContent  = 'Sin resultados';
+    if(title) title.textContent = 'No hay videos para este filtro';
+    if(desc)  desc.textContent  = 'Prueba seleccionando otro tipo de contenido.';
+    if(btn)   { btn.textContent='Sin video'; btn.disabled=true; btn.dataset.playFeatured=''; }
     return;
   }
 
-  const isPlaying = autoplay || videoState.playingId === video.videoId;
-  type.textContent = video.category;
-  date.textContent = video.publishedAt ? fmtDate(video.publishedAt) : 'Sin fecha';
-  title.textContent = video.title;
-  meta.textContent = isPlaying
-    ? 'Reproduciendo dentro del sitio'
-    : 'Listo para reproducir dentro del sitio';
-  desc.textContent = summarizeDescription(video.description, 220);
+  const isPlaying = vtState.playingId === video.videoId;
 
-  if (isPlaying) {
-    media.innerHTML = `<iframe src="${buildEmbedUrl(video.videoId, true)}" title="${escapeHtml(video.title)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
-  } else {
-    media.innerHTML = `<div class="video-player-placeholder"><div class="video-player-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><strong>${escapeHtml(video.title)}</strong><p>Presiona el botón grande para reproducir este mensaje aquí mismo, sin salir del sitio.</p></div>`;
+  if(cat)   { cat.textContent = video.category; cat.className = `video-featured-label cat-${video.category}`; }
+  if(date)  date.textContent  = video.publishedAt ? fmtDate(video.publishedAt) : 'Sin fecha';
+  if(title) title.textContent = video.title;
+  if(desc)  desc.textContent  = summarise(video.description, 200);
+  if(count) count.textContent = vtState.filtered.length > 1 ? `${vtState.filtered.length} videos disponibles` : '';
+
+  if(btn) {
+    btn.dataset.playFeatured = video.videoId;
+    btn.disabled = false;
+    btn.innerHTML = isPlaying
+      ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Reproduciendo`
+      : `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reproducir aquí`;
+    btn.classList.toggle('is-playing', isPlaying);
   }
 
-  actions.innerHTML = `<button type="button" class="video-btn video-btn-primary video-btn-large" data-play-featured="${escapeHtml(video.videoId)}">${isPlaying ? 'Reproducir de nuevo' : 'Reproducir aquí'}</button>`;
+  card.classList.toggle('is-playing', isPlaying);
 }
 
-function renderVideoStrip(videos) {
-  const strip = document.getElementById('videoStrip');
-  const count = document.getElementById('videoStripCount');
-  if (!strip || !count) return;
-
-  count.textContent = `${videos.length} video${videos.length === 1 ? '' : 's'} disponibles`;
+function renderVideoRows(videos) {
+  const list = $id('videoRowList');
+  if (!list) return;
 
   if (!videos.length) {
-    strip.innerHTML = `<div class="video-empty">No hay videos para ese filtro todavía.</div>`;
+    list.innerHTML = `<div class="video-empty-msg">No hay videos para este filtro.</div>`;
     return;
   }
 
-  strip.innerHTML = videos.map(video => `
-    <article class="video-list-item ${video.videoId === videoState.selectedId ? 'active' : ''}">
-      <div class="video-list-topline">
-        <span class="video-tag">${escapeHtml(video.category)}</span>
-        <span class="video-date">${escapeHtml(fmtDate(video.publishedAt))}</span>
-      </div>
-      <h4 class="video-list-title">${escapeHtml(video.title)}</h4>
-      <p class="video-list-desc">${escapeHtml(summarizeDescription(video.description, 150))}</p>
-      <div class="video-list-actions">
-        <span class="video-note">${video.videoId === videoState.selectedId ? 'Seleccionado como principal' : 'Disponible para reproducir aquí'}</span>
-        <button type="button" class="video-btn video-btn-primary" data-play-video="${escapeHtml(video.videoId)}">Reproducir aquí</button>
-      </div>
-    </article>
-  `).join('');
-}
-
-function applyVideoFilters({ preserveSelection = true } = {}) {
-  videoState.filtered = getFilteredVideos();
-
-  let featured = null;
-  if (preserveSelection && videoState.selectedId) {
-    featured = videoState.filtered.find(v => v.videoId === videoState.selectedId) || null;
-  }
-  if (!featured) {
-    featured = videoState.filtered[0] || null;
-  }
-
-  videoState.selectedId = featured?.videoId || null;
-  if (videoState.playingId && featured?.videoId !== videoState.playingId) {
-    videoState.playingId = null;
-  }
-
-  renderFeature(featured, false);
-  renderVideoStrip(videoState.filtered);
-}
-
-function setVideoTypeFilter(type) {
-  videoState.type = type;
-  document.querySelectorAll('.video-chip').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.videoType === type);
+  // Group by month
+  const groups = new Map();
+  videos.forEach(v => {
+    const key = v.monthKey==='unknown' ? 'Sin fecha' : v.monthKey;
+    if (!groups.has(key)) groups.set(key, { label: v.monthLabel, videos: [] });
+    groups.get(key).videos.push(v);
   });
-  applyVideoFilters({ preserveSelection: false });
-}
 
-function setVideoMonthFilter(month) {
-  videoState.month = month;
-  document.querySelectorAll('.video-month-chip').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.videoMonth === month);
+  let html = '';
+  groups.forEach(({ label, videos: gvids }) => {
+    html += `<div class="video-month-group"><p class="video-month-header">${escHtml(label)}</p>`;
+    gvids.forEach(v => {
+      const active    = v.videoId === vtState.selectedId ? 'vr-active' : '';
+      const shortDate = v.publishedAt ? fmtShortDate(v.publishedAt) : '—';
+      html += `
+        <div class="video-row ${active}" data-row-video="${escHtml(v.videoId)}">
+          <span class="vr-day">${escHtml(shortDate)}</span>
+          <span class="vr-cat cat-${escHtml(v.category)}">${escHtml(v.category)}</span>
+          <span class="vr-title">${escHtml(v.title)}</span>
+          <span class="vr-play">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </div>`;
+    });
+    html += `</div>`;
   });
-  applyVideoFilters({ preserveSelection: false });
+
+  list.innerHTML = html;
 }
 
-function initVideoLibrary(videos) {
-  videoState.all = videos;
-  videoState.latestEmbeddable = videos[0] || null;
-  populateMonthButtons(videos);
-  applyVideoFilters({ preserveSelection: false });
+function getFiltered() {
+  return vtState.all.filter(v => vtState.typeFilter === 'all' || v.category === vtState.typeFilter);
 }
 
-function playFeatured(videoId, { scrollIntoView = true } = {}) {
-  const video = videoState.all.find(v => v.videoId === videoId);
+function applyFilter({ resetFeatured = true } = {}) {
+  vtState.filtered = getFiltered();
+  if (resetFeatured || !vtState.filtered.find(v => v.videoId === vtState.selectedId)) {
+    vtState.selectedId = vtState.filtered[0]?.videoId || null;
+    // If the currently playing video is gone from filter, close player
+    if (vtState.playingId && !vtState.filtered.find(v => v.videoId === vtState.playingId)) {
+      vtState.playingId = null;
+      const player = $id('videoInlinePlayer');
+      if (player) { player.innerHTML=''; player.classList.remove('open'); }
+    }
+  }
+  const featured = vtState.filtered.find(v => v.videoId === vtState.selectedId) || vtState.filtered[0] || null;
+  vtState.selectedId = featured?.videoId || null;
+  renderFeaturedCard(featured);
+  renderVideoRows(vtState.filtered);
+}
+
+function selectVideo(videoId, play = true) {
+  const video = vtState.all.find(v => v.videoId === videoId);
   if (!video) return;
-  videoState.selectedId = video.videoId;
-  videoState.playingId = video.videoId;
-  renderFeature(video, true);
-  renderVideoStrip(videoState.filtered);
 
-  if (scrollIntoView) {
-    document.getElementById('videoFeature')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  vtState.selectedId = videoId;
+
+  if (play) {
+    vtState.playingId = videoId;
+    const player = $id('videoInlinePlayer');
+    if (player) {
+      player.innerHTML = `<iframe src="${embedUrl(videoId, true)}" title="${escHtml(video.title)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
+      player.classList.add('open');
+      // Scroll featured into view
+      $id('videoFeaturedCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }
+
+  renderFeaturedCard(video);
+  renderVideoRows(vtState.filtered);
 }
 
-function mountLivePlayer(video) {
-  const box = qs('.stream-box');
-  const next = qs('.next-txt');
-  const pill = qs('.live-pill');
-  if (!box || !video) return;
-
-  box.innerHTML = `<iframe src="${buildEmbedUrl(video.videoId, true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escapeHtml(video.title)}"></iframe>`;
-  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>CANAL';
-  if (next) next.innerHTML = `Reproduciendo ahora: <strong>${escapeHtml(video.title)}</strong>`;
-}
-
-function renderLive(video) {
-  const box = qs('.stream-box'), pill = qs('.live-pill'), next = qs('.next-txt');
-  if (!box || !video) return;
-  box.innerHTML = `<iframe src="${buildEmbedUrl(video.videoId, true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escapeHtml(video.title)}"></iframe>`;
-  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>EN VIVO AHORA';
-  if (next) next.innerHTML = `📺 <strong>${escapeHtml(video.title)}</strong> · Transmisión en curso`;
-}
-
-function renderUpcoming(video, fallbackVideo) {
-  const box = qs('.stream-box'), next = qs('.next-txt'), pill = qs('.live-pill');
-  if (!box || !video) return;
-
-  const fallbackButton = fallbackVideo
-    ? `<button type="button" data-play-live-fallback="${escapeHtml(fallbackVideo.videoId)}" style="display:inline-flex;background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button>`
-    : `<span style="font-size:.78rem;color:var(--muted)">Sin video reciente disponible</span>`;
-
-  box.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:1.4rem"><div style="max-width:560px;width:100%;text-align:center"><p style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem">Próxima transmisión programada</p><p style="font-size:.98rem;line-height:1.55;color:var(--white);margin-bottom:.85rem">${escapeHtml(video.title)}</p><p style="font-size:.82rem;color:var(--muted);margin-bottom:1.15rem">${video.scheduledStartTime ? escapeHtml(fmtDateTime(video.scheduledStartTime)) : 'Horario pendiente'}</p>${fallbackButton}</div></div>`;
-  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>PRÓXIMO EN VIVO';
-  if (next) next.innerHTML = `Próxima transmisión: <strong>${video.scheduledStartTime ? escapeHtml(fmtDateTime(video.scheduledStartTime)) : 'Programada'}</strong>`;
-}
-
-function renderLastServiceFallback(video) {
-  const box = qs('.stream-box'), next = qs('.next-txt'), pill = qs('.live-pill');
-  if (!box || !video) return;
-  box.innerHTML = `<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión en vivo activa en este momento.<br>Puedes reproducir el mensaje más reciente aquí mismo.</p><button type="button" data-play-live-fallback="${escapeHtml(video.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button></div>`;
-  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>CANAL';
-  if (next) next.innerHTML = `Destacado reciente: <strong>${escapeHtml(video.title)}</strong>`;
-}
-
-document.addEventListener('click', (event) => {
-  const typeBtn = event.target.closest('[data-video-type]');
-  if (typeBtn) {
-    setVideoTypeFilter(typeBtn.dataset.videoType || 'all');
+/* Click delegation for video section */
+document.addEventListener('click', e => {
+  // Type filter chips
+  const chip = e.target.closest('[data-video-type]');
+  if (chip) {
+    vtState.typeFilter = chip.dataset.videoType;
+    document.querySelectorAll('[data-video-type]').forEach(c => c.classList.toggle('active', c.dataset.videoType === vtState.typeFilter));
+    applyFilter({ resetFeatured: true });
     return;
   }
 
-  const monthBtn = event.target.closest('[data-video-month]');
-  if (monthBtn) {
-    setVideoMonthFilter(monthBtn.dataset.videoMonth || 'all');
+  // Featured play button
+  const playBtn = e.target.closest('[data-play-featured]');
+  if (playBtn && playBtn.dataset.playFeatured) {
+    selectVideo(playBtn.dataset.playFeatured, true);
     return;
   }
 
-  const listPlayBtn = event.target.closest('[data-play-video]');
-  if (listPlayBtn) {
-    playFeatured(listPlayBtn.dataset.playVideo);
+  // Row click
+  const row = e.target.closest('[data-row-video]');
+  if (row && row.dataset.rowVideo) {
+    selectVideo(row.dataset.rowVideo, true);
     return;
   }
 
-  const featuredPlayBtn = event.target.closest('[data-play-featured]');
-  if (featuredPlayBtn) {
-    playFeatured(featuredPlayBtn.dataset.playFeatured, { scrollIntoView: false });
+  // Live fallback button (in #envivo section)
+  const liveFallback = e.target.closest('[data-play-live-fallback]');
+  if (liveFallback) {
+    const vid = vtState.all.find(v => v.videoId === liveFallback.dataset.playLiveFallback) || vtState.latestEmbeddable;
+    if (vid) mountLivePlayer(vid);
     return;
-  }
-
-  const liveFallbackBtn = event.target.closest('[data-play-live-fallback]');
-  if (liveFallbackBtn) {
-    const videoId = liveFallbackBtn.dataset.playLiveFallback;
-    const video = videoState.all.find(v => v.videoId === videoId) || videoState.latestEmbeddable;
-    if (video) mountLivePlayer(video);
   }
 });
 
-async function initYouTubeSections() {
-  if (!ytOK()) return;
-  try {
-    const recentVideos = await getRecentUploads(36);
-    const latest = recentVideos[0] || null;
-    if (recentVideos.length) initVideoLibrary(recentVideos);
+/* ─── LIVE / EN-VIVO SECTION ─── */
+function mountLivePlayer(video) {
+  const box  = qs('.stream-box');
+  const next = qs('.next-txt');
+  const pill = qs('.live-pill');
+  if (!box || !video) return;
+  box.innerHTML = `<iframe src="${embedUrl(video.videoId,true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escHtml(video.title)}"></iframe>`;
+  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>CANAL';
+  if (next) next.innerHTML = `Reproduciendo: <strong>${escHtml(video.title)}</strong>`;
+}
 
-    const live = await getBroadcast('live');
-    if (live) { renderLive(live); return; }
+function renderLive(video) {
+  const box=qs('.stream-box'), pill=qs('.live-pill'), next=qs('.next-txt');
+  if (!box||!video) return;
+  box.innerHTML = `<iframe src="${embedUrl(video.videoId,true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escHtml(video.title)}"></iframe>`;
+  if(pill) pill.innerHTML='<span class="live-dot-r"></span>EN VIVO AHORA';
+  if(next) next.innerHTML=`📺 <strong>${escHtml(video.title)}</strong> · Transmisión en curso`;
+}
 
-    const upcoming = await getBroadcast('upcoming');
-    if (upcoming) { renderUpcoming(upcoming, latest); return; }
+function renderUpcoming(video, fallback) {
+  const box=qs('.stream-box'), next=qs('.next-txt'), pill=qs('.live-pill');
+  if(!box||!video) return;
+  const fb = fallback
+    ? `<button type="button" data-play-live-fallback="${escHtml(fallback.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button>`
+    : `<span style="font-size:.78rem;color:var(--muted)">Sin video reciente</span>`;
+  box.innerHTML=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:1.4rem"><div style="max-width:560px;width:100%;text-align:center"><p style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem">Próxima transmisión programada</p><p style="font-size:.98rem;line-height:1.55;color:var(--white);margin-bottom:.85rem">${escHtml(video.title)}</p><p style="font-size:.82rem;color:var(--muted);margin-bottom:1.15rem">${video.scheduledStart?escHtml(fmtDateTime(video.scheduledStart)):'Horario pendiente'}</p>${fb}</div></div>`;
+  if(pill) pill.innerHTML='<span class="live-dot-r"></span>PRÓXIMO EN VIVO';
+  if(next) next.innerHTML=`Próxima transmisión: <strong>${video.scheduledStart?escHtml(fmtDateTime(video.scheduledStart)):'Programada'}</strong>`;
+}
 
-    if (latest) {
-      renderLastServiceFallback(latest);
-    } else {
-      const box = qs('.stream-box');
-      const next = qs('.next-txt');
-      if (box) {
-        box.innerHTML = `<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No se encontraron transmisiones ni videos largos embebibles del canal.</p></div>`;
-      }
-      if (next) next.innerHTML = 'No se pudo encontrar un video reciente del canal';
-    }
-  } catch (e) {
-    console.warn('YouTube:', e);
-    const featureTitle = document.getElementById('videoFeatureTitle');
-    const featureMeta = document.getElementById('videoFeatureMeta');
-    const featureDesc = document.getElementById('videoFeatureDesc');
-    const media = document.getElementById('videoFeatureMedia');
-    const next = qs('.next-txt');
-    const strip = document.getElementById('videoStrip');
-    const count = document.getElementById('videoStripCount');
-
-    if (featureTitle) featureTitle.textContent = 'No se pudieron cargar los videos';
-    if (featureMeta) featureMeta.textContent = 'Verificá la API key y el channel ID';
-    if (featureDesc) featureDesc.textContent = 'La biblioteca del canal no pudo conectarse con YouTube.';
-    if (media) media.innerHTML = '<div class="video-player-placeholder"><div class="video-player-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><strong>No se pudo cargar el reproductor</strong><p>La conexión con YouTube falló.</p></div>';
-    if (strip) strip.innerHTML = '<div class="video-empty">No se pudo consultar la lista de videos.</div>';
-    if (count) count.textContent = 'Sin datos';
-    if (next) next.innerHTML = 'No se pudo consultar el canal';
+function renderNoLive(fallback) {
+  const box=qs('.stream-box'), next=qs('.next-txt'), pill=qs('.live-pill');
+  if(!box) return;
+  if(fallback) {
+    box.innerHTML=`<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión activa.<br>Reproducí el mensaje más reciente aquí mismo.</p><button type="button" data-play-live-fallback="${escHtml(fallback.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button></div>`;
+    if(pill) pill.innerHTML='<span class="live-dot-r"></span>CANAL';
+    if(next) next.innerHTML=`Destacado reciente: <strong>${escHtml(fallback.title)}</strong>`;
+  } else {
+    box.innerHTML=`<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión activa en este momento.</p></div>`;
+    if(next) next.textContent='Sin transmisión programada por el momento';
   }
 }
 
-initYouTubeSections();
+/* ─── INIT ─── */
+async function initYouTube() {
+  if (!YT_API_KEY || !YT_CHANNEL_ID) return;
+  try {
+    const recent = await getRecent(40);
+    const latest = recent[0] || null;
+
+    // Populate video section
+    if (recent.length) {
+      vtState.all = recent;
+      vtState.latestEmbeddable = latest;
+      vtState.filtered = recent;
+      vtState.selectedId = latest?.videoId || null;
+      renderFeaturedCard(latest);
+      renderVideoRows(recent);
+      const count = $id('videoTotalCount');
+      if(count) count.textContent = `${recent.length} videos disponibles`;
+    } else {
+      const card = $id('videoFeaturedCard');
+      if(card) card.classList.remove('is-loading');
+      const title = $id('videoFeatTitle');
+      if(title) title.textContent = 'No se encontraron videos largos en el canal';
+    }
+
+    // Live section
+    const live = await getBroadcast('live');
+    if (live) { renderLive(live); return; }
+    const upcoming = await getBroadcast('upcoming');
+    if (upcoming) { renderUpcoming(upcoming, latest); return; }
+    renderNoLive(latest);
+
+  } catch(err) {
+    console.warn('YouTube:', err);
+    const card = $id('videoFeaturedCard');
+    if(card) card.classList.remove('is-loading');
+    const title = $id('videoFeatTitle');
+    if(title) title.textContent = 'No se pudo cargar el canal';
+    const desc = $id('videoFeatDesc');
+    if(desc) desc.textContent = 'Verificá la API key y el ID del canal.';
+    const rows = $id('videoRowList');
+    if(rows) rows.innerHTML='<div class="video-empty-msg">No se pudo conectar con YouTube.</div>';
+    renderNoLive(null);
+  }
+}
+
+initYouTube();
 </script>
 </body>
 </html>
