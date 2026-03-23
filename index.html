@@ -1063,11 +1063,17 @@ function parseISO(iso = '') { const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\
 function embedUrl(id, autoplay=false) { return `https://www.youtube-nocookie.com/embed/${id}?autoplay=${autoplay?1:0}&controls=1&rel=0&playsinline=1`; }
 
 function classify(v) {
-  const t = normalise(v.title||'');
-  if (/(debate|panel)/.test(t)) return 'Debates';
-  if (/(charla|conferencia)/.test(t)) return 'Charlas';
-  if (/(estudio|biblico)/.test(t)) return 'Estudios';
-  if (/(culto|mensaje|predic)/.test(t)) return 'Cultos';
+  const t = normalise(v.title || '');
+  const d = normalise(v.description || '');
+  const combo = t + ' ' + d;
+
+  if (/(debate|panel|mesa redonda|conversatorio)/.test(combo)) return 'Debates';
+  if (/(charla|conferencia|seminario|taller|entrevista)/.test(combo)) return 'Charlas';
+  if (/(estudio|biblico|discipulado|ensenanza|serie)/.test(combo)) return 'Estudios';
+  if (/(culto|mensaje|predic|sermon|domingo|adoracion)/.test(combo)) return 'Cultos';
+  if (/(aviso|anuncio|comunicado|informativo)/.test(combo)) return 'Avisos';
+  if (/(mj|jovenes|juvenil|pieba j|adolescentes)/.test(combo)) return 'Jóvenes';
+  
   return 'Otros';
 }
 
@@ -1099,7 +1105,11 @@ async function initYouTube() {
     const ids = vids.items.map(i=>i.snippet.resourceId.videoId).join(',');
     const details = await ytFetch('videos',{part:'snippet,status,contentDetails,liveStreamingDetails',id:ids});
     
-    const list = details.items.map(toItem).filter(v => v.embeddable && v.privacy==='public');
+    const list = details.items.map(toItem).filter(v => {
+  const isShort = v.durationSeconds > 0 && v.durationSeconds < 90;
+  const hasShortTag = /#shorts|shorts|short|reel/.test(normalise(v.title + v.description));
+  return v.embeddable && v.privacy === 'public' && !isShort && !hasShortTag;
+});
     if (!list.length) throw new Error();
 
     vtState.all = list;
@@ -1130,7 +1140,7 @@ function renderVideoRows(vids) {
   $id('videoRowList').innerHTML = vids.slice(0,10).map(v => `
     <div class="video-row" onclick="selectVideo('${v.videoId}')">
       <span class="vr-day">${fmtShortDate(v.publishedAt)}</span>
-      <span class="vr-cat">${v.category}</span>
+      <span class="vr-cat cat-${v.category}">${v.category}</span>
       <span class="vr-title">${v.title}</span>
       <span class="vr-play">▶</span>
     </div>
