@@ -685,16 +685,25 @@
       <div class="live-pill reveal"><span class="live-dot-r"></span>En Vivo</div>
       <h2 class="section-title reveal d1" style="text-align:center">Transmisión<br>en Directo</h2>
       <div class="gold-line reveal d2"></div>
-      <div class="stream-box reveal d2">
-        <div class="stream-ph">
+<div class="stream-box reveal d2" id="streamBox">
+        <div class="stream-ph" id="livePlaceholder">
           <div class="stream-icon">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
-          <p style="font-size:.84rem;">La transmisión estará disponible<br>durante el culto</p>
-          <p class="stream-hint">Cargando estado del canal...</p>
+          <p style="font-size:.9rem; margin-bottom:1.5rem; opacity:0.8;">¿Buscas la transmisión de hoy?</p>
+          
+          <div style="display:flex; flex-direction:column; gap:0.8rem; width:100%; max-width:300px; margin: 0 auto;">
+            <button onclick="checkLive()" style="background:var(--gold); color:var(--navy); border:none; padding:.8rem; border-radius:2px; font-size:.7rem; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">
+              Comprobar En Vivo ahora
+            </button>
+            
+            <button onclick="verUltimoEnVivo()" style="background:rgba(255,255,255,0.05); color:var(--white); border:1px solid var(--glass-b); padding:.8rem; border-radius:2px; font-size:.7rem; font-weight:500; cursor:pointer; text-transform:uppercase;">
+              Ver último culto grabado
+            </button>
+          </div>
         </div>
       </div>
-      <p class="next-txt reveal d3">Próxima transmisión: <strong>Consultando canal...</strong></p>
+      <p class="next-txt reveal d3" id="liveStatus">La transmisión inicia puntualmente los domingos 10:15 hs.</p>
     </div>
     <span class="page-num">04 / 10</span>
   </section>
@@ -966,314 +975,176 @@ if (location.hash) {
 </script>
 
 <script>
-/* ─────────────────────────────────────────────
-   YOUTUBE + VIDEO SECTION (Solo Cultos & Meses)
-   ───────────────────────────────────────────── */
+<script>
+/* ─── YOUTUBE AHORRATIVO: MÁXIMA EFICIENCIA ─── */
 const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
 const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
 
+// Estado de la sección
 const vtState = {
-  all:        [],
-  filtered:   [],
-  selectedId: null,
-  playingId:  null,
-  monthFilter: 'all',
-  latestEmbeddable: null,
-  _ytLoaded:  false
+  lastVideos: [], // Solo guardaremos los 2 primeros para el inicio
+  _ytLoaded: false
 };
 
-const qs   = s => document.querySelector(s);
-const $id  = id => document.getElementById(id);
-
-function escHtml(str = '') { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function normalise(str = '') { return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w\s#]/g,' ').replace(/\s+/g,' ').trim(); }
+const $id = id => document.getElementById(id);
 function fmtDate(iso) { return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'}); }
-function fmtShortDate(iso) { return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'short'}); }
-function fmtDateTime(iso) { return new Date(iso).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}); }
-function summarise(str = '', max = 180) { const c = String(str).replace(/\s+/g,' ').trim(); return c.length > max ? c.slice(0,max).trim()+'…' : (c || 'Contenido del canal PIEBA.'); }
-function parseISO(iso = '') { const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i); if (!m) return 0; return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0)); }
-function embedUrl(id, autoplay=false) { return `https://www.youtube-nocookie.com/embed/${id}?autoplay=${autoplay?1:0}&controls=1&rel=0&playsinline=1`; }
-
-const bibleRe = /(genesis|exodo|levitico|numeros|deuteronomio|josue|jueces|rut|samuel|reyes|cronicas|esdras|nehemias|ester|job|salmo|salmos|proverbios|eclesiastes|cantares|isaias|jeremias|lamentaciones|ezequiel|daniel|oseas|joel|amos|abdias|jonas|miqueas|nahum|habacuc|sofonias|hageo|zacarias|malaquias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|tito|filemon|hebreos|santiago|pedro|judas|apocalipsis)/;
-
-function classify(v) {
-  const t = normalise(v.title||'');
-  if (/(culto|predic|sermon|mensaje|adoracion|santa cena|domingo|miercoles|pr |pastor)/.test(t)||bibleRe.test(t)) return 'Cultos';
-  if (v.durationSeconds >= 1200) return 'Cultos';
-  return 'Otros';
-}
-
-function toItem(v) {
-  if (!v) return null;
-  const ds = parseISO(v.contentDetails?.duration||'');
-  const item = {
-    videoId:       v.id,
-    title:         v.snippet?.title||'',
-    description:   v.snippet?.description||'',
-    publishedAt:   v.snippet?.publishedAt||null,
-    scheduledStart:v.liveStreamingDetails?.scheduledStartTime||null,
-    actualStart:   v.liveStreamingDetails?.actualStartTime||null,
-    embeddable:    v.status?.embeddable !== false,
-    privacy:       v.status?.privacyStatus||'public',
-    durationSeconds: ds
-  };
-  item.category = classify(item);
-  item.monthKey  = item.publishedAt ? item.publishedAt.slice(0,7) : 'unknown';
-  item.monthLabel= item.publishedAt ? new Date(`${item.monthKey}-01T12:00:00`).toLocaleDateString('es-PY',{month:'long',year:'numeric'}) : 'Sin fecha';
-  return item;
-}
-
-function isLongPlayable(v) {
-  if (!v || v.privacy==='private' || !v.embeddable) return false;
-  if (v.durationSeconds>0 && v.durationSeconds<90) return false;
-  const t = normalise(`${v.title} ${v.description}`);
-  if (/(^|\s)(#shorts|shorts|short|reel|reels|clip)(\s|$)/.test(t)) return false;
-  return true;
-}
 
 async function ytFetch(path, params={}) {
   const url = new URL(`${YT_BASE}/${path}`);
-  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v])=>{ if(v!=null&&v!=='') url.searchParams.set(k,v); });
-  const res  = await fetch(url);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message||'YouTube error');
-  return data;
+  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v])=>{ if(v) url.searchParams.set(k,v); });
+  const res = await fetch(url);
+  return await res.json();
 }
 
-async function getUploadsId() {
-  const d = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
-  return d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads||null;
-}
-
-async function getRecent(limit=50) {
-  const pid = await getUploadsId();
-  if (!pid) return [];
-  const items=[]; let pt='';
-  while(items.length<limit){
-    const d = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:Math.min(50,limit-items.length),pageToken:pt});
-    items.push(...(d.items||[]));
-    if(!d.nextPageToken||!d.items?.length) break;
-    pt=d.nextPageToken;
-  }
-  const ids = items.map(i=>i?.snippet?.resourceId?.videoId).filter(Boolean);
-  if(!ids.length) return [];
-  const chunks=[]; for(let i=0;i<ids.length;i+=50) chunks.push(ids.slice(i,i+50).join(','));
-  const batches = await Promise.all(chunks.map(c=>ytFetch('videos',{part:'snippet,status,liveStreamingDetails,contentDetails',id:c})));
-  return batches.flatMap(b=>b.items||[]).map(toItem).filter(Boolean).filter(isLongPlayable).sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0));
-}
-
-async function getBroadcast(eventType) {
-  const s = await ytFetch('search',{part:'snippet',channelId:YT_CHANNEL_ID,eventType,type:'video',videoEmbeddable:'true',maxResults:5});
-  const ids = (s.items||[]).map(i=>i.id?.videoId).filter(Boolean);
-  if(!ids.length) return null;
-  const vd = await ytFetch('videos',{part:'snippet,status,liveStreamingDetails,contentDetails',id:ids.join(',')});
-  const list = (vd.items||[]).map(toItem).filter(Boolean).filter(isLongPlayable);
-  if(!list.length) return null;
-  if(eventType==='live') list.sort((a,b)=>new Date(b.actualStart||b.publishedAt)-new Date(a.actualStart||a.publishedAt));
-  else list.sort((a,b)=>new Date(a.scheduledStart||a.publishedAt)-new Date(b.scheduledStart||b.publishedAt));
-  return list[0];
-}
-
-function renderFeaturedCard(video) {
-  const card   = $id('videoFeaturedCard'), date = $id('videoFeatDate'), title = $id('videoFeatTitle'), desc = $id('videoFeatDesc'), btn = $id('videoPlayBtn'), count = $id('videoTotalCount');
-  if (!card) return;
-  card.classList.remove('is-loading');
-
-  if (!video) {
-    if(date)  date.textContent  = 'Sin resultados';
-    if(title) title.textContent = 'No hay videos para este mes';
-    if(desc)  desc.textContent  = 'Prueba seleccionando otro periodo.';
-    if(btn)   { btn.textContent='Sin video'; btn.disabled=true; btn.dataset.playFeatured=''; }
-    return;
-  }
-
-  const isPlaying = vtState.playingId === video.videoId;
-  if(date)  date.textContent  = video.publishedAt ? fmtDate(video.publishedAt) : 'Sin fecha';
-  if(title) title.textContent = video.title;
-  if(desc)  desc.textContent  = summarise(video.description, 200);
-  if(count) count.textContent = vtState.filtered.length > 1 ? `${vtState.filtered.length} videos disponibles` : '';
-
-  if(btn) {
-    btn.dataset.playFeatured = video.videoId;
-    btn.disabled = false;
-    btn.innerHTML = isPlaying
-      ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Reproduciendo`
-      : `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reproducir aquí`;
-    btn.classList.toggle('is-playing', isPlaying);
-  }
-  card.classList.toggle('is-playing', isPlaying);
-}
-
-function renderVideoRows(videos) {
-  const list = $id('videoRowList');
-  if (!list) return;
-  if (!videos.length) {
-    list.innerHTML = `<div class="video-empty-msg">No hay videos para este filtro.</div>`;
-    return;
-  }
-  let html = '';
-  videos.forEach(v => {
-    const active    = v.videoId === vtState.selectedId ? 'vr-active' : '';
-    const shortDate = v.publishedAt ? fmtShortDate(v.publishedAt) : '—';
-    html += `
-      <div class="video-row ${active}" data-row-video="${escHtml(v.videoId)}">
-        <span class="vr-day">${escHtml(shortDate)}</span>
-        <span class="vr-title">${escHtml(v.title)}</span>
-        <span class="vr-play">
-          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-      </div>`;
-  });
-  list.innerHTML = html;
-}
-
-function getFiltered() {
-  return vtState.all.filter(v => vtState.monthFilter === 'all' || v.monthKey === vtState.monthFilter);
-}
-
-function applyFilter({ resetFeatured = true } = {}) {
-  vtState.filtered = getFiltered();
-  if (resetFeatured || !vtState.filtered.find(v => v.videoId === vtState.selectedId)) {
-    vtState.selectedId = vtState.filtered[0]?.videoId || null;
-    if (vtState.playingId && !vtState.filtered.find(v => v.videoId === vtState.playingId)) {
-      vtState.playingId = null;
-      const player = $id('videoInlinePlayer');
-      if (player) { player.innerHTML=''; player.classList.remove('open'); }
-    }
-  }
-  const featured = vtState.filtered.find(v => v.videoId === vtState.selectedId) || vtState.filtered[0] || null;
-  vtState.selectedId = featured?.videoId || null;
-  renderFeaturedCard(featured);
-  renderVideoRows(vtState.filtered);
-}
-
-function selectVideo(videoId, play = true) {
-  const video = vtState.all.find(v => v.videoId === videoId);
-  if (!video) return;
-  vtState.selectedId = videoId;
-  if (play) {
-    vtState.playingId = videoId;
-    const player = $id('videoInlinePlayer');
-    if (player) {
-      player.innerHTML = `<iframe src="${embedUrl(videoId, true)}" title="${escHtml(video.title)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
-      player.classList.add('open');
-      $id('videoFeaturedCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }
-  renderFeaturedCard(video);
-  renderVideoRows(vtState.filtered);
-}
-
-document.addEventListener('click', e => {
-  const chip = e.target.closest('[data-video-month]');
-  if (chip) {
-    vtState.monthFilter = chip.dataset.videoMonth;
-    document.querySelectorAll('[data-video-month]').forEach(c => c.classList.toggle('active', c.dataset.videoMonth === vtState.monthFilter));
-    applyFilter({ resetFeatured: true });
-    return;
-  }
-  const playBtn = e.target.closest('[data-play-featured]');
-  if (playBtn && playBtn.dataset.playFeatured) { selectVideo(playBtn.dataset.playFeatured, true); return; }
-  const row = e.target.closest('[data-row-video]');
-  if (row && row.dataset.rowVideo) { selectVideo(row.dataset.rowVideo, true); return; }
-  const liveFallback = e.target.closest('[data-play-live-fallback]');
-  if (liveFallback) {
-    const vid = vtState.all.find(v => v.videoId === liveFallback.dataset.playLiveFallback) || vtState.latestEmbeddable;
-    if (vid) mountLivePlayer(vid);
-    return;
-  }
-});
-
-/* ─── LIVE / EN-VIVO ─── */
-function mountLivePlayer(video) {
-  const box = qs('.stream-box'), next = qs('.next-txt'), pill = qs('.live-pill');
-  if (!box || !video) return;
-  box.innerHTML = `<iframe src="${embedUrl(video.videoId,true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escHtml(video.title)}"></iframe>`;
-  if (pill) pill.innerHTML = '<span class="live-dot-r"></span>CANAL';
-  if (next) next.innerHTML = `Reproduciendo: <strong>${escHtml(video.title)}</strong>`;
-}
-
-function renderLive(video) {
-  const box=qs('.stream-box'), pill=qs('.live-pill'), next=qs('.next-txt');
-  if (!box||!video) return;
-  box.innerHTML = `<iframe src="${embedUrl(video.videoId,true)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" style="width:100%;height:100%;border:none" title="${escHtml(video.title)}"></iframe>`;
-  if(pill) pill.innerHTML='<span class="live-dot-r"></span>EN VIVO AHORA';
-  if(next) next.innerHTML=`📺 <strong>${escHtml(video.title)}</strong> · Transmisión en curso`;
-}
-
-function renderUpcoming(video, fallback) {
-  const box=qs('.stream-box'), next=qs('.next-txt'), pill=qs('.live-pill');
-  if(!box||!video) return;
-  const fb = fallback ? `<button type="button" data-play-live-fallback="${escHtml(fallback.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir mensaje reciente</button>` : '';
-  box.innerHTML=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:1.4rem"><div style="max-width:560px;width:100%;text-align:center"><p style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem">Próxima transmisión programada</p><p style="font-size:.98rem;line-height:1.55;color:var(--white);margin-bottom:.85rem">${escHtml(video.title)}</p><p style="font-size:.82rem;color:var(--muted);margin-bottom:1.15rem">${video.scheduledStart?escHtml(fmtDateTime(video.scheduledStart)):'Horario pendiente'}</p>${fb}</div></div>`;
-  if(pill) pill.innerHTML='<span class="live-dot-r"></span>PRÓXIMO EN VIVO';
-  if(next) next.innerHTML=`Próxima transmisión: <strong>${video.scheduledStart?escHtml(fmtDateTime(video.scheduledStart)):'Programada'}</strong>`;
-}
-
-function renderNoLive(fallback) {
-  const box=qs('.stream-box'), next=qs('.next-txt'), pill=qs('.live-pill');
-  if(!box) return;
-  if(fallback) {
-    box.innerHTML=`<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión activa.<br>Reproducí el culto más reciente aquí mismo.</p><button type="button" data-play-live-fallback="${escHtml(fallback.videoId)}" style="background:var(--gold);color:#0f0b32;border:none;padding:.7rem 1.35rem;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Reproducir culto reciente</button></div>`;
-    if(pill) pill.innerHTML='<span class="live-dot-r"></span>CANAL';
-    if(next) next.innerHTML=`Destacado reciente: <strong>${escHtml(fallback.title)}</strong>`;
-  } else {
-    box.innerHTML=`<div class="stream-ph"><div class="stream-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p style="font-size:.84rem;line-height:1.7">No hay transmisión activa en este momento.</p></div>`;
-    if(next) next.textContent='Sin transmisión programada por el momento';
-  }
-}
-
+// 1. INICIO: Solo carga el último y el anteúltimo (Costo: 1 unidad)
 async function initYouTube() {
-  if (!YT_API_KEY || !YT_CHANNEL_ID) return;
   try {
-    const rawRecent = await getRecent(50);
-    // Filtrado estricto: Solo guardamos "Cultos"
-    const recent = rawRecent.filter(v => v.category === 'Cultos');
-    const latest = recent[0] || null;
+    const ch = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
+    const pid = ch.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+    if(!pid) return;
 
-    if (recent.length) {
-      vtState.all = recent;
-      vtState.latestEmbeddable = latest;
-      vtState.filtered = recent;
-      vtState.selectedId = latest?.videoId || null;
+    // Pedimos solo los 2 últimos para el diseño inicial
+    const playlist = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:2});
+    vtState.lastVideos = playlist.items;
 
-      // Generar botones de filtro de meses dinámicamente
-      const filterContainer = $id('videoTypeFilters');
-      if (filterContainer) {
-        const monthsSet = new Set(recent.map(v => v.monthKey));
-        let btnHtml = `<span class="video-filter-label-sm">Meses:</span>`;
-        btnHtml += `<button type="button" class="vchip active" data-video-month="all">Todos</button>`;
-        Array.from(monthsSet).forEach(monthKey => {
-          if (monthKey !== 'unknown') {
-            const monthLabel = recent.find(v => v.monthKey === monthKey).monthLabel;
-            btnHtml += `<button type="button" class="vchip" data-video-month="${monthKey}">${monthLabel}</button>`;
-          }
-        });
-        filterContainer.innerHTML = btnHtml;
-      }
+    renderInicioCultos();
+    renderMonthButtons(); // Genera los botones de meses (sin cargar videos)
+  } catch(e) { console.error("Error YT:", e); }
+}
 
-      renderFeaturedCard(latest);
-      renderVideoRows(recent);
-    } else {
-      const card = $id('videoFeaturedCard'); if(card) card.classList.remove('is-loading');
-      const title = $id('videoFeatTitle'); if(title) title.textContent = 'No se encontraron cultos grabados';
-    }
+function renderInicioCultos() {
+  if(!vtState.lastVideos.length) return;
 
-    const live = await getBroadcast('live');
-    if (live) { renderLive(live); return; }
-    const upcoming = await getBroadcast('upcoming');
-    if (upcoming) { renderUpcoming(upcoming, latest); return; }
-    renderNoLive(latest);
+  // EL ÚLTIMO (GRANDE)
+  const last = vtState.lastVideos[0].snippet;
+  $id('videoFeatDate').textContent = fmtDate(last.publishedAt);
+  $id('videoFeatTitle').textContent = last.title;
+  $id('videoFeatDesc').textContent = last.description.slice(0,120) + '...';
+  $id('videoPlayBtn').onclick = () => playVideo(last.resourceId.videoId);
+  $id('videoFeaturedCard').classList.remove('is-loading');
 
-  } catch(err) {
-    console.warn('YouTube:', err);
-    const card = $id('videoFeaturedCard'); if(card) card.classList.remove('is-loading');
-    const title = $id('videoFeatTitle'); if(title) title.textContent = 'No se pudo cargar el canal';
-    const rows = $id('videoRowList'); if(rows) rows.innerHTML='<div class="video-empty-msg">Error de conexión.</div>';
-    renderNoLive(null);
+  // EL ANTERIOR (CHICO ABAJO)
+  const prevCont = $id('videoRowList');
+  if(vtState.lastVideos[1]) {
+    const prev = vtState.lastVideos[1].snippet;
+    prevCont.innerHTML = `
+      <p style="font-size:.6rem; color:var(--gold); margin:1.5rem 0 0.8rem; letter-spacing:.1em; text-transform:uppercase;">Culto Anterior:</p>
+      <div class="video-row" onclick="playVideo('${prev.resourceId.videoId}')" style="border: 1px solid var(--glass-b); background: var(--glass); padding: 1rem; border-radius: 4px; cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+           <div>
+             <p style="font-size:.65rem; color:var(--gold); text-transform:uppercase;">${fmtDate(prev.publishedAt)}</p>
+             <p style="font-size:.85rem; font-weight:600; margin-top:.2rem;">${prev.title}</p>
+           </div>
+           <div class="vr-play"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+      </div>`;
   }
 }
+
+// Genera botones de los últimos 6 meses dinámicamente basándose en la fecha actual
+function renderMonthButtons() {
+  const filters = $id('videoTypeFilters');
+  let html = `<span class="video-filter-label-sm">Buscar por Mes:</span>`;
+  const hoy = new Date();
+  
+  for(let i=0; i<6; i++) {
+    const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
+    const label = d.toLocaleDateString('es-PY', { month: 'long', year: 'numeric' });
+    const monthKey = d.toISOString().slice(0, 7); // "2026-03"
+    html += `<button class="vchip" onclick="fetchVideosByMonth('${monthKey}', this)">${label}</button>`;
+  }
+  filters.innerHTML = html;
+}
+
+// BUSCAR VIDEOS POR MES (Solo cuando el usuario hace clic - Costo: 100 unidades)
+async function fetchVideosByMonth(monthKey, btn) {
+  document.querySelectorAll('.vchip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  const subCont = $id('videoRowList');
+  subCont.innerHTML = `<p style="text-align:center; padding:2rem; font-size:.7rem; opacity:.5;">BUSCANDO CULTOS DE ${btn.innerText.toUpperCase()}...</p>`;
+
+  try {
+    const publishedAfter = `${monthKey}-01T00:00:00Z`;
+    const lastDay = new Date(monthKey.split('-')[0], monthKey.split('-')[1], 0).getDate();
+    const publishedBefore = `${monthKey}-${lastDay}T23:59:59Z`;
+
+    const search = await ytFetch('search', {
+      part: 'snippet',
+      channelId: YT_CHANNEL_ID,
+      publishedAfter,
+      publishedBefore,
+      maxResults: 10,
+      type: 'video',
+      q: 'Culto PIEBA' // Filtramos para que busque específicamente cultos
+    });
+
+    if(!search.items || search.items.length === 0) {
+      subCont.innerHTML = `<p style="text-align:center; padding:2rem; font-size:.8rem; opacity:.5;">No se encontraron grabaciones en este mes.</p>`;
+      return;
+    }
+
+    let html = `<p style="font-size:.6rem; color:var(--gold); margin:1.5rem 0 0.8rem; letter-spacing:.1em; text-transform:uppercase;">Resultados de ${btn.innerText}:</p>`;
+    search.items.forEach(v => {
+      html += `
+        <div class="video-row" onclick="playVideo('${v.id.videoId}')" style="border: 1px solid var(--glass-b); background: var(--glass); padding: 1rem; border-radius: 4px; margin-bottom:0.5rem; cursor:pointer;">
+           <p style="font-size:.65rem; color:var(--gold); text-transform:uppercase;">${fmtDate(v.snippet.publishedAt)}</p>
+           <p style="font-size:.85rem; font-weight:600; margin-top:.2rem;">${v.snippet.title}</p>
+        </div>`;
+    });
+    subCont.innerHTML = html;
+  } catch(e) { 
+    subCont.innerHTML = `<p>Error al buscar. Inténtalo más tarde.</p>`;
+  }
+}
+
+function playVideo(id) {
+  const player = $id('videoInlinePlayer');
+  player.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%; height:100%; border:none;"></iframe>`;
+  player.classList.add('open');
+  $id('videoFeaturedCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── LÓGICA EN VIVO (Solo por clic) ───
+
+async function checkLive() {
+  const box = $id('streamBox');
+  const status = $id('liveStatus');
+  const pill = document.querySelector('.live-pill');
+
+  box.innerHTML = `<div class="stream-ph"><p style="font-size:.8rem; letter-spacing:1px;">BUSCANDO TRANSMISIÓN...</p></div>`;
+
+  try {
+    const live = await ytFetch('search', {
+      part: 'snippet',
+      channelId: YT_CHANNEL_ID,
+      eventType: 'live',
+      type: 'video'
+    });
+
+    if (live.items && live.items.length > 0) {
+      const v = live.items[0];
+      box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
+      if(pill) pill.innerHTML = '<span class="live-dot-r"></span>¡EN VIVO AHORA!';
+      if(status) status.innerHTML = `Transmitiendo: <strong>${v.snippet.title}</strong>`;
+    } else {
+      box.innerHTML = `<div class="stream-ph"><p style="font-size:.84rem; margin-bottom:1rem;">No se detectó ninguna transmisión activa.</p><button onclick="location.reload()" style="background:var(--gold); color:var(--navy); border:none; padding:.6rem 1.2rem; border-radius:2px; font-size:.7rem; font-weight:700; cursor:pointer;">REINTENTAR</button></div>`;
+      if(status) status.textContent = 'No hay transmisiones en este momento.';
+    }
+  } catch (e) {
+    box.innerHTML = `<div class="stream-ph"><p>Error al conectar con YouTube.</p></div>`;
+  }
+}
+
+window.verUltimoEnVivo = () => {
+  if (vtState.lastVideos.length > 0) {
+    const last = vtState.lastVideos[0].snippet;
+    const box = $id('streamBox');
+    box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${last.resourceId.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
+    $id('liveStatus').innerHTML = `Reproduciendo último grabado: <strong>${last.title}</strong>`;
+  }
+};
 </script>
 
 <script type="module">
