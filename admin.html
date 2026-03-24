@@ -92,10 +92,10 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .content-section.active { display: block; }
 
 /* ── PAGE HEADER ── */
-.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--glass-b); }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--glass-b); gap: 1rem; }
 .page-title { font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 600; }
 .page-label { font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: .4rem; }
-.btn-add { display: inline-flex; align-items: center; gap: .5rem; background: var(--gold); color: var(--navy-deep); border: none; border-radius: 4px; padding: .65rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; transition: opacity .2s; flex-shrink: 0; }
+.btn-add { display: inline-flex; align-items: center; gap: .5rem; background: var(--gold); color: var(--navy-deep); border: none; border-radius: 4px; padding: .65rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; transition: opacity .2s; flex-shrink: 0; white-space: nowrap; }
 .btn-add:hover { opacity: .88; }
 
 /* ── CARDS LIST ── */
@@ -191,12 +191,56 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .dash-welcome h2 { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: .4rem; }
 .dash-welcome p { font-size: .82rem; color: var(--muted); line-height: 1.7; }
 
+/* ── MOBILE TOP BAR ── */
+.mobile-topbar {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+  height: 52px;
+  background: var(--navy-mid);
+  border-bottom: 1px solid var(--glass-b);
+  align-items: center;
+  padding: 0 1rem;
+  gap: .75rem;
+}
+.mobile-topbar-logo { display: flex; align-items: center; gap: .55rem; flex: 1; }
+.mobile-topbar-logo svg { width: 28px; height: 28px; }
+.mobile-topbar-logo-text { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 700; }
+.mobile-topbar-subtitle { font-size: .52rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+.btn-hamburger {
+  background: transparent; border: none; cursor: pointer;
+  color: var(--muted); padding: .4rem; display: flex; align-items: center; justify-content: center;
+  border-radius: 4px; transition: color .2s;
+}
+.btn-hamburger:hover { color: var(--white); }
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 350;
+  background: rgba(7,5,30,.7);
+  backdrop-filter: blur(3px);
+}
+.sidebar-overlay.open { display: block; }
+
 @media (max-width: 700px) {
+  .mobile-topbar { display: flex; }
   .app-layout { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-  .content-section { padding: 1.25rem; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 360;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform .27s cubic-bezier(.4,0,.2,1);
+    box-shadow: 4px 0 24px rgba(0,0,0,.4);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { padding-top: 52px; }
+  .content-section { padding: 1.1rem 1rem; }
+  .page-header { flex-direction: column; align-items: stretch; gap: .75rem; }
+  .page-title { font-size: 1.3rem; }
+  .btn-add { justify-content: center; width: 100%; }
   .form-row { grid-template-columns: 1fr; }
   .dash-grid { grid-template-columns: 1fr; }
+  .item-card { flex-wrap: nowrap; }
 }
 </style>
 </head>
@@ -225,6 +269,24 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 
 <!-- ══════════════ APP ══════════════ -->
 <div id="appScreen">
+
+<!-- MOBILE TOP BAR -->
+<div class="mobile-topbar">
+  <button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Menú">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+  </button>
+  <div class="mobile-topbar-logo">
+    <svg viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg"><path fill="#c9a96e" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/></svg>
+    <div>
+      <div class="mobile-topbar-logo-text">PIEBA</div>
+      <div class="mobile-topbar-subtitle">Admin Panel</div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 <div class="app-layout">
 
   <!-- SIDEBAR -->
@@ -639,6 +701,7 @@ window.showSection = (id) => {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(`sec-${id}`)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => { if(n.getAttribute('onclick')?.includes(id)) n.classList.add('active'); });
+  closeSidebar();
 };
 window.closeModal = (id) => { document.getElementById(id).classList.remove('open'); };
 window.openModal  = (id) => { document.getElementById(id).classList.add('open'); };
@@ -1070,6 +1133,21 @@ window.deleteBlog = async (id) => {
 async function loadAll() {
   await Promise.all([loadAvisos(), loadEventos(), loadGaleria(), loadBlog()]);
 }
+
+/* ── MOBILE SIDEBAR ── */
+window.toggleSidebar = function() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  const isOpen = sb.classList.contains('open');
+  if (isOpen) { sb.classList.remove('open'); ov.classList.remove('open'); }
+  else { sb.classList.add('open'); ov.classList.add('open'); }
+};
+window.closeSidebar = function() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.classList.remove('open');
+};
 
 /* close modal on overlay click */
 document.querySelectorAll('.modal-overlay').forEach(o => {
