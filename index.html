@@ -1441,7 +1441,7 @@ const firebaseConfig = {
   cargarComunidad();
   cargarGaleria();
 
-  // --- FUNCIÓN PARA CARGAR EL BLOG ---
+// ─── 4. CARGAR BLOG (DISEÑO INTELIGENTE) ───
   async function cargarBlog() {
     const cont = document.getElementById('contenedorBlog');
     if(!cont) return;
@@ -1452,43 +1452,66 @@ const firebaseConfig = {
         cont.innerHTML = "<p style='grid-column:1/-1; opacity:0.5;'>Próximamente nuevas reflexiones...</p>";
         return;
       }
-      let html = "";
+      
       let docs = [];
       snap.forEach(d => docs.push(d.data()));
 
-      // Tarjeta Grande (la primera)
-      const d = docs[0];
-      html += `
-        <div class="blog-card reveal visible">
-          <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
-          <div class="blog-card-body">
-            <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
-            <p class="blog-titulo">${d.titulo}</p>
-            <p class="blog-excerpt">${d.extracto || ''}</p>
-            <div class="blog-meta"><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot"></span><span>${formatDate(d.fecha.toDate())}</span></div>
-          </div>
-        </div>`;
+      // Ajuste de grilla dinámico: Si hay 1 solo, lo centramos y agrandamos
+      if (docs.length === 1) {
+        cont.style.display = "block";
+        cont.style.maxWidth = "600px";
+        cont.style.margin = "2.5rem auto 0";
+      } else {
+        cont.style.display = "grid";
+        cont.style.maxWidth = "1080px";
+        cont.style.margin = "2.5rem 0 0";
+      }
 
-      // Tarjetas chicas (el resto)
-      if(docs.length > 1) {
-        html += `<div class="blog-side">`;
-        docs.slice(1, 4).forEach(art => {
-          html += `
-            <div class="blog-card-sm reveal visible">
-              <div class="blog-thumb-sm">${art.imagen ? `<img src="${art.imagen}">` : `<div class="blog-thumb-ph"></div>`}</div>
-              <div class="blog-sm-body">
-                <p class="blog-cat" style="font-size:.58rem;">${art.categoria || 'Comunidad'}</p>
-                <p class="blog-sm-titulo">${art.titulo}</p>
-                <p class="blog-sm-meta">${art.autor || 'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>
+      let html = "";
+      
+      if (docs.length === 1) {
+        // DISEÑO PARA UN SOLO ARTÍCULO
+        const d = docs[0];
+        html = `
+          <div class="blog-card reveal visible" style="width:100%;">
+            <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
+            <div class="blog-card-body">
+              <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
+              <h3 class="blog-titulo" style="font-size:1.5rem; margin-bottom:1rem;">${d.titulo}</h3>
+              <p class="blog-excerpt">${d.extracto || ''}</p>
+              <div class="blog-meta"><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot"></span><span>${formatDate(d.fecha.toDate())}</span></div>
+            </div>
+          </div>`;
+      } else {
+        // DISEÑO ORIGINAL PARA VARIOS ARTÍCULOS
+        const d = docs[0];
+        html += `
+          <div class="blog-card reveal visible">
+            <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
+            <div class="blog-card-body">
+              <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
+              <p class="blog-titulo">${d.titulo}</p>
+              <p class="blog-excerpt">${d.extracto || ''}</p>
+              <div class="blog-meta"><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot"></span><span>${formatDate(d.fecha.toDate())}</span></div>
+            </div>
+          </div>
+          <div class="blog-side">
+            ${docs.slice(1, 4).map(art => `
+              <div class="blog-card-sm reveal visible">
+                <div class="blog-thumb-sm">${art.imagen ? `<img src="${art.imagen}">` : `<div class="blog-thumb-ph"></div>`}</div>
+                <div class="blog-sm-body">
+                  <p class="blog-cat" style="font-size:.58rem;">${art.categoria || 'Comunidad'}</p>
+                  <p class="blog-sm-titulo">${art.titulo}</p>
+                  <p class="blog-sm-meta">${art.autor || 'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>
+                </div>
               </div>
-            </div>`;
-        });
-        html += `</div>`;
+            `).join('')}
+          </div>`;
       }
       cont.innerHTML = html;
     } catch(e) { console.error(e); }
   }
-  cargarBlog(); // No te olvides de esta línea para que arranque
+  cargarBlog();
   
 </script>
 
