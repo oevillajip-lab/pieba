@@ -982,106 +982,208 @@ if (location.hash) {
 </script>
 
 <script>
-/* ─── YOUTUBE INTELIGENTE Y AHORRATIVO ─── */
+/* ─── YOUTUBE — 2 LLAMADAS TOTALES, FILTRO INTELIGENTE POR DURACIÓN ─── */
 const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
 const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
 
 const vtState = { cultosDetectados: [], _ytLoaded: false };
 const $id = id => document.getElementById(id);
-const fmtDate = (iso) => new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long'});
+const fmtDate = iso => new Date(iso).toLocaleDateString('es-PY', { day: 'numeric', month: 'long' });
 
-// TU FILTRO INTELIGENTE (Título + Descripción + Libros Biblia)
-const bibleRe = /(genesis|exodo|levitico|numeros|deuteronomio|josue|jueces|rut|samuel|reyes|cronicas|esdras|nehemias|ester|job|salmo|salmos|proverbios|eclesiastes|cantares|isaias|jeremias|lamentaciones|ezequiel|daniel|oseas|joel|amos|abdias|jonas|miqueas|nahum|habacuc|sofonias|hageo|zacarias|malaquias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|tito|filemon|hebreos|santiago|pedro|judas|apocalipsis)/;
-
-function esCultoReal(v) {
-  const texto = (v.snippet.title + " " + v.snippet.description).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  const keywords = /(culto|predicacion|sermon|mensaje|adoracion|santa cena|domingo|miercoles|pastor)/;
-  return keywords.test(texto) || bibleRe.test(texto);
+/* ── PARSEAR DURACIÓN ISO 8601 → segundos ── */
+function parseDuration(iso) {
+  if (!iso) return 0;
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return 0;
+  return (parseInt(m[1] || 0) * 3600) + (parseInt(m[2] || 0) * 60) + (parseInt(m[3] || 0));
 }
 
-async function ytFetch(path, params={}) {
+/* ── SCORE: qué tan probable es que sea un culto (0 = no, 1 = sí seguro) ── */
+function scoreCulto(video) {
+  const titulo = (video.snippet.title || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const desc   = (video.snippet.description || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const texto  = titulo + ' ' + desc;
+  const dur    = parseDuration(video.contentDetails?.duration);
+
+  /* REGLA 1: Shorts y clips muy cortos → excluir siempre */
+  if (dur < 180) return 0;               // menos de 3 min
+
+  /* REGLA 2: Videos largos → casi seguro culto/mensaje */
+  if (dur >= 1800) {                     // más de 30 min
+    /* Excepción: si parece anuncio/promo y no menciona nada ministerial */
+    const esAnuncio = /(anuncio|promo|bienvenida|bienvenidos al canal|trailer)/.test(texto);
+    if (esAnuncio) return 0;
+    return 2;                            // peso alto
+  }
+
+  /* REGLA 3: Videos medianos (3-30 min) → necesitan keywords */
+  const keywords = /(culto|predicacion|sermon|mensaje|adoracion|santa cena|domingo|miercoles|sabado|pastor|devocional|reflexion|estudio biblico)/;
+  const biblia   = /(genesis|exodo|salmos?|proverbios|isaias|jeremias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|hebreos|santiago|pedro|apocalipsis)/;
+  if (keywords.test(texto) || biblia.test(texto)) return 1;
+
+  return 0;  // video medio sin keywords → probablemente clip musical o anuncio
+}
+
+/* ── FETCH helper ── */
+async function ytFetch(path, params = {}) {
   const url = new URL(`${YT_BASE}/${path}`);
-  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v])=>{ if(v) url.searchParams.set(k,v); });
+  Object.entries({ ...params, key: YT_API_KEY }).forEach(([k, v]) => { if (v) url.searchParams.set(k, v); });
   const res = await fetch(url);
-  return await res.json();
+  return res.json();
 }
 
+/* ── INIT: sólo 2 llamadas totales ── */
 async function initYouTube() {
   if (vtState._ytLoaded) return;
-  try {
-    const ch = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
-    const pid = ch.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
-    if(!pid) return;
+  vtState._ytLoaded = true;
 
-    // Pedimos 15 para filtrar en JS (Gasto: 1 punto)
-    const playlist = await ytFetch('playlistItems',{part:'snippet', playlistId:pid, maxResults:15});
-    
-    // Aplicamos el filtro inteligente a la lista
-    vtState.cultosDetectados = playlist.items.filter(esCultoReal);
-    vtState._ytLoaded = true;
+  try {
+    /* LLAMADA 1 (1 quota): canal → playlist uploads */
+    const ch = await ytFetch('channels', { part: 'contentDetails', id: YT_CHANNEL_ID });
+    const pid = ch.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+    if (!pid) { mostrarErrorCultos('No se encontró el canal.'); return; }
+
+    /* LLAMADA 2 (1 quota): últimos 20 videos con snippet */
+    const playlist = await ytFetch('playlistItems', {
+      part: 'snippet',
+      playlistId: pid,
+      maxResults: 20
+    });
+    if (!playlist.items?.length) { mostrarErrorCultos('Sin videos en el canal.'); return; }
+
+    /* LLAMADA 3 (1 quota): duraciones de todos en batch (una sola llamada) */
+    const ids = playlist.items.map(i => i.snippet.resourceId?.videoId).filter(Boolean).join(',');
+    const detalles = await ytFetch('videos', { part: 'contentDetails,snippet', id: ids });
+
+    /* Enriquecer cada video con contentDetails */
+    const detalleMap = {};
+    (detalles.items || []).forEach(v => { detalleMap[v.id] = v; });
+
+    const videosEnriquecidos = playlist.items
+      .map(item => {
+        const vid = item.snippet.resourceId?.videoId;
+        const detalle = detalleMap[vid];
+        if (!detalle) return null;
+        return {
+          snippet: {
+            ...item.snippet,
+            resourceId: item.snippet.resourceId
+          },
+          contentDetails: detalle.contentDetails
+        };
+      })
+      .filter(Boolean);
+
+    /* Filtrar y ordenar por score descendente (más culto primero) */
+    vtState.cultosDetectados = videosEnriquecidos
+      .filter(v => scoreCulto(v) > 0)
+      .sort((a, b) => {
+        /* Primero por score descendente, luego por fecha descendente */
+        const ds = scoreCulto(b) - scoreCulto(a);
+        if (ds !== 0) return ds;
+        return new Date(b.snippet.publishedAt) - new Date(a.snippet.publishedAt);
+      });
+
+    /* Guardar también los NO-cultos para estadística (opcional) */
+    vtState.nocultos = videosEnriquecidos.filter(v => scoreCulto(v) === 0);
+
+    if (!vtState.cultosDetectados.length) {
+      mostrarErrorCultos('No se detectaron cultos recientes.');
+      return;
+    }
 
     renderSeccionCultos();
-  } catch(e) { console.error("Error YT:", e); }
+
+  } catch (e) {
+    console.error('Error YT:', e);
+    mostrarErrorCultos('Error de conexión con YouTube.');
+  }
+}
+
+function mostrarErrorCultos(msg) {
+  $id('videoFeaturedCard').classList.remove('is-loading');
+  $id('videoFeatTitle').textContent = msg;
+  $id('videoFeatDate').textContent = '';
+  $id('videoFeatDesc').textContent = 'Intenta recargar la página más tarde.';
 }
 
 function renderSeccionCultos() {
-  if(!vtState.cultosDetectados.length) return;
+  const cultos = vtState.cultosDetectados;
+  if (!cultos.length) return;
 
-  // 1. EL ÚLTIMO (EL ACTUAL)
-  const last = vtState.cultosDetectados[0].snippet;
-  $id('videoFeatDate').textContent = fmtDate(last.publishedAt);
-  $id('videoFeatTitle').textContent = last.title;
-  $id('videoFeatDesc').textContent = last.description.slice(0,100) + '...';
-  $id('videoPlayBtn').onclick = () => playVideo(last.resourceId.videoId);
+  /* ── CULTO PRINCIPAL (el más reciente de score alto) ── */
+  const ultimo = cultos[0].snippet;
+  $id('videoFeatCat').textContent   = getDurLabel(cultos[0]);
+  $id('videoFeatDate').textContent  = fmtDate(ultimo.publishedAt);
+  $id('videoFeatTitle').textContent = ultimo.title;
+  $id('videoFeatDesc').textContent  = (ultimo.description || '').slice(0, 120) + '…';
+  $id('videoPlayBtn').onclick = () => playVideo(ultimo.resourceId.videoId);
+  $id('videoTotalCount').textContent = cultos.length > 1 ? `${cultos.length} cultos disponibles` : '';
   $id('videoFeaturedCard').classList.remove('is-loading');
 
-  // 2. BOTÓN DE CULTO ANTERIOR
+  /* ── CULTOS ANTERIORES (máximo 3 botones) ── */
   const row = $id('videoRowList');
-  if(vtState.cultosDetectados[1]) {
-    const prev = vtState.cultosDetectados[1].snippet;
-    row.innerHTML = `
-      <button onclick="playVideo('${prev.resourceId.videoId}')" style="flex: 1; min-width: 250px; background: var(--glass); border: 1px solid var(--glass-b); color: var(--white); padding: 1rem; border-radius: 3px; cursor: pointer; text-align: left; transition: 0.3s;">
-        <p style="font-size: .6rem; color: var(--gold); text-transform: uppercase; margin-bottom: 0.3rem;">Culto Anterior (${fmtDate(prev.publishedAt)})</p>
-        <p style="font-size: .85rem; font-weight: 600; line-height: 1.3;">${prev.title}</p>
-      </button>`;
-  }
+  row.innerHTML = '';
+  cultos.slice(1, 4).forEach(c => {
+    const s = c.snippet;
+    const btn = document.createElement('button');
+    btn.style.cssText = 'flex:1;min-width:200px;max-width:340px;background:var(--glass);border:1px solid var(--glass-b);color:var(--white);padding:.9rem 1rem;border-radius:3px;cursor:pointer;text-align:left;transition:.25s;';
+    btn.onmouseover = () => btn.style.borderColor = 'rgba(201,169,110,.4)';
+    btn.onmouseout  = () => btn.style.borderColor = 'rgba(255,255,255,.1)';
+    btn.innerHTML = `
+      <p style="font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.3rem;">
+        ${getDurLabel(c)} &nbsp;·&nbsp; ${fmtDate(s.publishedAt)}
+      </p>
+      <p style="font-size:.82rem;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.title}</p>`;
+    btn.onclick = () => playVideo(s.resourceId.videoId);
+    row.appendChild(btn);
+  });
+}
+
+/* Etiqueta de duración legible */
+function getDurLabel(video) {
+  const dur = parseDuration(video.contentDetails?.duration);
+  if (dur >= 5400) return 'Culto especial';   // 90min+
+  if (dur >= 1800) return 'Culto';            // 30-90min
+  return 'Mensaje';                           // 3-30min (pasó el filtro de keywords)
 }
 
 function playVideo(id) {
   const player = $id('videoInlinePlayer');
-  player.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%; height:100%; border:none;"></iframe>`;
+  player.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;aspect-ratio:16/9;border:none;display:block;"></iframe>`;
   player.classList.add('open');
   $id('videoFeaturedCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ─── LÓGICA EN VIVO (SOLO POR CLIC) ───
+/* ─── EN VIVO (solo por clic del usuario) ─── */
 window.checkLive = async () => {
-  const box = $id('streamBox');
+  const box    = $id('streamBox');
   const status = $id('liveStatus');
-  box.innerHTML = `<div class="stream-ph"><p style="font-size:.8rem;">BUSCANDO...</p></div>`;
+  box.innerHTML = `<div class="stream-ph"><p style="font-size:.8rem;opacity:.7;">Buscando transmisión…</p></div>`;
   try {
     const live = await ytFetch('search', { part: 'snippet', channelId: YT_CHANNEL_ID, eventType: 'live', type: 'video' });
-    if (live.items && live.items.length > 0) {
+    if (live.items?.length) {
       const v = live.items[0];
       box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
       status.innerHTML = `<span style="color:#ff7070">● EN VIVO:</span> <strong>${v.snippet.title}</strong>`;
     } else {
-      box.innerHTML = `<div class="stream-ph"><p style="font-size:.8rem;">No hay transmisión activa.</p></div>`;
-      status.textContent = 'Sin transmisiones en este momento.';
+      box.innerHTML = `<div class="stream-ph"><p style="font-size:.85rem;">Sin transmisión activa en este momento.</p></div>`;
+      status.textContent = 'La transmisión inicia puntualmente los domingos 10:15 hs.';
     }
-  } catch (e) { box.innerHTML = `<p>Error de conexión.</p>`; }
-};
-
-window.verUltimoEnVivo = () => {
-  if (vtState.cultosDetectados.length > 0) {
-    const last = vtState.cultosDetectados[0].snippet;
-    $id('streamBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${last.resourceId.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
-    $id('liveStatus').innerHTML = `Reproduciendo último grabado: <strong>${last.title}</strong>`;
+  } catch {
+    box.innerHTML = `<div class="stream-ph"><p style="font-size:.85rem;color:#ff7070;">Error de conexión.</p></div>`;
   }
 };
 
-// Arrancamos el sistema
+window.verUltimoEnVivo = () => {
+  if (!vtState.cultosDetectados.length) { initYouTube().then(verUltimoEnVivo); return; }
+  const last = vtState.cultosDetectados[0].snippet;
+  $id('streamBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${last.resourceId.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
+  $id('liveStatus').innerHTML = `Reproduciendo: <strong>${last.title}</strong>`;
+};
+
+/* ─── LAZY: se dispara desde el IntersectionObserver ─── */
 initYouTube();
 </script>
 
