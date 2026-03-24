@@ -1189,7 +1189,7 @@ initYouTube();
 <script>
   /* === MOTOR DE COMPARTIR Y VISUALIZADORES === */
   window.generarBotonesCompartir = (titulo, urlImagen = '') => {
-    const url = encodeURIComponent(window.location.href.split('#')[0]); // Link a la web
+    const url = encodeURIComponent(window.location.href.split('#')[0]); 
     const textoApp = encodeURIComponent(`¡Mira esto en PIEBA!\n${titulo}\n${urlImagen ? urlImagen + '\n' : ''}`);
     return `
       <div class="share-row" onclick="event.stopPropagation()">
@@ -1203,9 +1203,15 @@ initYouTube();
     `;
   };
 
-  /* Lógica de Foto Grande */
+  /* ── LÓGICA DE FOTO GRANDE Y GALERÍA ── */
   window.fotosActuales = [];
   window.indiceFotoActual = 0;
+
+  // ESTA ES LA FUNCIÓN QUE FALTABA PARA CERRAR EL ALBUM
+  window.closeLightbox = () => {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  };
 
   window.abrirFotoGrande = (index) => {
     window.indiceFotoActual = index;
@@ -1222,24 +1228,34 @@ initYouTube();
     window.abrirFotoGrande(window.indiceFotoActual);
   };
 
-  /* Lógica del Blog Modal */
-  window.blogDataGlobal = [];
-  window.indiceBlogActual = 0;
+  /* ── VISOR UNIVERSAL (BLOG, AVISOS, EVENTOS) ── */
+  window.listaArticulosGlobal = [];
+  window.indiceArticuloActual = 0;
+  window.tipoArticuloActual = 'blog';
 
-  window.abrirBlogModal = (index) => {
-    window.indiceBlogActual = index;
-    const d = window.blogDataGlobal[index];
+  window.abrirArticuloModal = (datos, index, tipo) => {
+    window.listaArticulosGlobal = datos;
+    window.indiceArticuloActual = index;
+    window.tipoArticuloActual = tipo;
+    
+    const d = datos[index];
     if (!d) return;
 
     document.getElementById('bvTitle').textContent = d.titulo;
     const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
-    document.getElementById('bvMeta').textContent = `${d.autor || 'PIEBA'} - ${fechaStr}`;
+    
+    let meta = '';
+    if (tipo === 'blog') meta = `${d.autor || 'PIEBA'} - ${fechaStr}`;
+    else if (tipo === 'evento') meta = `Evento - ${fechaStr}`;
+    else meta = `Comunicado - ${fechaStr}`;
+    
+    document.getElementById('bvMeta').textContent = meta;
     
     const imgEl = document.getElementById('bvImage');
     if(d.imagen) { imgEl.src = d.imagen; imgEl.style.display = 'block'; }
     else { imgEl.style.display = 'none'; }
     
-    document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin contenido extenso.';
+    document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
     document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
     
     document.getElementById('blogViewer').classList.add('open');
@@ -1252,19 +1268,20 @@ initYouTube();
       document.body.style.overflow = '';
     }
   };
+
   window.moverBlog = (dir) => {
-    let nuevoIndex = window.indiceBlogActual + dir;
-    if (nuevoIndex < 0) nuevoIndex = window.blogDataGlobal.length - 1;
-    if (nuevoIndex >= window.blogDataGlobal.length) nuevoIndex = 0;
-    window.abrirBlogModal(nuevoIndex);
+    let nuevoIndex = window.indiceArticuloActual + dir;
+    if (nuevoIndex < 0) nuevoIndex = window.listaArticulosGlobal.length - 1;
+    if (nuevoIndex >= window.listaArticulosGlobal.length) nuevoIndex = 0;
+    window.abrirArticuloModal(window.listaArticulosGlobal, nuevoIndex, window.tipoArticuloActual);
   };
 
-  /* Reemplazar tu listener de Escape actual por este súper-listener */
+  /* Teclado universal */
   document.addEventListener('keydown', e => { 
     if (e.key === 'Escape') {
       window.cerrarFoto();
       window.cerrarBlogModal();
-      if(window.closeLightbox) window.closeLightbox(); 
+      window.closeLightbox(); 
     }
     if (e.key === 'ArrowRight') {
       if (document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(1);
@@ -1311,6 +1328,11 @@ initYouTube();
     normal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`
   };
 
+  // GLOBALES PARA EL VISOR UNIVERSAL
+  window.avisosDataGlobal = [];
+  window.eventosDataGlobal = [];
+  window.blogDataGlobal = [];
+
   // ─── 1. CARGAR COMUNIDAD (AVISOS Y EVENTOS) ───
   async function cargarComunidad() {
     const contAvisos = document.getElementById('contenedorAvisos');
@@ -1324,11 +1346,14 @@ initYouTube();
       if (snapAvisos.empty) {
         htmlAvisos = `<p style="color:var(--muted); font-size:0.85rem;">No hay comunicados.</p>`;
       } else {
+        window.avisosDataGlobal = [];
+        let i = 0;
         snapAvisos.forEach(doc => {
           const d = doc.data();
+          window.avisosDataGlobal.push(d);
           const tipo = (d.tipo || 'normal').toLowerCase();
           htmlAvisos += `
-            <div class="aviso-card ${tipo} reveal visible">
+            <div class="aviso-card ${tipo} reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.avisosDataGlobal, ${i}, 'aviso')">
               ${d.imagen ? `<div class="aviso-img"><img src="${d.imagen}" loading="lazy"></div>` : ''}
               <div class="aviso-header-row">
                 <div class="aviso-ico ${tipo}">${icons[tipo] || icons.normal}</div>
@@ -1343,6 +1368,7 @@ initYouTube();
                 </div>
               </div>
             </div>`;
+          i++;
         });
       }
       contAvisos.innerHTML = htmlAvisos;
@@ -1356,10 +1382,11 @@ initYouTube();
       if (fut.length === 0) {
         contEventos.innerHTML = `<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
       } else {
-        contEventos.innerHTML = fut.map(e => {
+        window.eventosDataGlobal = fut;
+        contEventos.innerHTML = fut.map((e, index) => {
           const fe = e.fecha.toDate();
           return `
-            <div class="evento-card reveal visible">
+            <div class="evento-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.eventosDataGlobal, ${index}, 'evento')">
               ${e.imagen ? `<div class="evento-img"><img src="${e.imagen}" loading="lazy"></div>` : ''}
               <div class="evento-date-bar">
                 <div class="evento-dia">${fe.getDate()}</div>
@@ -1424,6 +1451,16 @@ initYouTube();
   }
 
   // ─── 3. LÓGICA DEL LIGHTBOX (Galería) ───
+  
+  // Aquí aseguramos que la X funcione para volver a la lista de álbumes
+  window.closeLightbox = () => {
+    const lb = document.getElementById('lightbox');
+    if(lb) {
+        lb.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+  };
+
   window.abrirAlbum = (albumIndex) => {
     const album = albumsData[albumIndex];
     if (!album) return;
@@ -1483,7 +1520,7 @@ initYouTube();
       if (docs.length === 1) {
         const d = docs[0];
         html = `
-          <div class="blog-card reveal visible" style="width:100%;" onclick="window.abrirBlogModal(0)">
+          <div class="blog-card reveal visible" style="width:100%; cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal, 0, 'blog')">
             <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
             <div class="blog-card-body">
               <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
@@ -1498,7 +1535,7 @@ initYouTube();
       } else {
         const d = docs[0];
         html += `
-          <div class="blog-card reveal visible" onclick="window.abrirBlogModal(0)">
+          <div class="blog-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal, 0, 'blog')">
             <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
             <div class="blog-card-body">
               <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
@@ -1512,7 +1549,7 @@ initYouTube();
           </div>
           <div class="blog-side">
             ${docs.slice(1, 4).map((art, i) => `
-              <div class="blog-card-sm reveal visible" onclick="window.abrirBlogModal(${i + 1})">
+              <div class="blog-card-sm reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal, ${i + 1}, 'blog')">
                 <div class="blog-thumb-sm">${art.imagen ? `<img src="${art.imagen}">` : `<div class="blog-thumb-ph"></div>`}</div>
                 <div class="blog-sm-body">
                   <p class="blog-cat" style="font-size:.58rem;">${art.categoria || 'Comunidad'}</p>
