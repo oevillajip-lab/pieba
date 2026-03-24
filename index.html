@@ -968,7 +968,7 @@ const io = new IntersectionObserver(entries => {
       }
     }
   });
-}, { root: wrap, threshold: 0.35 });
+}, { root: wrap, threshold: 0.1 });
 
 sections.forEach(s => io.observe(s));
 document.querySelectorAll('#inicio .reveal').forEach(el => el.classList.add('visible'));
