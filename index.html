@@ -92,10 +92,10 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .content-section.active { display: block; }
 
 /* ── PAGE HEADER ── */
-.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--glass-b); }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--glass-b); gap: 1rem; }
 .page-title { font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 600; }
 .page-label { font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: .4rem; }
-.btn-add { display: inline-flex; align-items: center; gap: .5rem; background: var(--gold); color: var(--navy-deep); border: none; border-radius: 4px; padding: .65rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; transition: opacity .2s; flex-shrink: 0; }
+.btn-add { display: inline-flex; align-items: center; gap: .5rem; background: var(--gold); color: var(--navy-deep); border: none; border-radius: 4px; padding: .65rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; transition: opacity .2s; flex-shrink: 0; white-space: nowrap; }
 .btn-add:hover { opacity: .88; }
 
 /* ── CARDS LIST ── */
@@ -234,9 +234,13 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
   }
   .sidebar.open { transform: translateX(0); }
   .main-content { padding-top: 52px; }
-  .content-section { padding: 1.25rem; }
+  .content-section { padding: 1.1rem 1rem; }
+  .page-header { flex-direction: column; align-items: stretch; gap: .75rem; }
+  .page-title { font-size: 1.3rem; }
+  .btn-add { justify-content: center; width: 100%; }
   .form-row { grid-template-columns: 1fr; }
   .dash-grid { grid-template-columns: 1fr; }
+  .item-card { flex-wrap: nowrap; }
 }
 </style>
 </head>
@@ -1131,17 +1135,19 @@ async function loadAll() {
 }
 
 /* ── MOBILE SIDEBAR ── */
-function toggleSidebar() {
+window.toggleSidebar = function() {
   const sb = document.querySelector('.sidebar');
   const ov = document.getElementById('sidebarOverlay');
   const isOpen = sb.classList.contains('open');
   if (isOpen) { sb.classList.remove('open'); ov.classList.remove('open'); }
   else { sb.classList.add('open'); ov.classList.add('open'); }
-}
-function closeSidebar() {
-  document.querySelector('.sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('open');
-}
+};
+window.closeSidebar = function() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.classList.remove('open');
+};
 
 /* close modal on overlay click */
 document.querySelectorAll('.modal-overlay').forEach(o => {
