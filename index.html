@@ -1284,16 +1284,16 @@ initYouTube();
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  // TU CONFIGURACIÓN (Reemplazar con tus datos de Firebase)
-const firebaseConfig = {
-  apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
-  authDomain: "pieba-database.firebaseapp.com",
-  projectId: "pieba-database",
-  storageBucket: "pieba-database.firebasestorage.app",
-  messagingSenderId: "54248882255",
-  appId: "1:54248882255:web:b635bace1d3d723515aa3a",
-  measurementId: "G-5CXYM9XQ1X"
-};
+  // TU CONFIGURACIÓN
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
+    authDomain: "pieba-database.firebaseapp.com",
+    projectId: "pieba-database",
+    storageBucket: "pieba-database.firebasestorage.app",
+    messagingSenderId: "54248882255",
+    appId: "1:54248882255:web:b635bace1d3d723515aa3a",
+    measurementId: "G-5CXYM9XQ1X"
+  };
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
@@ -1312,12 +1312,12 @@ const firebaseConfig = {
   };
 
   // ─── 1. CARGAR COMUNIDAD (AVISOS Y EVENTOS) ───
-  // ─── 1. CARGAR COMUNIDAD (DISEÑO CON IMÁGENES) ───
   async function cargarComunidad() {
     const contAvisos = document.getElementById('contenedorAvisos');
     const contEventos = document.getElementById('contenedorEventos');
     if (!contAvisos || !contEventos) return;
     try {
+      // CARGAR AVISOS
       const qAvisos = query(collection(db, "avisos"), orderBy("fecha", "desc"));
       const snapAvisos = await getDocs(qAvisos);
       let htmlAvisos = '';
@@ -1338,7 +1338,7 @@ const firebaseConfig = {
                   <p class="aviso-texto">${d.texto || ''}</p>
                   <div class="aviso-footer">
                     <span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>
-                    ${window.generarBotonesCompartir(d.titulo)}
+                    ${window.generarBotonesCompartir ? window.generarBotonesCompartir(d.titulo) : ''}
                   </div>
                 </div>
               </div>
@@ -1347,44 +1347,12 @@ const firebaseConfig = {
       }
       contAvisos.innerHTML = htmlAvisos;
 
-      const qEventos = query(collection(db, "eventos"), orderBy("fecha", "asc"));
-      const snapEventos = await getDocs(qEventos);
-      const hoy = new Date(); hoy.setHours(0,0,0,0);
-      let fut = [];
-      snapEventos.forEach(doc => { if(doc.data().fecha.toDate() >= hoy) fut.push(doc.data()); });
-      if (fut.length === 0) {
-        contEventos.innerHTML = `<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
-      } else {
-        contEventos.innerHTML = fut.map(e => {
-          const fe = e.fecha.toDate();
-          return `
-            <div class="evento-card reveal visible">
-              ${e.imagen ? `<div class="evento-img"><img src="${e.imagen}" loading="lazy"></div>` : ''}
-              <div class="evento-date-bar">
-                <div class="evento-dia">${fe.getDate()}</div>
-                <div class="evento-mes-hora">
-                  <span class="evento-mes">${fe.toLocaleDateString('es-PY',{month:'long'})}</span>
-                  <span class="evento-hora">${fe.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}</span>
-                </div>
-              </div>
-              <div class="evento-body">
-                <p class="evento-titulo">${e.titulo || ''}</p>
-                <p class="evento-desc">${e.texto || ''}</p>
-                ${window.generarBotonesCompartir(e.titulo)}
-              </div>
-            </div>`;
-        }).join('');
-      }
-    } catch (err) { console.error('Error:', err); }
-  }
-
       // CARGAR EVENTOS
       const qEventos = query(collection(db, "eventos"), orderBy("fecha", "asc"));
       const snapEventos = await getDocs(qEventos);
       const hoy = new Date(); hoy.setHours(0,0,0,0);
       let fut = [];
       snapEventos.forEach(doc => { if(doc.data().fecha.toDate() >= hoy) fut.push(doc.data()); });
-
       if (fut.length === 0) {
         contEventos.innerHTML = `<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
       } else {
@@ -1403,6 +1371,7 @@ const firebaseConfig = {
               <div class="evento-body">
                 <p class="evento-titulo">${e.titulo || ''}</p>
                 <p class="evento-desc">${e.texto || ''}</p>
+                ${window.generarBotonesCompartir ? window.generarBotonesCompartir(e.titulo) : ''}
               </div>
             </div>`;
         }).join('');
@@ -1410,13 +1379,11 @@ const firebaseConfig = {
     } catch (err) { console.error('Error:', err); }
   }
 
-  // ─── 2. CARGAR GALERÍA (FIREBASE + CLOUDINARY) ───
-  let albumsData = []; // Guardaremos los álbumes en memoria para el lightbox
-
+  // ─── 2. CARGAR GALERÍA ───
+  let albumsData = [];
   async function cargarGaleria() {
     const contGaleria = document.getElementById('albumGrid');
     if (!contGaleria) return;
-
     try {
       const qGaleria = query(collection(db, "galeria"), orderBy("fecha", "desc"));
       const snapGaleria = await getDocs(qGaleria);
@@ -1425,24 +1392,19 @@ const firebaseConfig = {
         contGaleria.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--muted);"><p>Aún no hay álbumes publicados.</p></div>`;
         return;
       }
-
       let htmlGaleria = '';
-      albumsData = []; // Reset
+      albumsData = [];
       let index = 0;
-
       snapGaleria.forEach(doc => {
         const data = doc.data();
         const fechaJs = data.fecha ? data.fecha.toDate() : new Date();
         const fotos = data.fotos || []; 
         albumsData.push({ id: index, nombre: data.nombre, fecha: formatMonthYear(fechaJs), fotos: fotos });
-
-        // Si no hay portada definida, usamos la primera foto, sino un placeholder
-        const portadaUrl = data.portada || (fotos.length > 0 ? fotos[0] : null);
         
+        const portadaUrl = data.portada || (fotos.length > 0 ? fotos[0] : null);
         const coverHtml = portadaUrl 
           ? `<img src="${portadaUrl}" class="album-cover-img" alt="${data.nombre}" loading="lazy">`
           : `<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><image href=""/></svg></div>`;
-
         htmlGaleria += `
           <div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">
             ${coverHtml}
@@ -1454,27 +1416,23 @@ const firebaseConfig = {
           </div>`;
         index++;
       });
-
       contGaleria.innerHTML = htmlGaleria;
-
     } catch (err) {
       console.error('Error Galería:', err);
       contGaleria.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff7070;"><p>Error al cargar la galería.</p></div>`;
     }
   }
 
-  // ─── 3. LÓGICA DEL LIGHTBOX ───
-  // Exponemos las funciones al scope global (window) para que los onclick del HTML funcionen
-window.abrirAlbum = (albumIndex) => {
+  // ─── 3. LÓGICA DEL LIGHTBOX (Galería) ───
+  window.abrirAlbum = (albumIndex) => {
     const album = albumsData[albumIndex];
     if (!album) return;
     document.getElementById('lbTitle').textContent = album.nombre;
-    document.getElementById('lbDate').innerHTML = album.fecha + window.generarBotonesCompartir('Álbum: ' + album.nombre);
+    document.getElementById('lbDate').innerHTML = album.fecha + (window.generarBotonesCompartir ? window.generarBotonesCompartir('Álbum: ' + album.nombre) : '');
     
     const grid = document.getElementById('lbGrid');
     grid.innerHTML = '';
     
-    // Guardamos la lista al motor global
     window.fotosActuales = album.fotos;
 
     if (album.fotos.length === 0) {
@@ -1490,15 +1448,17 @@ window.abrirAlbum = (albumIndex) => {
     document.getElementById('lightbox').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-  // Esto reemplaza al listener que borramos antes
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeLightbox(); });
+
+  document.addEventListener('keydown', e => { 
+    if (e.key === 'Escape' && typeof window.closeLightbox === 'function') window.closeLightbox(); 
+  });
 
   // Ejecutar cargas iniciales
   cargarComunidad();
   cargarGaleria();
 
-// ─── 4. CARGAR BLOG (DISEÑO INTELIGENTE) ───
-async function cargarBlog() {
+  // ─── 4. CARGAR BLOG ───
+  async function cargarBlog() {
     const cont = document.getElementById('contenedorBlog');
     if(!cont) return;
     try {
@@ -1509,7 +1469,6 @@ async function cargarBlog() {
         return;
       }
       
-      // Guardamos para el visor
       window.blogDataGlobal = [];
       snap.forEach(d => window.blogDataGlobal.push(d.data()));
       const docs = window.blogDataGlobal;
@@ -1532,7 +1491,7 @@ async function cargarBlog() {
               <p class="blog-excerpt">${d.extracto || ''}</p>
               <div class="blog-meta" style="justify-content:space-between;">
                 <div><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block; margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>
-                ${window.generarBotonesCompartir(d.titulo)}
+                ${window.generarBotonesCompartir ? window.generarBotonesCompartir(d.titulo) : ''}
               </div>
             </div>
           </div>`;
@@ -1547,7 +1506,7 @@ async function cargarBlog() {
               <p class="blog-excerpt">${d.extracto || ''}</p>
               <div class="blog-meta" style="justify-content:space-between; margin-top:1rem;">
                 <div><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block; margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>
-                ${window.generarBotonesCompartir(d.titulo)}
+                ${window.generarBotonesCompartir ? window.generarBotonesCompartir(d.titulo) : ''}
               </div>
             </div>
           </div>
@@ -1559,7 +1518,7 @@ async function cargarBlog() {
                   <p class="blog-cat" style="font-size:.58rem;">${art.categoria || 'Comunidad'}</p>
                   <p class="blog-sm-titulo">${art.titulo}</p>
                   <p class="blog-sm-meta">${art.autor || 'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>
-                  ${window.generarBotonesCompartir(art.titulo)}
+                  ${window.generarBotonesCompartir ? window.generarBotonesCompartir(art.titulo) : ''}
                 </div>
               </div>
             `).join('')}
@@ -1569,7 +1528,6 @@ async function cargarBlog() {
     } catch(e) { console.error(e); }
   }
   cargarBlog();
-  
 </script>
 
 <style>
