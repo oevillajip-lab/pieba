@@ -491,12 +491,15 @@
       .lightbox-header { padding: 1rem 1.1rem; }
       .lightbox-title { font-size: .95rem; }
 
-      /* COMUNIDAD EN CELULAR: Comunicados y Eventos uno arriba del otro */
+/* COMUNIDAD EN CELULAR: Forzar una sola columna */
       .comunidad-wrap { padding: 0 1.2rem; }
       .comunidad-grid { 
-        grid-template-columns: 1fr !important; 
+        display: flex !important; 
+        flex-direction: column !important;
         gap: 3rem !important; 
       }
+      .aviso-list, .evento-grid { width: 100% !important; }
+      .aviso-card { max-width: 100% !important; }
       .avisos-wrap { width: 100%; max-width: 100%; padding: 0; }
       .aviso-list { margin-top: 1.5rem; gap: .7rem; align-items: center; }
       .aviso-card { padding: 1rem 1.1rem; gap: 1rem; max-width: 100%; }
@@ -975,20 +978,19 @@ if (location.hash) {
 </script>
 
 <script>
-<script>
 /* ─── YOUTUBE AHORRATIVO: MÁXIMA EFICIENCIA ─── */
 const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
 const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
 
-// Estado de la sección
+// Estado global para no repetir llamadas
 const vtState = {
-  lastVideos: [], // Solo guardaremos los 2 primeros para el inicio
+  lastVideos: [],
   _ytLoaded: false
 };
 
 const $id = id => document.getElementById(id);
-function fmtDate(iso) { return new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'}); }
+const fmtDate = (iso) => new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
 
 async function ytFetch(path, params={}) {
   const url = new URL(`${YT_BASE}/${path}`);
@@ -997,107 +999,126 @@ async function ytFetch(path, params={}) {
   return await res.json();
 }
 
-// 1. INICIO: Solo carga el último y el anteúltimo (Costo: 1 unidad)
+// 1. CARGA INICIAL (Solo 2 videos - Costo 1 unidad)
 async function initYouTube() {
+  if (vtState._ytLoaded) return;
   try {
     const ch = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
     const pid = ch.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
     if(!pid) return;
 
-    // Pedimos solo los 2 últimos para el diseño inicial
+    // Traemos solo los 2 últimos para el inicio
     const playlist = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:2});
     vtState.lastVideos = playlist.items;
+    vtState._ytLoaded = true;
 
     renderInicioCultos();
-    renderMonthButtons(); // Genera los botones de meses (sin cargar videos)
+    renderMonthButtons();
   } catch(e) { console.error("Error YT:", e); }
 }
 
 function renderInicioCultos() {
   if(!vtState.lastVideos.length) return;
 
-  // EL ÚLTIMO (GRANDE)
+  // EL ÚLTIMO (Principal con Reproductor)
   const last = vtState.lastVideos[0].snippet;
   $id('videoFeatDate').textContent = fmtDate(last.publishedAt);
   $id('videoFeatTitle').textContent = last.title;
   $id('videoFeatDesc').textContent = last.description.slice(0,120) + '...';
-  $id('videoPlayBtn').onclick = () => playVideo(last.resourceId.videoId);
+  
+  // Conectar el botón de reproducción
+  const playBtn = $id('videoPlayBtn');
+  playBtn.onclick = () => playVideo(last.resourceId.videoId);
   $id('videoFeaturedCard').classList.remove('is-loading');
 
-  // EL ANTERIOR (CHICO ABAJO)
+  // EL ANTERIOR (Caja debajo)
   const prevCont = $id('videoRowList');
   if(vtState.lastVideos[1]) {
     const prev = vtState.lastVideos[1].snippet;
     prevCont.innerHTML = `
       <p style="font-size:.6rem; color:var(--gold); margin:1.5rem 0 0.8rem; letter-spacing:.1em; text-transform:uppercase;">Culto Anterior:</p>
-      <div class="video-row" onclick="playVideo('${prev.resourceId.videoId}')" style="border: 1px solid var(--glass-b); background: var(--glass); padding: 1rem; border-radius: 4px; cursor:pointer;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-           <div>
-             <p style="font-size:.65rem; color:var(--gold); text-transform:uppercase;">${fmtDate(prev.publishedAt)}</p>
-             <p style="font-size:.85rem; font-weight:600; margin-top:.2rem;">${prev.title}</p>
-           </div>
-           <div class="vr-play"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-        </div>
+      <div class="video-row" onclick="playVideo('${prev.resourceId.videoId}')" style="border: 1px solid var(--glass-b); background: var(--glass); padding: 1rem; border-radius: 4px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <p style="font-size:.65rem; color:var(--gold); text-transform:uppercase;">${fmtDate(prev.publishedAt)}</p>
+            <p style="font-size:.85rem; font-weight:600; margin-top:.2rem;">${prev.title}</p>
+          </div>
+          <div class="vr-play"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
       </div>`;
   }
 }
 
-// Genera botones de los últimos 6 meses dinámicamente basándose en la fecha actual
 function renderMonthButtons() {
   const filters = $id('videoTypeFilters');
   let html = `<span class="video-filter-label-sm">Buscar por Mes:</span>`;
   const hoy = new Date();
-  
+  // Generar últimos 6 meses
   for(let i=0; i<6; i++) {
     const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
     const label = d.toLocaleDateString('es-PY', { month: 'long', year: 'numeric' });
-    const monthKey = d.toISOString().slice(0, 7); // "2026-03"
+    const monthKey = d.toISOString().slice(0, 7); 
     html += `<button class="vchip" onclick="fetchVideosByMonth('${monthKey}', this)">${label}</button>`;
   }
   filters.innerHTML = html;
 }
 
-// BUSCAR VIDEOS POR MES (Solo cuando el usuario hace clic - Costo: 100 unidades)
-async function fetchVideosByMonth(monthKey, btn) {
+// 2. BUSCAR POR MES (Solo por clic - Costo 100)
+window.fetchVideosByMonth = async (monthKey, btn) => {
   document.querySelectorAll('.vchip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  
   const subCont = $id('videoRowList');
-  subCont.innerHTML = `<p style="text-align:center; padding:2rem; font-size:.7rem; opacity:.5;">BUSCANDO CULTOS DE ${btn.innerText.toUpperCase()}...</p>`;
+  subCont.innerHTML = `<p style="text-align:center; padding:2rem; font-size:.7rem; opacity:.5;">BUSCANDO CULTOS...</p>`;
 
   try {
     const publishedAfter = `${monthKey}-01T00:00:00Z`;
-    const lastDay = new Date(monthKey.split('-')[0], monthKey.split('-')[1], 0).getDate();
+    // Calculamos el último día del mes
+    const year = monthKey.split('-')[0];
+    const month = monthKey.split('-')[1];
+    const lastDay = new Date(year, month, 0).getDate();
     const publishedBefore = `${monthKey}-${lastDay}T23:59:59Z`;
 
     const search = await ytFetch('search', {
-      part: 'snippet',
-      channelId: YT_CHANNEL_ID,
-      publishedAfter,
-      publishedBefore,
-      maxResults: 10,
-      type: 'video',
-      q: 'Culto PIEBA' // Filtramos para que busque específicamente cultos
+      part: 'snippet', channelId: YT_CHANNEL_ID, publishedAfter, publishedBefore,
+      maxResults: 10, type: 'video', q: 'Culto PIEBA'
     });
 
-    if(!search.items || search.items.length === 0) {
-      subCont.innerHTML = `<p style="text-align:center; padding:2rem; font-size:.8rem; opacity:.5;">No se encontraron grabaciones en este mes.</p>`;
-      return;
-    }
+    if(!search.items.length) { subCont.innerHTML = `<p style="padding:1rem; opacity:.5;">No se encontraron videos.</p>`; return; }
 
-    let html = `<p style="font-size:.6rem; color:var(--gold); margin:1.5rem 0 0.8rem; letter-spacing:.1em; text-transform:uppercase;">Resultados de ${btn.innerText}:</p>`;
+    let html = `<p style="font-size:.6rem; color:var(--gold); margin:1.5rem 0 0.8rem; text-transform:uppercase;">Resultados de ${btn.innerText}:</p>`;
     search.items.forEach(v => {
-      html += `
-        <div class="video-row" onclick="playVideo('${v.id.videoId}')" style="border: 1px solid var(--glass-b); background: var(--glass); padding: 1rem; border-radius: 4px; margin-bottom:0.5rem; cursor:pointer;">
-           <p style="font-size:.65rem; color:var(--gold); text-transform:uppercase;">${fmtDate(v.snippet.publishedAt)}</p>
-           <p style="font-size:.85rem; font-weight:600; margin-top:.2rem;">${v.snippet.title}</p>
-        </div>`;
+      html += `<div class="video-row" onclick="playVideo('${v.id.videoId}')" style="border: 1px solid var(--glass-b); background: var(--glass); padding: 1rem; border-radius: 4px; margin-bottom:0.5rem; cursor:pointer;">
+        <p style="font-size:.65rem; color:var(--gold);">${fmtDate(v.snippet.publishedAt)}</p>
+        <p style="font-size:.85rem; font-weight:600;">${v.snippet.title}</p>
+      </div>`;
     });
     subCont.innerHTML = html;
-  } catch(e) { 
-    subCont.innerHTML = `<p>Error al buscar. Inténtalo más tarde.</p>`;
+  } catch(e) { subCont.innerHTML = `<p>Error al buscar.</p>`; }
+};
+
+// 3. EN VIVO (Solo por clic - Costo 100)
+window.checkLive = async () => {
+  const box = $id('streamBox');
+  const status = $id('liveStatus');
+  box.innerHTML = `<div class="stream-ph"><p style="font-size:.8rem;">BUSCANDO TRANSMISIÓN...</p></div>`;
+  try {
+    const live = await ytFetch('search', { part: 'snippet', channelId: YT_CHANNEL_ID, eventType: 'live', type: 'video' });
+    if (live.items && live.items.length > 0) {
+      const v = live.items[0];
+      box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
+      status.innerHTML = `<span style="color:#ff7070">● EN VIVO:</span> <strong>${v.snippet.title}</strong>`;
+    } else {
+      box.innerHTML = `<div class="stream-ph"><p>No hay transmisión activa.</p><button onclick="location.reload()" style="background:var(--gold); border:none; padding:.6rem 1rem; margin-top:1rem; cursor:pointer; font-weight:700;">REINTENTAR</button></div>`;
+      status.textContent = 'Sin transmisiones en este momento.';
+    }
+  } catch (e) { box.innerHTML = `<p>Error de conexión.</p>`; }
+};
+
+window.verUltimoEnVivo = () => {
+  if (vtState.lastVideos.length > 0) {
+    const last = vtState.lastVideos[0].snippet;
+    $id('streamBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${last.resourceId.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
+    $id('liveStatus').innerHTML = `Último grabado: <strong>${last.title}</strong>`;
   }
-}
+};
 
 function playVideo(id) {
   const player = $id('videoInlinePlayer');
@@ -1105,46 +1126,6 @@ function playVideo(id) {
   player.classList.add('open');
   $id('videoFeaturedCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-
-// ─── LÓGICA EN VIVO (Solo por clic) ───
-
-async function checkLive() {
-  const box = $id('streamBox');
-  const status = $id('liveStatus');
-  const pill = document.querySelector('.live-pill');
-
-  box.innerHTML = `<div class="stream-ph"><p style="font-size:.8rem; letter-spacing:1px;">BUSCANDO TRANSMISIÓN...</p></div>`;
-
-  try {
-    const live = await ytFetch('search', {
-      part: 'snippet',
-      channelId: YT_CHANNEL_ID,
-      eventType: 'live',
-      type: 'video'
-    });
-
-    if (live.items && live.items.length > 0) {
-      const v = live.items[0];
-      box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
-      if(pill) pill.innerHTML = '<span class="live-dot-r"></span>¡EN VIVO AHORA!';
-      if(status) status.innerHTML = `Transmitiendo: <strong>${v.snippet.title}</strong>`;
-    } else {
-      box.innerHTML = `<div class="stream-ph"><p style="font-size:.84rem; margin-bottom:1rem;">No se detectó ninguna transmisión activa.</p><button onclick="location.reload()" style="background:var(--gold); color:var(--navy); border:none; padding:.6rem 1.2rem; border-radius:2px; font-size:.7rem; font-weight:700; cursor:pointer;">REINTENTAR</button></div>`;
-      if(status) status.textContent = 'No hay transmisiones en este momento.';
-    }
-  } catch (e) {
-    box.innerHTML = `<div class="stream-ph"><p>Error al conectar con YouTube.</p></div>`;
-  }
-}
-
-window.verUltimoEnVivo = () => {
-  if (vtState.lastVideos.length > 0) {
-    const last = vtState.lastVideos[0].snippet;
-    const box = $id('streamBox');
-    box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${last.resourceId.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
-    $id('liveStatus').innerHTML = `Reproduciendo último grabado: <strong>${last.title}</strong>`;
-  }
-};
 </script>
 
 <script type="module">
