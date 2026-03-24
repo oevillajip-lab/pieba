@@ -983,12 +983,7 @@ const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
 const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
 
-// Estado global para no repetir llamadas
-const vtState = {
-  lastVideos: [],
-  _ytLoaded: false
-};
-
+const vtState = { lastVideos: [], _ytLoaded: false };
 const $id = id => document.getElementById(id);
 const fmtDate = (iso) => new Date(iso).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
 
@@ -999,7 +994,6 @@ async function ytFetch(path, params={}) {
   return await res.json();
 }
 
-// 1. CARGA INICIAL (Solo 2 videos - Costo 1 unidad)
 async function initYouTube() {
   if (vtState._ytLoaded) return;
   try {
@@ -1007,7 +1001,6 @@ async function initYouTube() {
     const pid = ch.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
     if(!pid) return;
 
-    // Traemos solo los 2 últimos para el inicio
     const playlist = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:2});
     vtState.lastVideos = playlist.items;
     vtState._ytLoaded = true;
@@ -1019,19 +1012,15 @@ async function initYouTube() {
 
 function renderInicioCultos() {
   if(!vtState.lastVideos.length) return;
-
-  // EL ÚLTIMO (Principal con Reproductor)
   const last = vtState.lastVideos[0].snippet;
   $id('videoFeatDate').textContent = fmtDate(last.publishedAt);
   $id('videoFeatTitle').textContent = last.title;
   $id('videoFeatDesc').textContent = last.description.slice(0,120) + '...';
   
   // Conectar el botón de reproducción
-  const playBtn = $id('videoPlayBtn');
-  playBtn.onclick = () => playVideo(last.resourceId.videoId);
+  $id('videoPlayBtn').onclick = () => playVideo(last.resourceId.videoId);
   $id('videoFeaturedCard').classList.remove('is-loading');
 
-  // EL ANTERIOR (Caja debajo)
   const prevCont = $id('videoRowList');
   if(vtState.lastVideos[1]) {
     const prev = vtState.lastVideos[1].snippet;
@@ -1051,7 +1040,6 @@ function renderMonthButtons() {
   const filters = $id('videoTypeFilters');
   let html = `<span class="video-filter-label-sm">Buscar por Mes:</span>`;
   const hoy = new Date();
-  // Generar últimos 6 meses
   for(let i=0; i<6; i++) {
     const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
     const label = d.toLocaleDateString('es-PY', { month: 'long', year: 'numeric' });
@@ -1061,29 +1049,19 @@ function renderMonthButtons() {
   filters.innerHTML = html;
 }
 
-// 2. BUSCAR POR MES (Solo por clic - Costo 100)
 window.fetchVideosByMonth = async (monthKey, btn) => {
   document.querySelectorAll('.vchip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const subCont = $id('videoRowList');
   subCont.innerHTML = `<p style="text-align:center; padding:2rem; font-size:.7rem; opacity:.5;">BUSCANDO CULTOS...</p>`;
-
   try {
     const publishedAfter = `${monthKey}-01T00:00:00Z`;
-    // Calculamos el último día del mes
-    const year = monthKey.split('-')[0];
-    const month = monthKey.split('-')[1];
-    const lastDay = new Date(year, month, 0).getDate();
-    const publishedBefore = `${monthKey}-${lastDay}T23:59:59Z`;
-
     const search = await ytFetch('search', {
-      part: 'snippet', channelId: YT_CHANNEL_ID, publishedAfter, publishedBefore,
+      part: 'snippet', channelId: YT_CHANNEL_ID, publishedAfter,
       maxResults: 10, type: 'video', q: 'Culto PIEBA'
     });
-
-    if(!search.items.length) { subCont.innerHTML = `<p style="padding:1rem; opacity:.5;">No se encontraron videos.</p>`; return; }
-
-    let html = `<p style="font-size:.6rem; color:var(--gold); margin:1.5rem 0 0.8rem; text-transform:uppercase;">Resultados de ${btn.innerText}:</p>`;
+    if(!search.items.length) { subCont.innerHTML = `<p>No hay videos.</p>`; return; }
+    let html = `<p style="font-size:.6rem; color:var(--gold); margin:1rem 0;">Resultados:</p>`;
     search.items.forEach(v => {
       html += `<div class="video-row" onclick="playVideo('${v.id.videoId}')" style="border: 1px solid var(--glass-b); background: var(--glass); padding: 1rem; border-radius: 4px; margin-bottom:0.5rem; cursor:pointer;">
         <p style="font-size:.65rem; color:var(--gold);">${fmtDate(v.snippet.publishedAt)}</p>
@@ -1094,7 +1072,6 @@ window.fetchVideosByMonth = async (monthKey, btn) => {
   } catch(e) { subCont.innerHTML = `<p>Error al buscar.</p>`; }
 };
 
-// 3. EN VIVO (Solo por clic - Costo 100)
 window.checkLive = async () => {
   const box = $id('streamBox');
   const status = $id('liveStatus');
@@ -1126,6 +1103,9 @@ function playVideo(id) {
   player.classList.add('open');
   $id('videoFeaturedCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// ESTA LÍNEA ES LA QUE FALTABA PARA QUE TODO ARRANQUE
+initYouTube();
 </script>
 
 <script type="module">
