@@ -222,7 +222,7 @@
     .galeria-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
 .album-grid { 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(280px, 340px)); 
+      grid-template-columns: repeat(auto-fit, minmax(350px, 420px)); 
       justify-content: center; 
       gap: 1.5rem; 
       margin-top: 2.5rem; 
@@ -442,6 +442,7 @@
     @keyframes spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
     /* ── MOBILE ── */
+/* ── MOBILE ── */
     @media (max-width: 900px) {
       html, body { overflow: hidden; }
       .scroll-wrap { height: 100dvh; min-height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
@@ -480,19 +481,33 @@
       .envivo-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
       .stream-box { margin-top: 1.2rem; max-height: none; min-height: 200px; }
 
+      /* GALERÍA EN CELULAR: Una sola columna grande y centrada */
       .galeria-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .album-grid { grid-template-columns: 1fr 1fr; gap: .85rem; margin-top: 1.5rem; }
+      .album-grid { 
+        grid-template-columns: 1fr !important; 
+        gap: 1.5rem; 
+        margin-top: 1.5rem; 
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
       .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: 1rem; gap: 2px; }
       .lightbox-header { padding: 1rem 1.1rem; }
       .lightbox-title { font-size: .95rem; }
 
-      .avisos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .aviso-list { margin-top: 1.5rem; gap: .7rem; }
-      .aviso-card { padding: 1rem 1.1rem; gap: 1rem; }
+      /* COMUNIDAD EN CELULAR: Comunicados y Eventos uno arriba del otro */
+      .comunidad-wrap { padding: 0 1.2rem; }
+      .comunidad-grid { 
+        grid-template-columns: 1fr !important; 
+        gap: 3rem !important; 
+      }
+      .avisos-wrap { width: 100%; max-width: 100%; padding: 0; }
+      .aviso-list { margin-top: 1.5rem; gap: .7rem; align-items: center; }
+      .aviso-card { padding: 1rem 1.1rem; gap: 1rem; max-width: 100%; }
       .aviso-titulo { font-size: .88rem; }
       .aviso-texto { font-size: .8rem; }
 
-      .eventos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
+      .eventos-wrap { width: 100%; max-width: 100%; padding: 0; }
       .evento-grid, .evento-grid.par, .evento-grid.solo { grid-template-columns: 1fr; max-width: 100%; gap: .85rem; margin-top: 1.5rem; }
 
       .blog-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
