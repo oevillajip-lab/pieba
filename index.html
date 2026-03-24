@@ -220,7 +220,14 @@
     /* ── GALERÍA ── */
     #galeria { background: var(--navy); }
     .galeria-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
-    .album-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; }
+.album-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(280px, 340px)); 
+      justify-content: center; 
+      gap: 1.5rem; 
+      margin-top: 2.5rem; 
+      width: 100%;
+    }
     .album-card { position: relative; cursor: pointer; border-radius: 3px; overflow: hidden; border: 1px solid var(--glass-b); aspect-ratio: 4/3; transition: border-color .3s, transform .3s; }
     .album-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
     .album-card:hover .album-overlay { opacity: 1; }
@@ -253,8 +260,26 @@
     /* ── AVISOS ── */
     #avisos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
     .avisos-wrap { text-align: center; max-width: 880px; width: 100%; padding: 2rem 3rem; }
-    .aviso-list { display: flex; flex-direction: column; gap: .85rem; margin-top: 2rem; text-align: left; }
-    .aviso-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: border-color .3s; }
+    .aviso-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 0.85rem; 
+      margin-top: 2rem; 
+      text-align: left;
+      align-items: center; 
+    }
+    .aviso-card { 
+      background: var(--glass); 
+      border: 1px solid var(--glass-b); 
+      border-radius: 3px; 
+      padding: 1.25rem 1.5rem; 
+      display: flex; 
+      align-items: flex-start; 
+      gap: 1.25rem; 
+      transition: border-color 0.3s;
+      width: 100%;
+      max-width: 480px; /* Esto evita que el aviso se estire demasiado */
+    }
     .aviso-card:hover { border-color: var(--gold-dim); }
     .aviso-card.urgente { border-left: 3px solid #ff7070; }
     .aviso-card.info { border-left: 3px solid var(--gold); }
