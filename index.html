@@ -1186,6 +1186,97 @@ window.verUltimoEnVivo = () => {
 initYouTube();
 </script>
 
+<script>
+  /* === MOTOR DE COMPARTIR Y VISUALIZADORES === */
+  window.generarBotonesCompartir = (titulo, urlImagen = '') => {
+    const url = encodeURIComponent(window.location.href.split('#')[0]); // Link a la web
+    const textoApp = encodeURIComponent(`¡Mira esto en PIEBA!\n${titulo}\n${urlImagen ? urlImagen + '\n' : ''}`);
+    return `
+      <div class="share-row" onclick="event.stopPropagation()">
+        <a href="https://wa.me/?text=${textoApp}${url}" target="_blank" class="share-btn" title="Compartir en WhatsApp">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="mailto:?subject=${encodeURIComponent(titulo)}&body=${textoApp}${url}" class="share-btn" title="Compartir por Correo">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </a>
+      </div>
+    `;
+  };
+
+  /* Lógica de Foto Grande */
+  window.fotosActuales = [];
+  window.indiceFotoActual = 0;
+
+  window.abrirFotoGrande = (index) => {
+    window.indiceFotoActual = index;
+    const urlFoto = window.fotosActuales[index];
+    document.getElementById('pvImage').src = urlFoto;
+    document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
+    document.getElementById('photoViewer').classList.add('open');
+  };
+  window.cerrarFoto = () => document.getElementById('photoViewer').classList.remove('open');
+  window.moverFoto = (dir) => {
+    window.indiceFotoActual += dir;
+    if (window.indiceFotoActual < 0) window.indiceFotoActual = window.fotosActuales.length - 1;
+    if (window.indiceFotoActual >= window.fotosActuales.length) window.indiceFotoActual = 0;
+    window.abrirFotoGrande(window.indiceFotoActual);
+  };
+
+  /* Lógica del Blog Modal */
+  window.blogDataGlobal = [];
+  window.indiceBlogActual = 0;
+
+  window.abrirBlogModal = (index) => {
+    window.indiceBlogActual = index;
+    const d = window.blogDataGlobal[index];
+    if (!d) return;
+
+    document.getElementById('bvTitle').textContent = d.titulo;
+    const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
+    document.getElementById('bvMeta').textContent = `${d.autor || 'PIEBA'} - ${fechaStr}`;
+    
+    const imgEl = document.getElementById('bvImage');
+    if(d.imagen) { imgEl.src = d.imagen; imgEl.style.display = 'block'; }
+    else { imgEl.style.display = 'none'; }
+    
+    document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin contenido extenso.';
+    document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
+    
+    document.getElementById('blogViewer').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.cerrarBlogModal = () => {
+    document.getElementById('blogViewer').classList.remove('open');
+    if (!document.getElementById('lightbox').classList.contains('open')) {
+      document.body.style.overflow = '';
+    }
+  };
+  window.moverBlog = (dir) => {
+    let nuevoIndex = window.indiceBlogActual + dir;
+    if (nuevoIndex < 0) nuevoIndex = window.blogDataGlobal.length - 1;
+    if (nuevoIndex >= window.blogDataGlobal.length) nuevoIndex = 0;
+    window.abrirBlogModal(nuevoIndex);
+  };
+
+  /* Reemplazar tu listener de Escape actual por este súper-listener */
+  document.addEventListener('keydown', e => { 
+    if (e.key === 'Escape') {
+      window.cerrarFoto();
+      window.cerrarBlogModal();
+      if(window.closeLightbox) window.closeLightbox(); 
+    }
+    if (e.key === 'ArrowRight') {
+      if (document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(1);
+      else if (document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(1);
+    }
+    if (e.key === 'ArrowLeft') {
+      if (document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(-1);
+      else if (document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(-1);
+    }
+  });
+</script>
+  
 <script type="module">
   /* ─────────────────────────────────────────────
      FIREBASE FIRESTORE — AVISOS, EVENTOS Y GALERÍA
@@ -1226,9 +1317,7 @@ const firebaseConfig = {
     const contAvisos = document.getElementById('contenedorAvisos');
     const contEventos = document.getElementById('contenedorEventos');
     if (!contAvisos || !contEventos) return;
-
     try {
-      // CARGAR AVISOS
       const qAvisos = query(collection(db, "avisos"), orderBy("fecha", "desc"));
       const snapAvisos = await getDocs(qAvisos);
       let htmlAvisos = '';
@@ -1247,13 +1336,47 @@ const firebaseConfig = {
                   <span class="aviso-tag ${tipo}">${tipo.toUpperCase()}</span>
                   <p class="aviso-titulo">${d.titulo || ''}</p>
                   <p class="aviso-texto">${d.texto || ''}</p>
-                  <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span></div>
+                  <div class="aviso-footer">
+                    <span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>
+                    ${window.generarBotonesCompartir(d.titulo)}
+                  </div>
                 </div>
               </div>
             </div>`;
         });
       }
       contAvisos.innerHTML = htmlAvisos;
+
+      const qEventos = query(collection(db, "eventos"), orderBy("fecha", "asc"));
+      const snapEventos = await getDocs(qEventos);
+      const hoy = new Date(); hoy.setHours(0,0,0,0);
+      let fut = [];
+      snapEventos.forEach(doc => { if(doc.data().fecha.toDate() >= hoy) fut.push(doc.data()); });
+      if (fut.length === 0) {
+        contEventos.innerHTML = `<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
+      } else {
+        contEventos.innerHTML = fut.map(e => {
+          const fe = e.fecha.toDate();
+          return `
+            <div class="evento-card reveal visible">
+              ${e.imagen ? `<div class="evento-img"><img src="${e.imagen}" loading="lazy"></div>` : ''}
+              <div class="evento-date-bar">
+                <div class="evento-dia">${fe.getDate()}</div>
+                <div class="evento-mes-hora">
+                  <span class="evento-mes">${fe.toLocaleDateString('es-PY',{month:'long'})}</span>
+                  <span class="evento-hora">${fe.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}</span>
+                </div>
+              </div>
+              <div class="evento-body">
+                <p class="evento-titulo">${e.titulo || ''}</p>
+                <p class="evento-desc">${e.texto || ''}</p>
+                ${window.generarBotonesCompartir(e.titulo)}
+              </div>
+            </div>`;
+        }).join('');
+      }
+    } catch (err) { console.error('Error:', err); }
+  }
 
       // CARGAR EVENTOS
       const qEventos = query(collection(db, "eventos"), orderBy("fecha", "asc"));
@@ -1342,35 +1465,31 @@ const firebaseConfig = {
 
   // ─── 3. LÓGICA DEL LIGHTBOX ───
   // Exponemos las funciones al scope global (window) para que los onclick del HTML funcionen
-  window.abrirAlbum = (albumIndex) => {
+window.abrirAlbum = (albumIndex) => {
     const album = albumsData[albumIndex];
     if (!album) return;
-
     document.getElementById('lbTitle').textContent = album.nombre;
-    document.getElementById('lbDate').textContent  = album.fecha;
+    document.getElementById('lbDate').innerHTML = album.fecha + window.generarBotonesCompartir('Álbum: ' + album.nombre);
+    
     const grid = document.getElementById('lbGrid');
     grid.innerHTML = '';
+    
+    // Guardamos la lista al motor global
+    window.fotosActuales = album.fotos;
 
     if (album.fotos.length === 0) {
       grid.innerHTML = `<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`;
     } else {
-      album.fotos.forEach(url => {
+      album.fotos.forEach((url, i) => {
         grid.innerHTML += `
-          <div class="lightbox-photo">
+          <div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})">
             <img src="${url}" loading="lazy" alt="Foto de ${album.nombre}">
           </div>`;
       });
     }
-
     document.getElementById('lightbox').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-
-  window.closeLightbox = () => {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  };
-
   // Esto reemplaza al listener que borramos antes
   document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeLightbox(); });
 
@@ -1379,7 +1498,7 @@ const firebaseConfig = {
   cargarGaleria();
 
 // ─── 4. CARGAR BLOG (DISEÑO INTELIGENTE) ───
-  async function cargarBlog() {
+async function cargarBlog() {
     const cont = document.getElementById('contenedorBlog');
     if(!cont) return;
     try {
@@ -1390,56 +1509,57 @@ const firebaseConfig = {
         return;
       }
       
-      let docs = [];
-      snap.forEach(d => docs.push(d.data()));
+      // Guardamos para el visor
+      window.blogDataGlobal = [];
+      snap.forEach(d => window.blogDataGlobal.push(d.data()));
+      const docs = window.blogDataGlobal;
 
-      // Ajuste de grilla dinámico: Si hay 1 solo, lo centramos y agrandamos
       if (docs.length === 1) {
-        cont.style.display = "block";
-        cont.style.maxWidth = "600px";
-        cont.style.margin = "2.5rem auto 0";
+        cont.style.display = "block"; cont.style.maxWidth = "600px"; cont.style.margin = "2.5rem auto 0";
       } else {
-        cont.style.display = "grid";
-        cont.style.maxWidth = "1080px";
-        cont.style.margin = "2.5rem 0 0";
+        cont.style.display = "grid"; cont.style.maxWidth = "1080px"; cont.style.margin = "2.5rem 0 0";
       }
-
       let html = "";
       
       if (docs.length === 1) {
-        // DISEÑO PARA UN SOLO ARTÍCULO
         const d = docs[0];
         html = `
-          <div class="blog-card reveal visible" style="width:100%;">
+          <div class="blog-card reveal visible" style="width:100%;" onclick="window.abrirBlogModal(0)">
             <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
             <div class="blog-card-body">
               <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
               <h3 class="blog-titulo" style="font-size:1.5rem; margin-bottom:1rem;">${d.titulo}</h3>
               <p class="blog-excerpt">${d.extracto || ''}</p>
-              <div class="blog-meta"><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot"></span><span>${formatDate(d.fecha.toDate())}</span></div>
+              <div class="blog-meta" style="justify-content:space-between;">
+                <div><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block; margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>
+                ${window.generarBotonesCompartir(d.titulo)}
+              </div>
             </div>
           </div>`;
       } else {
-        // DISEÑO ORIGINAL PARA VARIOS ARTÍCULOS
         const d = docs[0];
         html += `
-          <div class="blog-card reveal visible">
+          <div class="blog-card reveal visible" onclick="window.abrirBlogModal(0)">
             <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
             <div class="blog-card-body">
               <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
               <p class="blog-titulo">${d.titulo}</p>
               <p class="blog-excerpt">${d.extracto || ''}</p>
-              <div class="blog-meta"><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot"></span><span>${formatDate(d.fecha.toDate())}</span></div>
+              <div class="blog-meta" style="justify-content:space-between; margin-top:1rem;">
+                <div><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block; margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>
+                ${window.generarBotonesCompartir(d.titulo)}
+              </div>
             </div>
           </div>
           <div class="blog-side">
-            ${docs.slice(1, 4).map(art => `
-              <div class="blog-card-sm reveal visible">
+            ${docs.slice(1, 4).map((art, i) => `
+              <div class="blog-card-sm reveal visible" onclick="window.abrirBlogModal(${i + 1})">
                 <div class="blog-thumb-sm">${art.imagen ? `<img src="${art.imagen}">` : `<div class="blog-thumb-ph"></div>`}</div>
                 <div class="blog-sm-body">
                   <p class="blog-cat" style="font-size:.58rem;">${art.categoria || 'Comunidad'}</p>
                   <p class="blog-sm-titulo">${art.titulo}</p>
                   <p class="blog-sm-meta">${art.autor || 'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>
+                  ${window.generarBotonesCompartir(art.titulo)}
                 </div>
               </div>
             `).join('')}
@@ -1451,6 +1571,79 @@ const firebaseConfig = {
   cargarBlog();
   
 </script>
+
+<style>
+  /* VISUALIZADOR DE FOTOS INDIVIDUALES */
+  .photo-viewer { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; flex-direction: column; }
+  .photo-viewer.open { display: flex; }
+  .pv-close { position: absolute; top: 1.5rem; right: 2rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.2rem; cursor: pointer; z-index: 501; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+  .pv-close:hover { background: var(--gold-dim); color: var(--gold); }
+  .pv-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: white; font-size: 1.5rem; width: 50px; height: 50px; cursor: pointer; border-radius: 50%; transition: 0.3s; z-index: 501; display: flex; align-items: center; justify-content: center; }
+  .pv-nav:hover { background: var(--gold); color: var(--navy); }
+  .pv-nav.prev { left: 2rem; }
+  .pv-nav.next { right: 2rem; }
+  #pvImage { max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transition: opacity 0.3s; }
+  .pv-footer { position: absolute; bottom: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+
+  /* LECTOR DE BLOG FLOTANTE */
+  .blog-viewer { position: fixed; inset: 0; z-index: 450; background: rgba(7,5,30,0.96); backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; padding: 2rem; }
+  .blog-viewer.open { display: flex; }
+  .bv-content { background: var(--navy-deep); border: 1px solid var(--glass-b); width: 100%; max-width: 750px; max-height: 85vh; border-radius: 4px; overflow-y: auto; padding: 2.5rem; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+  .bv-close { position: absolute; top: 1.5rem; right: 1.5rem; background: var(--glass); border: 1px solid var(--glass-b); color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display:flex; align-items:center; justify-content:center; transition:0.3s;}
+  .bv-close:hover { background: var(--gold-dim); color: var(--gold); }
+  .bv-header { margin-bottom: 1.5rem; padding-right: 2rem; border-bottom: 1px solid var(--glass-b); padding-bottom: 1rem; }
+  #bvTitle { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--gold); line-height: 1.3; margin-bottom: 0.5rem; }
+  #bvMeta { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+  .bv-body { font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.8; margin-bottom: 2rem; }
+  .bv-body img { max-width: 100%; border-radius: 4px; margin: 1rem 0; }
+  .bv-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-b); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+  .bv-controls button { background: transparent; border: 1px solid rgba(201,169,110,0.5); color: var(--gold); padding: 0.6rem 1.2rem; border-radius: 2px; cursor: pointer; font-family: 'Raleway', sans-serif; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.15em; transition: 0.3s; }
+  .bv-controls button:hover { background: var(--gold); color: var(--navy); }
+
+  /* BOTONES DE COMPARTIR (GLOBAL) */
+  .share-row { display: flex; gap: 0.4rem; margin-top: 0.75rem; }
+  .share-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-b); color: var(--white); cursor: pointer; transition: 0.3s; text-decoration: none; }
+  .share-btn:hover { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+  @media (max-width: 768px) {
+    .pv-nav { width: 40px; height: 40px; font-size: 1.2rem; }
+    .pv-nav.prev { left: 0.5rem; }
+    .pv-nav.next { right: 0.5rem; }
+    .bv-content { padding: 1.5rem; max-height: 90vh; }
+    #bvTitle { font-size: 1.4rem; }
+    .blog-viewer { padding: 1rem; }
+  }
+</style>
+
+<div class="photo-viewer" id="photoViewer">
+  <button class="pv-close" onclick="cerrarFoto()">✕</button>
+  <button class="pv-nav prev" onclick="moverFoto(-1)">&#10094;</button>
+  <img id="pvImage" src="" alt="Foto PIEBA">
+  <button class="pv-nav next" onclick="moverFoto(1)">&#10095;</button>
+  <div class="pv-footer" id="pvShareContainer"></div>
+</div>
+
+<div class="blog-viewer" id="blogViewer">
+  <div class="bv-content">
+    <button class="bv-close" onclick="cerrarBlogModal()">✕</button>
+    <div class="bv-header">
+      <h2 id="bvTitle">Título</h2>
+      <p id="bvMeta">Autor - Fecha</p>
+    </div>
+    <img id="bvImage" src="" alt="Portada" style="width:100%; border-radius:3px; margin-bottom:1.5rem; display:none;">
+    <div class="bv-body" id="bvText"></div>
+    <div class="bv-footer">
+      <div id="bvShare"></div>
+      <div class="bv-controls">
+        <button onclick="moverBlog(-1)">&#10094; Anterior</button>
+        <button onclick="moverBlog(1)">Siguiente &#10095;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 </body>
 </html>
