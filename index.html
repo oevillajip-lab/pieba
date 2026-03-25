@@ -438,99 +438,104 @@
     @keyframes spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
     /* ── MOBILE ── */
-/* ── MOBILE ── */
     @media (max-width: 900px) {
       html, body { overflow: hidden; }
       .scroll-wrap { height: 100dvh; min-height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
-      .page { min-height: 100dvh; height: auto; overflow: visible; justify-content: flex-start; padding: 5.5rem 0 2.5rem; }
+      
+      /* FIX ANTI-CORTES: Padding inferior amplio (6rem) para que puedas ver hasta el último píxel de cada sección */
+      .page { min-height: 100dvh; height: auto; overflow: visible; justify-content: flex-start; padding: 5.5rem 0 6rem; }
       .page-num { display: none; }
       .topnav { padding: .9rem 1.1rem; }
       .nav-links, .nav-cta { display: none; }
       .hamburger { display: flex; }
       .side-dots { display: none; }
 
+      /* TÍTULOS MÁS COMPACTOS */
+      .section-title { font-size: clamp(1.4rem, 6vw, 1.8rem); margin-top: .4rem; }
+      .gold-line, .gold-line.left { margin: .8rem auto; }
+
       #inicio { min-height: 100dvh; justify-content: center; padding-top: 5rem; padding-bottom: 2rem; }
       .hero-content { width: 100%; padding: 0 1.2rem; }
-      .hero-logo { width: min(55vw, 200px); height: min(55vw, 200px); margin-bottom: 1rem; }
-      .hero-name { font-size: clamp(1.1rem, 6vw, 1.8rem); letter-spacing: .06em; max-width: 90%; }
-      .hero-sub { font-size: .68rem; letter-spacing: .14em; line-height: 1.7; margin-top: .75rem; }
-      .hero-verse { font-size: .8rem; line-height: 1.7; max-width: 92%; margin-top: 1.2rem; }
-      .scroll-cue { bottom: .8rem; }
+      .hero-logo { width: min(45vw, 160px); height: min(45vw, 160px); margin-bottom: .8rem; }
+      .hero-name { font-size: clamp(1.1rem, 5.5vw, 1.6rem); letter-spacing: .05em; max-width: 100%; }
+      .hero-sub { font-size: .65rem; margin-top: .6rem; }
+      .hero-verse { font-size: .75rem; margin-top: 1rem; }
 
-      .nos-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; max-width: 100%; }
+      .nos-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.2rem; }
       .nos-visual { display: none; }
-      .section-title { font-size: clamp(1.5rem, 7vw, 2.2rem); line-height: 1.15; }
-      .nos-body { font-size: .88rem; }
-      .nos-list li span { font-size: .84rem; }
+      .nos-body { font-size: .85rem; margin-top: 1rem; }
+      .nos-list { margin-top: 1.2rem; gap: .7rem; }
 
-      .cultos-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .culto-cards { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
-      .culto-card { padding: 1.2rem 1rem; }
-      .culto-hora { font-size: 1.65rem; }
-      .video-section { margin-top: 1.5rem; }
-      .video-featured-card { padding: 1.2rem 1.1rem 1.1rem; }
-      .video-featured-title { font-size: clamp(.9rem, 5vw, 1.2rem); }
-      .video-inline-player.open { max-height: 240px; }
-      .video-row { grid-template-columns: auto 1fr 1.5rem; gap: 0 .65rem; padding: .65rem .3rem; }
+      .cultos-wrap { padding: 0 1.2rem; }
+      
+      /* CULTOS EN 2 COLUMNAS (El 3ro se centra abajo ocupando todo) */
+      .culto-cards { grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1.2rem; }
+      .culto-card { padding: 1rem .8rem; }
+      .culto-card:last-child { grid-column: 1 / -1; }
+      .culto-hora { font-size: 1.25rem; margin-top: .4rem; }
+      .culto-nombre { font-size: .85rem; line-height: 1.2; }
+      .culto-desc { font-size: .7rem; margin-top: .4rem; }
+
+      .video-section { margin-top: 1.2rem; }
+      .video-featured-card { padding: 1rem; }
+      .video-featured-title { font-size: .95rem; }
+      .video-inline-player.open { max-height: 200px; }
+      .video-row { grid-template-columns: auto 1fr 1.5rem; gap: 0 .5rem; padding: .5rem .3rem; }
       .vr-day { display: none; }
 
-      .envivo-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .stream-box { margin-top: 1.2rem; max-height: none; min-height: 200px; }
+      .envivo-wrap { padding: 0 1.2rem; }
+      .stream-box { margin-top: 1rem; min-height: 180px; }
 
-      /* GALERÍA EN CELULAR: Una sola columna grande y centrada */
-      .galeria-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .album-grid { 
-        grid-template-columns: 1fr !important; 
-        gap: 1.5rem; 
-        margin-top: 1.5rem; 
-        max-width: 400px;
-        margin-left: auto;
-        margin-right: auto;
-      }
+      /* GALERÍA PRO: 2 COLUMNAS CUADRADAS */
+      .galeria-wrap { padding: 0 1.2rem; }
+      .album-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .6rem; margin-top: 1.2rem; max-width: 100%; }
+      .album-card { aspect-ratio: 1; } 
+      .album-name { font-size: .75rem; }
+      .album-date { font-size: .55rem; }
+      .album-count { top: .4rem; right: .4rem; font-size: .5rem; padding: .15rem .4rem; }
       .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: 1rem; gap: 2px; }
-      .lightbox-header { padding: 1rem 1.1rem; }
-      .lightbox-title { font-size: .95rem; }
 
-/* COMUNIDAD EN CELULAR: Forzar una sola columna */
+      /* COMUNIDAD Y AVISOS */
       .comunidad-wrap { padding: 0 1.2rem; }
-      .comunidad-grid { 
-        display: flex !important; 
-        flex-direction: column !important;
-        gap: 3rem !important; 
-      }
-      .aviso-list, .evento-grid { width: 100% !important; }
-      .aviso-card { max-width: 100% !important; }
-      .avisos-wrap { width: 100%; max-width: 100%; padding: 0; }
-      .aviso-list { margin-top: 1.5rem; gap: .7rem; align-items: center; }
-      .aviso-card { padding: 1rem 1.1rem; gap: 1rem; max-width: 100%; }
-      .aviso-titulo { font-size: .88rem; }
-      .aviso-texto { font-size: .8rem; }
+      .comunidad-grid { display: flex !important; flex-direction: column !important; gap: 1.5rem !important; margin-top: 1.5rem; }
+      .comunidad-col-title { font-size: .95rem; margin-bottom: .5rem; }
+      
+      /* Avisos tipo tarjeta horizontal estilo notificación */
+      .aviso-list { margin-top: .5rem; gap: .6rem; }
+      .aviso-card { padding: .8rem; gap: .8rem; flex-direction: row; align-items: center; max-width: 100%; }
+      .aviso-img { width: 70px; height: 70px; flex-shrink: 0; }
+      .aviso-titulo { font-size: .8rem; margin-bottom: .2rem; }
+      .aviso-texto { font-size: .7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      
+      /* EVENTOS EN 2 COLUMNAS */
+      .evento-grid, .evento-grid.par, .evento-grid.solo { grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: .5rem; max-width: 100%; }
+      .evento-date-bar { padding: .5rem; gap: .4rem; }
+      .evento-dia { font-size: 1.2rem; }
+      .evento-mes { font-size: .5rem; }
+      .evento-hora { font-size: .6rem; }
+      .evento-body { padding: .8rem; }
+      .evento-titulo { font-size: .8rem; line-height: 1.2; }
+      .evento-desc { font-size: .7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: .4rem; }
 
-      .eventos-wrap { width: 100%; max-width: 100%; padding: 0; }
-      .evento-grid, .evento-grid.par, .evento-grid.solo { grid-template-columns: 1fr; max-width: 100%; gap: .85rem; margin-top: 1.5rem; }
+      .blog-wrap { padding: 0 1.2rem; }
+      .blog-grid { grid-template-columns: 1fr; gap: .8rem; margin-top: 1.2rem; }
+      .blog-card-body { padding: .8rem 1rem; }
 
-      .blog-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .blog-grid { grid-template-columns: 1fr; gap: .85rem; margin-top: 1.5rem; }
-      .blog-cover { aspect-ratio: 16/9; }
-      .blog-side { gap: .85rem; }
-      .blog-card-body { padding: 1rem 1.1rem 1.2rem; }
+      .cont-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; }
+      .cont-map { min-height: 200px; }
 
-      .cont-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; max-width: 100%; }
-      .cont-map { min-height: 220px; }
-      .cont-items { gap: 1.1rem; }
-
-      .ofr-wrap { width: 100%; max-width: 100%; padding: 0 1.2rem; }
-      .ofr-cards { grid-template-columns: 1fr; gap: .9rem; margin-top: 1.4rem; }
-      .ofr-card { padding: 1.2rem 1rem; }
+      /* OFRENDAR EN 2 COLUMNAS COMPACTAS */
+      .ofr-wrap { padding: 0 1.2rem; }
+      .ofr-cards { grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1.2rem; }
+      .ofr-card { padding: 1rem .8rem; }
+      .ofr-card-title { font-size: .75rem; margin-bottom: .6rem; line-height: 1.2; }
+      .ofr-detail { font-size: .65rem; line-height: 1.5; }
+      .qr-ph { width: 60px; height: 60px; margin: 0 auto .6rem; font-size: .5rem; }
     }
 
-@media (max-width: 480px) {
-      .hero-name { font-size: clamp(1rem, 7.5vw, 1.5rem); }
-      .section-title { font-size: clamp(1.3rem, 8vw, 1.9rem); }
-      .album-grid { grid-template-columns: 1fr 1fr; gap: .6rem; }
-      .album-name { font-size: .78rem; }
-      .blog-titulo { font-size: .88rem; }
-      .evento-titulo { font-size: .9rem; }
+    @media (max-width: 480px) {
+      .hero-name { font-size: clamp(1rem, 6vw, 1.3rem); }
+      .section-title { font-size: clamp(1.2rem, 7vw, 1.6rem); }
     }
 
     /* --- CAPAS DE BRILLOS (Fondo -> Brillos -> Contenido) --- */
