@@ -445,9 +445,15 @@
       .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: .75rem; gap: 2px; }
 
       /* ── COMUNIDAD ── */
-     .comunidad-wrap { padding: 0 1.25rem; }
-      .culto-cards { display: flex; flex-direction: column; gap: .75rem; margin-top: 1rem; }
-      .culto-card { width: 100%; padding: 1.1rem; }
+      .comunidad-wrap { padding: 0 1.25rem; }
+      /* Tarjetas de cultos: las 3 juntas, texto pequeño, se agrandan al tocar/hover */
+      .culto-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; margin-top: 1rem; }
+      .culto-card { padding: .7rem .5rem; text-align: center; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease; }
+      .culto-card:hover, .culto-card:active { transform: scale(1.05); border-color: var(--gold); z-index: 10; }
+      .culto-dia { font-size: .45rem; letter-spacing: .15em; }
+      .culto-nombre { font-size: .65rem; margin-top: .3rem; line-height: 1.1; }
+      .culto-hora { font-size: 1rem; margin-top: .4rem; }
+      .culto-desc { font-size: .5rem; margin-top: .4rem; line-height: 1.3; }
       
       /* Avisos y Eventos en 2 columnas paralelas compactas */
       .comunidad-grid { grid-template-columns: repeat(2, 1fr); gap: .75rem; margin-top: 1.5rem; align-items: start; }
@@ -1429,12 +1435,10 @@ cargarBlog();
 /* === GESTIÓN DEL BOTÓN ATRÁS (HISTORIAL) === */
 (function() {
   function registerModal() {
-    // Agrega un estado falso al historial al abrir una ventana
     history.pushState({ modalAbierto: true }, '', location.href);
   }
   
   window.addEventListener('popstate', function(e) {
-    // Si el usuario usa el gesto Atrás, se activa esto: cerramos capa por capa
     const photo = document.getElementById('photoViewer');
     const blog  = document.getElementById('blogViewer');
     const light = document.getElementById('lightbox');
@@ -1450,29 +1454,34 @@ cargarBlog();
     }
   });
 
-  // Interceptamos tus funciones originales de abrir
   const originalAbrirAlbum = window.abrirAlbum;
   window.abrirAlbum = function(index) {
-    if(originalAbrirAlbum) originalAbrirAlbum(index);
     registerModal();
+    if(originalAbrirAlbum) originalAbrirAlbum(index);
   };
 
   const originalAbrirFoto = window.abrirFotoGrande;
   window.abrirFotoGrande = function(index) {
-    if(originalAbrirFoto) originalAbrirFoto(index);
     registerModal();
+    if(originalAbrirFoto) originalAbrirFoto(index);
   };
 
   const originalAbrirArticulo = window.abrirArticuloModal;
   window.abrirArticuloModal = function(datos, index, tipo) {
-    if(originalAbrirArticulo) originalAbrirArticulo(datos, index, tipo);
     registerModal();
+    if(originalAbrirArticulo) originalAbrirArticulo(datos, index, tipo);
   };
 
-  // Interceptamos tus funciones originales de cerrar (botones X)
-  window.closeLightbox = function() {
-    if(document.getElementById('lightbox').classList.contains('open')) history.back();
-  };
+  // Botones de cerrar (X)
+  const btnCloseLightbox = document.querySelector('.lightbox-close');
+  if(btnCloseLightbox) {
+    // Quitamos el onclick de HTML para manejarlo por evento
+    btnCloseLightbox.removeAttribute('onclick');
+    btnCloseLightbox.addEventListener('click', () => {
+      if(document.getElementById('lightbox').classList.contains('open')) history.back();
+    });
+  }
+
   window.cerrarFoto = function() {
     if(document.getElementById('photoViewer').classList.contains('open')) history.back();
   };
