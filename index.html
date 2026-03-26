@@ -418,7 +418,7 @@
     .cont-map iframe { width: 100%; height: 100%; border: none; }
 
     /* ── OFRENDAR ── */
-    #ofrendar { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy-light) 100%); }
+    #dar { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy-light) 100%); }
     .ofr-wrap { text-align: center; max-width: 680px; width: 100%; padding: 2rem 3rem; }
     .ofr-verse { font-style: italic; font-size: .84rem; color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.85; }
     .ofr-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.25rem; }
@@ -531,7 +531,53 @@
       .ofr-card-title { font-size: .75rem; margin-bottom: .6rem; line-height: 1.2; }
       .ofr-detail { font-size: .65rem; line-height: 1.5; }
       .qr-ph { width: 60px; height: 60px; margin: 0 auto .6rem; font-size: .5rem; }
-    }
+      .ofr-motivacion {
+  max-width: 480px;
+  margin: 1.25rem auto 0;
+  text-align: center;
+}
+.ofr-mot-intro {
+  font-size: .82rem;
+  line-height: 1.75;
+  color: rgba(255,255,255,.6);
+  margin-bottom: .75rem;
+}
+.ofr-mot-question {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: .6rem;
+}
+.ofr-mot-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  text-align: left;
+}
+.ofr-mot-list li {
+  font-size: .78rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,.65);
+  padding-left: 1.1em;
+  position: relative;
+}
+.ofr-mot-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: rgba(201,169,110,.4);
+}
+.ofr-mot-cierre {
+  font-size: .78rem;
+  line-height: 1.75;
+  font-style: italic;
+  color: rgba(255,255,255,.55);
+}
 
     @media (max-width: 480px) {
       .hero-name { font-size: clamp(1rem, 6vw, 1.3rem); }
@@ -564,7 +610,7 @@
     <li><a href="#blog"      data-target="blog"      data-section="blog">Blog</a></li>
     <li><a href="#contacto"  data-target="contacto"  data-section="contacto">Contacto</a></li>
   </ul>
-  <a class="nav-cta" href="#ofrendar" data-target="ofrendar">Ofrendar</a>
+  <a class="nav-cta" href="#dar" data-target="dar">Dar</a>
   <button class="hamburger" id="ham" type="button" aria-label="Abrir menú" aria-controls="mobileNav" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
@@ -580,7 +626,7 @@
   <a href="#comunidad" data-target="comunidad" data-section="comunidad">Comunidad</a>
   <a href="#blog"      data-target="blog"      data-section="blog">Blog</a>
   <a href="#contacto"  data-target="contacto"  data-section="contacto">Contacto</a>
-  <a href="#ofrendar"  data-target="ofrendar"  data-section="ofrendar" style="color:var(--gold)">Ofrendar</a>
+  <a href="#dar"  data-target="dar"  data-section="dar" style="color:var(--gold)">Dar</a>
 </div>
 
 <!-- SIDE DOTS -->
@@ -593,7 +639,7 @@
   <button class="dot"        type="button" data-target="comunidad" title="Comunidad" aria-label="Ir a Comunidad"></button>
   <button class="dot"        type="button" data-target="blog"      title="Blog"      aria-label="Ir a Blog"></button>
   <button class="dot"        type="button" data-target="contacto"  title="Contacto"  aria-label="Ir a Contacto"></button>
-  <button class="dot"        type="button" data-target="ofrendar"  title="Ofrendar"  aria-label="Ir a Ofrendar"></button>
+  <button class="dot"        type="button" data-target="dar"  title="dar"  aria-label="Ir a Dar"></button>
 </div>
 
 <!-- LIGHTBOX -->
@@ -866,12 +912,24 @@
   </section>
 
   <!-- 10 OFRENDAR -->
-  <section class="page" id="ofrendar">
+  <section class="page" id="dar">
     <div class="ofr-wrap">
       <p class="section-label reveal">Generosidad</p>
-      <h2 class="section-title reveal d1" style="text-align:center">Ofrendar</h2>
+      <h2 class="section-title reveal d1" style="text-align:center">dar</h2>
       <div class="gold-line reveal d2"></div>
       <p class="ofr-verse reveal d2">&ldquo;Cada uno dé como propuso en su corazón; no con tristeza, ni por necesidad, porque Dios ama al dador alegre.&rdquo; &mdash; 2 Corintios 9:7</p>
+
+<div class="ofr-motivacion reveal d3">
+  <p class="ofr-mot-intro">Tu ofrenda a la Primera Iglesia Evangélica Bautista de Asunción es un acto libre y voluntario de fe.</p>
+  <p class="ofr-mot-question">¿Por qué dar?</p>
+  <ul class="ofr-mot-list">
+    <li>Porque cada peso sembrado multiplica el alcance del evangelio en nuestra ciudad.</li>
+    <li>Porque sostenemos juntos lo que ninguno podría sostener solo.</li>
+    <li>Porque tu generosidad es parte del testimonio vivo de esta iglesia ante Asunción.</li>
+  </ul>
+  <p class="ofr-mot-cierre">Cada ofrenda es un paso más hacia una Asunción transformada por el amor de Cristo.</p>
+</div>
+
       <div class="ofr-cards">
         <div class="ofr-card reveal d2">
           <p class="ofr-card-title">Transferencia Bancaria</p>
