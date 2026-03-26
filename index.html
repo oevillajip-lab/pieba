@@ -1440,62 +1440,76 @@ cargarBlog();
 
 
 <script>
-/* === GESTIÓN DEL BOTÓN ATRÁS (HISTORIAL) === */
+/* === GESTIÓN DEL BOTÓN ATRÁS Y MODALES (CORREGIDO) === */
 (function() {
-  function registerModal() {
-    history.pushState({ modalAbierto: true }, '', location.href);
-  }
-  
-  window.addEventListener('popstate', function(e) {
-    const photo = document.getElementById('photoViewer');
-    const blog  = document.getElementById('blogViewer');
-    const light = document.getElementById('lightbox');
+  // Un contador estricto para saber exactamente cuántas ventanas hemos abierto
+  let modalHistoryCount = 0;
 
-    if (photo && photo.classList.contains('open')) {
-      photo.classList.remove('open');
-    } else if (blog && blog.classList.contains('open')) {
-      blog.classList.remove('open');
-      if (!light || !light.classList.contains('open')) document.body.style.overflow = '';
-    } else if (light && light.classList.contains('open')) {
-      light.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  });
-
+  // 1. Interceptar las funciones de ABRIR para registrar el historial de forma segura
   const originalAbrirAlbum = window.abrirAlbum;
   window.abrirAlbum = function(index) {
-    registerModal();
+    history.pushState({ isModal: true }, '', location.href);
+    modalHistoryCount++;
     if(originalAbrirAlbum) originalAbrirAlbum(index);
   };
 
   const originalAbrirFoto = window.abrirFotoGrande;
   window.abrirFotoGrande = function(index) {
-    registerModal();
+    history.pushState({ isModal: true }, '', location.href);
+    modalHistoryCount++;
     if(originalAbrirFoto) originalAbrirFoto(index);
   };
 
   const originalAbrirArticulo = window.abrirArticuloModal;
   window.abrirArticuloModal = function(datos, index, tipo) {
-    registerModal();
+    history.pushState({ isModal: true }, '', location.href);
+    modalHistoryCount++;
     if(originalAbrirArticulo) originalAbrirArticulo(datos, index, tipo);
   };
 
-  // Botones de cerrar (X)
-  const btnCloseLightbox = document.querySelector('.lightbox-close');
-  if(btnCloseLightbox) {
-    // Quitamos el onclick de HTML para manejarlo por evento
-    btnCloseLightbox.removeAttribute('onclick');
-    btnCloseLightbox.addEventListener('click', () => {
-      if(document.getElementById('lightbox').classList.contains('open')) history.back();
-    });
-  }
+  // 2. Lógica limpia de cerrado (sin tocar el historial todavía)
+  const cerrarLightboxLimpio = () => {
+    const lb = document.getElementById('lightbox');
+    if(lb) { lb.classList.remove('open'); document.body.style.overflow=''; }
+  };
+  const cerrarFotoLimpio = () => {
+    const pv = document.getElementById('photoViewer');
+    if(pv) pv.classList.remove('open');
+  };
+  const cerrarBlogLimpio = () => {
+    const bv = document.getElementById('blogViewer');
+    if(bv) bv.classList.remove('open');
+    if (!document.getElementById('lightbox').classList.contains('open')) document.body.style.overflow='';
+  };
 
+  // 3. Interceptar las funciones de los botones "X"
+  window.closeLightbox = function() {
+    if(modalHistoryCount > 0) { history.back(); } else { cerrarLightboxLimpio(); }
+  };
   window.cerrarFoto = function() {
-    if(document.getElementById('photoViewer').classList.contains('open')) history.back();
+    if(modalHistoryCount > 0) { history.back(); } else { cerrarFotoLimpio(); }
   };
   window.cerrarBlogModal = function() {
-    if(document.getElementById('blogViewer').classList.contains('open')) history.back();
+    if(modalHistoryCount > 0) { history.back(); } else { cerrarBlogLimpio(); }
   };
+
+  // 4. Escuchar el GESTO ATRÁS del celular o cuando nosotros llamamos a history.back()
+  window.addEventListener('popstate', function(e) {
+    if(modalHistoryCount > 0) modalHistoryCount--;
+
+    const photo = document.getElementById('photoViewer');
+    const blog  = document.getElementById('blogViewer');
+    const light = document.getElementById('lightbox');
+
+    // Cierra en orden de prioridad (el que esté más arriba)
+    if (photo && photo.classList.contains('open')) {
+      cerrarFotoLimpio();
+    } else if (blog && blog.classList.contains('open')) {
+      cerrarBlogLimpio();
+    } else if (light && light.classList.contains('open')) {
+      cerrarLightboxLimpio();
+    }
+  });
 })();
 </script>
 
