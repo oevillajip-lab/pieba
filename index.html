@@ -1145,12 +1145,9 @@ initYouTube();
 
 <script>
 /* === MOTOR DE COMPARTIR Y VISUALIZADORES === */
-window.generarBotonesCompartir = (titulo, urlImagen='', tipo='', id='') => {
-  let linkBase = window.location.href.split('?')[0].split('#')[0];
-  if (tipo !== '' && id !== '') linkBase += `?t=${tipo}&i=${id}`;
-  const url = encodeURIComponent(linkBase);
-  // Quitamos la urlImagen del texto. Ahora WhatsApp y Correo enviarán solo título + link de la web
-  const textoApp = encodeURIComponent(`¡Mira esto en PIEBA!\n${titulo}\n\n`);
+window.generarBotonesCompartir = (titulo, urlImagen='') => {
+  const url = encodeURIComponent(window.location.href.split('#')[0]);
+  const textoApp = encodeURIComponent(`¡Mira esto en PIEBA!\n${titulo}\n${urlImagen?urlImagen+'\n':''}`);
   return `<div class="share-row" onclick="event.stopPropagation()">
     <a href="https://wa.me/?text=${textoApp}${url}" target="_blank" class="share-btn" title="WhatsApp"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
     <a href="mailto:?subject=${encodeURIComponent(titulo)}&body=${textoApp}${url}" class="share-btn" title="Correo"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
@@ -1159,30 +1156,15 @@ window.generarBotonesCompartir = (titulo, urlImagen='', tipo='', id='') => {
 
 window.fotosActuales = [];
 window.indiceFotoActual = 0;
-window.albumActivoIndex = 0;
-window.listaArticulosGlobal = [];
-window.indiceArticuloActual = 0;
-window.tipoArticuloActual = 'blog';
-
-window.closeLightbox = () => { 
-  const lb = document.getElementById('lightbox'); 
-  if(lb){ 
-    lb.classList.remove('open'); 
-    document.body.style.overflow=''; 
-    history.replaceState(null, '', window.location.pathname + window.location.hash); 
-  }
-};
-
+window.closeLightbox = () => { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; };
 window.abrirFotoGrande = (index) => {
   window.indiceFotoActual = index;
   const urlFoto = window.fotosActuales[index];
   document.getElementById('pvImage').src = urlFoto;
-  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', '', 'album', window.albumActivoIndex);
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA',urlFoto);
   document.getElementById('photoViewer').classList.add('open');
 };
-
 window.cerrarFoto = () => document.getElementById('photoViewer').classList.remove('open');
-
 window.moverFoto = (dir) => {
   window.indiceFotoActual += dir;
   if (window.indiceFotoActual<0) window.indiceFotoActual=window.fotosActuales.length-1;
@@ -1190,26 +1172,24 @@ window.moverFoto = (dir) => {
   window.abrirFotoGrande(window.indiceFotoActual);
 };
 
+window.listaArticulosGlobal = [];
+window.indiceArticuloActual = 0;
+window.tipoArticuloActual = 'blog';
+
 window.abrirArticuloModal = (datos, index, tipo) => {
   window.listaArticulosGlobal=datos; window.indiceArticuloActual=index; window.tipoArticuloActual=tipo;
   const d=datos[index]; if(!d) return;
-  
-  history.replaceState(null, '', `?t=${tipo}&i=${index}${window.location.hash}`);
-  
   document.getElementById('bvTitle').textContent=d.titulo;
   const fechaStr=d.fecha&&d.fecha.toDate?d.fecha.toDate().toLocaleDateString('es-PY'):'';
   let meta='';
   if(tipo==='blog') meta=`${d.autor||'PIEBA'} - ${fechaStr}`;
   else if(tipo==='evento') meta=`Evento - ${fechaStr}`;
   else meta=`Comunicado - ${fechaStr}`;
-  
   document.getElementById('bvMeta').textContent=meta;
   const imgEl=document.getElementById('bvImage');
   if(d.imagen){imgEl.src=d.imagen;imgEl.style.display='block';}else{imgEl.style.display='none';}
   document.getElementById('bvText').innerHTML=d.contenido||d.texto||d.extracto||'Sin información detallada.';
-  
-  document.getElementById('bvShare').innerHTML=window.generarBotonesCompartir(d.titulo, '', tipo, index);
-  
+  document.getElementById('bvShare').innerHTML=window.generarBotonesCompartir(d.titulo);
   document.getElementById('blogViewer').classList.add('open');
   document.body.style.overflow='hidden';
 };
@@ -1217,7 +1197,6 @@ window.abrirArticuloModal = (datos, index, tipo) => {
 window.cerrarBlogModal = () => {
   document.getElementById('blogViewer').classList.remove('open');
   if (!document.getElementById('lightbox').classList.contains('open')) document.body.style.overflow='';
-  history.replaceState(null, '', window.location.pathname + window.location.hash);
 };
 
 window.moverBlog = (dir) => {
@@ -1260,7 +1239,7 @@ const icons = {
   normal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`
 };
 
-window.avisosDataGlobal=[]; window.eventosDataGlobal=[]; window.blogDataGlobal=[]; window.albumsData=[];
+window.avisosDataGlobal=[]; window.eventosDataGlobal=[]; window.blogDataGlobal=[];
 
 async function cargarComunidad() {
   const contAvisos=document.getElementById('contenedorAvisos');
@@ -1285,7 +1264,7 @@ async function cargarComunidad() {
               <span class="aviso-tag ${tipo}">${tipo.toUpperCase()}</span>
               <p class="aviso-titulo">${d.titulo||''}</p>
               <p class="aviso-texto">${d.texto||''}</p>
-              <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>${window.generarBotonesCompartir(d.titulo, '', 'aviso', i)}</div>
+              <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div>
             </div>
           </div></div>`; i++;
       });
@@ -1309,13 +1288,14 @@ async function cargarComunidad() {
             <div class="evento-dia">${fe.getDate()}</div>
             <div class="evento-mes-hora"><span class="evento-mes">${fe.toLocaleDateString('es-PY',{month:'long'})}</span><span class="evento-hora">${fe.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}</span></div>
           </div>
-          <div class="evento-body"><p class="evento-titulo">${e.titulo||''}</p><p class="evento-desc">${e.texto||''}</p>${window.generarBotonesCompartir(e.titulo, '', 'evento', index)}</div>
+          <div class="evento-body"><p class="evento-titulo">${e.titulo||''}</p><p class="evento-desc">${e.texto||''}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo):''}</div>
         </div>`;
       }).join('');
     }
   } catch(err){ console.error('Error:',err); }
 }
 
+window.albumsData = []; // Declarado globalmente para que el gestor de estado lo encuentre
 async function cargarGaleria() {
   const contGaleria=document.getElementById('albumGrid');
   if(!contGaleria) return;
@@ -1338,21 +1318,6 @@ async function cargarGaleria() {
   } catch(err){ console.error('Error Galería:',err); contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:#ff7070;"><p>Error al cargar la galería.</p></div>`; }
 }
 
-window.abrirAlbum=(albumIndex)=>{
-  const album=window.albumsData[albumIndex]; if(!album) return;
-  window.albumActivoIndex = albumIndex;
-  history.replaceState(null, '', `?t=album&i=${albumIndex}${window.location.hash}`);
-  
-  document.getElementById('lbTitle').textContent=album.nombre;
-  document.getElementById('lbDate').innerHTML=album.fecha+window.generarBotonesCompartir('Álbum: '+album.nombre, '', 'album', albumIndex);
-  const grid=document.getElementById('lbGrid'); grid.innerHTML='';
-  window.fotosActuales=album.fotos;
-  if(album.fotos.length===0){grid.innerHTML=`<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`;}
-  else{album.fotos.forEach((url,i)=>{grid.innerHTML+=`<div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})"><img src="${url}" loading="lazy" alt="Foto de ${album.nombre}"></div>`;});}
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow='hidden';
-};
-
 cargarComunidad();
 cargarGaleria();
 
@@ -1373,17 +1338,17 @@ async function cargarBlog() {
       html=`<div class="blog-card reveal visible" style="width:100%;cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
         <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
         <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><h3 class="blog-titulo" style="font-size:1.35rem;margin-bottom:.85rem;">${d.titulo}</h3><p class="blog-excerpt">${d.extracto||''}</p>
-        <div class="blog-meta" style="justify-content:space-between;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir(d.titulo, '', 'blog', 0)}</div></div></div>`;
+        <div class="blog-meta" style="justify-content:space-between;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div></div></div>`;
     } else {
       const d=docs[0];
       html+=`<div class="blog-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
         <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
         <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><p class="blog-titulo">${d.titulo}</p><p class="blog-excerpt">${d.extracto||''}</p>
-        <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir(d.titulo, '', 'blog', 0)}</div></div></div>
+        <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div></div></div>
         <div class="blog-side">${docs.slice(1,4).map((art,i)=>`
           <div class="blog-card-sm reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,${i+1},'blog')">
             <div class="blog-thumb-sm">${art.imagen?`<img src="${art.imagen}">`:`<div class="blog-thumb-ph"></div>`}</div>
-            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir(art.titulo, '', 'blog', i+1)}</div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo):''}</div>
           </div>`).join('')}</div>`;
     }
     cont.innerHTML=html;
@@ -1392,61 +1357,201 @@ async function cargarBlog() {
 cargarBlog();
 </script>
 
+<style>
+  /* VISUALIZADOR DE FOTOS */
+  .photo-viewer{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.95);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;flex-direction:column;}
+  .photo-viewer.open{display:flex;}
+  .pv-close{position:absolute;top:1.25rem;right:1.75rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:38px;height:38px;color:white;font-size:1.1rem;cursor:pointer;z-index:501;transition:0.3s;display:flex;align-items:center;justify-content:center;}
+  .pv-close:hover{background:var(--gold-dim);color:var(--gold);}
+  .pv-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:white;font-size:1.4rem;width:46px;height:46px;cursor:pointer;border-radius:50%;transition:0.3s;z-index:501;display:flex;align-items:center;justify-content:center;}
+  .pv-nav:hover{background:var(--gold);color:var(--navy);}
+  .pv-nav.prev{left:1.5rem;} .pv-nav.next{right:1.5rem;}
+  #pvImage{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
+  .pv-footer{position:absolute;bottom:1.75rem;display:flex;flex-direction:column;align-items:center;gap:0.5rem;}
+
+  /* LECTOR BLOG */
+ .blog-viewer{position:fixed;inset:0;z-index:450;background:rgba(7,5,30,0.96);backdrop-filter:blur(12px);display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
+  .blog-viewer.open{display:flex;}
+  .bv-content{margin:auto;background:var(--navy-deep);border:1px solid var(--glass-b);width:100%;max-width:720px;max-height:none;border-radius:4px;padding:2.25rem;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+  .bv-close{position:absolute;top:1.25rem;right:1.25rem;background:var(--glass);border:1px solid var(--glass-b);color:white;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:0.3s;}
+  .bv-close:hover{background:var(--gold-dim);color:var(--gold);}
+  .bv-header{margin-bottom:1.25rem;padding-right:2rem;border-bottom:1px solid var(--glass-b);padding-bottom:.9rem;}
+  #bvTitle{font-family:'Cinzel',serif;font-size:1.65rem;color:var(--gold);line-height:1.3;margin-bottom:0.4rem;}
+  #bvMeta{font-size:0.72rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;}
+  .bv-body{font-size:0.92rem;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:1.75rem;}
+  .bv-body img{max-width:100%;border-radius:4px;margin:1rem 0;}
+  .bv-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--glass-b);padding-top:1.25rem;flex-wrap:wrap;gap:.85rem;}
+  .bv-controls button{background:transparent;border:1px solid rgba(201,169,110,0.5);color:var(--gold);padding:0.55rem 1.1rem;border-radius:2px;cursor:pointer;font-family:'Raleway',sans-serif;text-transform:uppercase;font-size:0.62rem;letter-spacing:0.15em;transition:0.3s;}
+  .bv-controls button:hover{background:var(--gold);color:var(--navy);}
+
+  /* SHARE */
+  .share-row{display:flex;gap:0.35rem;margin-top:0.65rem;}
+  .share-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-b);color:var(--white);cursor:pointer;transition:0.3s;text-decoration:none;}
+  .share-btn:hover{background:var(--gold-dim);border-color:var(--gold);transform:translateY(-2px);}
+
+  @media(max-width:768px){
+    .pv-nav{width:38px;height:38px;font-size:1.1rem;}
+    .pv-nav.prev{left:.5rem;} .pv-nav.next{right:.5rem;}
+    .bv-content{padding:1.25rem;max-height:none;}
+    #bvTitle{font-size:1.3rem;}
+    .blog-viewer{padding:.75rem;align-items:flex-start;}
+  }
+</style>
+
+<div class="photo-viewer" id="photoViewer">
+  <button class="pv-close" onclick="cerrarFoto()">✕</button>
+  <button class="pv-nav prev" onclick="moverFoto(-1)">❮</button>
+  <img id="pvImage" src="" alt="Foto PIEBA">
+  <button class="pv-nav next" onclick="moverFoto(1)">❯</button>
+  <div class="pv-footer" id="pvShareContainer"></div>
+</div>
+
+<div class="blog-viewer" id="blogViewer">
+  <div class="bv-content">
+    <button class="bv-close" onclick="cerrarBlogModal()">✕</button>
+    <div class="bv-header"><h2 id="bvTitle">Título</h2><p id="bvMeta">Autor - Fecha</p></div>
+    <img id="bvImage" src="" alt="Portada" style="width:100%;border-radius:3px;margin-bottom:1.25rem;display:none;">
+    <div class="bv-body" id="bvText"></div>
+    <div class="bv-footer">
+      <div id="bvShare"></div>
+      <div class="bv-controls">
+        <button onclick="moverBlog(-1)">❮ Anterior</button>
+        <button onclick="moverBlog(1)">Siguiente ❯</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-/* === GESTIÓN DEL BOTÓN ATRÁS (HISTORIAL INTOCABLE) === */
-(function() {
-  function registerModal() { history.pushState({ modalAbierto: true }, '', window.location.href); }
-  window.addEventListener('popstate', function(e) {
+/* === GESTOR DE ESTADO PROFESIONAL Y MODALES UNIFICADO === */
+
+// EL CEREBRO: El popstate escucha el botón atrás del celular y la X
+window.addEventListener('popstate', function(event) {
+  const state = event.state;
+  const photo = document.getElementById('photoViewer');
+  const blog  = document.getElementById('blogViewer');
+  const light = document.getElementById('lightbox');
+
+  // Si no hay estado o el estado es nulo, significa "estamos en la web principal". Cerramos TODO.
+  if (!state || !state.nivel) {
+    if (photo) photo.classList.remove('open');
+    if (blog) blog.classList.remove('open');
+    if (light) light.classList.remove('open');
+    document.body.style.overflow = '';
+    return;
+  }
+
+  // Si el estado dice "album", significa que salimos de la "foto" y debemos mantener el álbum abierto
+  if (state.nivel === 'album') {
+    if (photo) photo.classList.remove('open');
+    if (light) light.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+});
+
+// FUNCIONES DE ABRIR (Empujan el Estado al navegador)
+window.abrirAlbum = (albumIndex) => {
+  const album = window.albumsData[albumIndex]; if(!album) return;
+  // Registramos en el historial que abrimos un Álbum
+  history.pushState({ nivel: 'album' }, '', location.href);
+  
+  document.getElementById('lbTitle').textContent = album.nombre;
+  document.getElementById('lbDate').innerHTML = album.fecha + (window.generarBotonesCompartir ? window.generarBotonesCompartir('Álbum: ' + album.nombre) : '');
+  const grid = document.getElementById('lbGrid'); grid.innerHTML = '';
+  window.fotosActuales = album.fotos;
+  
+  if(album.fotos.length === 0){ grid.innerHTML = `<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`; }
+  else{ album.fotos.forEach((url,i) => { grid.innerHTML += `<div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})"><img src="${url}" loading="lazy" alt="Foto de ${album.nombre}"></div>`; }); }
+  
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.abrirFotoGrande = (index) => {
+  // Registramos en el historial que abrimos una Foto
+  history.pushState({ nivel: 'foto' }, '', location.href);
+  window.indiceFotoActual = index;
+  const urlFoto = window.fotosActuales[index];
+  document.getElementById('pvImage').src = urlFoto;
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
+  document.getElementById('photoViewer').classList.add('open');
+};
+
+window.abrirArticuloModal = (datos, index, tipo) => {
+  // Registramos en el historial que abrimos el Blog/Evento
+  history.pushState({ nivel: 'articulo' }, '', location.href);
+  window.listaArticulosGlobal = datos; window.indiceArticuloActual = index; window.tipoArticuloActual = tipo;
+  const d = datos[index]; if(!d) return;
+  document.getElementById('bvTitle').textContent = d.titulo;
+  const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
+  let meta = '';
+  if(tipo === 'blog') meta = `${d.autor||'PIEBA'} - ${fechaStr}`;
+  else if(tipo === 'evento') meta = `Evento - ${fechaStr}`;
+  else meta = `Comunicado - ${fechaStr}`;
+  
+  document.getElementById('bvMeta').textContent = meta;
+  const imgEl = document.getElementById('bvImage');
+  if(d.imagen){ imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+  document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
+  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
+  
+  document.getElementById('blogViewer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+// FUNCIONES DE CERRAR (Los botones "X" ahora simplemente dicen "Atrás", y el cerebro de arriba hace la magia)
+window.closeLightbox = () => { history.back(); };
+window.cerrarFoto = () => { history.back(); };
+window.cerrarBlogModal = () => { history.back(); };
+
+// NAVEGACIÓN DENTRO DE MODALES
+window.moverFoto = (dir) => {
+  window.indiceFotoActual += dir;
+  if (window.indiceFotoActual < 0) window.indiceFotoActual = window.fotosActuales.length - 1;
+  if (window.indiceFotoActual >= window.fotosActuales.length) window.indiceFotoActual = 0;
+  const urlFoto = window.fotosActuales[window.indiceFotoActual];
+  document.getElementById('pvImage').src = urlFoto;
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
+};
+
+window.moverBlog = (dir) => {
+  let nuevoIndex = window.indiceArticuloActual + dir;
+  if(nuevoIndex < 0) nuevoIndex = window.listaArticulosGlobal.length - 1;
+  if(nuevoIndex >= window.listaArticulosGlobal.length) nuevoIndex = 0;
+  
+  const d = window.listaArticulosGlobal[nuevoIndex]; if(!d) return;
+  window.indiceArticuloActual = nuevoIndex;
+  document.getElementById('bvTitle').textContent = d.titulo;
+  const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
+  let meta = '';
+  if(window.tipoArticuloActual === 'blog') meta = `${d.autor||'PIEBA'} - ${fechaStr}`;
+  else if(window.tipoArticuloActual === 'evento') meta = `Evento - ${fechaStr}`;
+  else meta = `Comunicado - ${fechaStr}`;
+  document.getElementById('bvMeta').textContent = meta;
+  const imgEl = document.getElementById('bvImage');
+  if(d.imagen){ imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+  document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
+  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
+};
+
+// TECLADO (Escape cierra simulando Atrás)
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') {
     const photo = document.getElementById('photoViewer');
     const blog  = document.getElementById('blogViewer');
     const light = document.getElementById('lightbox');
-
-    if (photo && photo.classList.contains('open')) { photo.classList.remove('open'); } 
-    else if (blog && blog.classList.contains('open')) {
-      blog.classList.remove('open');
-      if (!light || !light.classList.contains('open')) document.body.style.overflow = '';
-      history.replaceState(null, '', window.location.pathname + window.location.hash);
-    } else if (light && light.classList.contains('open')) {
-      light.classList.remove('open'); document.body.style.overflow = '';
-      history.replaceState(null, '', window.location.pathname + window.location.hash);
+    if((photo && photo.classList.contains('open')) || (blog && blog.classList.contains('open')) || (light && light.classList.contains('open'))) {
+      history.back();
     }
-  });
-
-  // Overriding the open functions to register modal in history
-  const originalAbrirAlbum = window.abrirAlbum;
-  window.abrirAlbum = function(index) { registerModal(); if(originalAbrirAlbum) originalAbrirAlbum(index); };
-  
-  const originalAbrirFoto = window.abrirFotoGrande;
-  window.abrirFotoGrande = function(index) { registerModal(); if(originalAbrirFoto) originalAbrirFoto(index); };
-  
-  const originalAbrirArticulo = window.abrirArticuloModal;
-  window.abrirArticuloModal = function(datos, index, tipo) { registerModal(); if(originalAbrirArticulo) originalAbrirArticulo(datos, index, tipo); };
-
-  const btnCloseLightbox = document.querySelector('.lightbox-close');
-  if(btnCloseLightbox) {
-    btnCloseLightbox.removeAttribute('onclick');
-    btnCloseLightbox.addEventListener('click', () => { if(document.getElementById('lightbox').classList.contains('open')) history.back(); });
   }
-  window.cerrarFoto = function() { if(document.getElementById('photoViewer').classList.contains('open')) history.back(); };
-  window.cerrarBlogModal = function() { if(document.getElementById('blogViewer').classList.contains('open')) history.back(); };
-})();
-</script>
-
-<script>
-/* === LECTOR DE LINKS COMPARTIDOS AUTOMÁTICO === */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const params = new URLSearchParams(window.location.search);
-    const tipo = params.get('t');
-    const id = parseInt(params.get('i'));
-    
-    if (tipo && !isNaN(id)) {
-      if (tipo === 'blog' && window.blogDataGlobal[id]) window.abrirArticuloModal(window.blogDataGlobal, id, 'blog');
-      else if (tipo === 'aviso' && window.avisosDataGlobal[id]) window.abrirArticuloModal(window.avisosDataGlobal, id, 'aviso');
-      else if (tipo === 'evento' && window.eventosDataGlobal[id]) window.abrirArticuloModal(window.eventosDataGlobal, id, 'evento');
-      else if (tipo === 'album' && window.albumsData[id]) window.abrirAlbum(id);
-    }
-  }, 1500); 
+  if(e.key === 'ArrowRight') {
+    if(document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(1);
+    else if(document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(1);
+  }
+  if(e.key === 'ArrowLeft') {
+    if(document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(-1);
+    else if(document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(-1);
+  }
 });
 </script>
 </body>
