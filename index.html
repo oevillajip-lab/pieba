@@ -1144,6 +1144,7 @@ initYouTube();
 </script>
 
 <script>
+
 /* === MOTOR DE COMPARTIR Y VISUALIZADORES === */
 window.generarBotonesCompartir = (titulo, urlImagen='', tipo='', id='') => {
   let linkBase = window.location.href.split('?')[0].split('#')[0];
@@ -1440,6 +1441,8 @@ window.addEventListener('popstate', function(event) {
     if (blog) blog.classList.remove('open');
     if (light) light.classList.remove('open');
     document.body.style.overflow = '';
+    // Limpiamos la URL para borrar el "?t=..."
+    history.replaceState(null, '', window.location.pathname + window.location.hash);
     return;
   }
 
@@ -1454,11 +1457,12 @@ window.addEventListener('popstate', function(event) {
 // FUNCIONES DE ABRIR (Empujan el Estado al navegador)
 window.abrirAlbum = (albumIndex) => {
   const album = window.albumsData[albumIndex]; if(!album) return;
-  // Registramos en el historial que abrimos un Álbum
-  history.pushState({ nivel: 'album' }, '', location.href);
+  window.albumActivoIndex = albumIndex;
+  // Registramos en el historial y cambiamos la URL
+  history.pushState({ nivel: 'album' }, '', `?t=album&i=${albumIndex}`);
   
   document.getElementById('lbTitle').textContent = album.nombre;
- document.getElementById('lbDate').innerHTML=album.fecha+(window.generarBotonesCompartir?window.generarBotonesCompartir('Álbum: '+album.nombre, '', 'album', albumIndex):'');
+  document.getElementById('lbDate').innerHTML=album.fecha+(window.generarBotonesCompartir?window.generarBotonesCompartir('Álbum: '+album.nombre, '', 'album', albumIndex):'');
   const grid = document.getElementById('lbGrid'); grid.innerHTML = '';
   window.fotosActuales = album.fotos;
   
@@ -1470,18 +1474,18 @@ window.abrirAlbum = (albumIndex) => {
 };
 
 window.abrirFotoGrande = (index) => {
-  // Registramos en el historial que abrimos una Foto
   history.pushState({ nivel: 'foto' }, '', location.href);
   window.indiceFotoActual = index;
   const urlFoto = window.fotosActuales[index];
   document.getElementById('pvImage').src = urlFoto;
-  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
+  // La foto envía los parámetros del álbum al que pertenece
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto, 'album', window.albumActivoIndex);
   document.getElementById('photoViewer').classList.add('open');
 };
 
 window.abrirArticuloModal = (datos, index, tipo) => {
-  // Registramos en el historial que abrimos el Blog/Evento
-  history.pushState({ nivel: 'articulo' }, '', location.href);
+  // Cambiamos la URL para el blog, aviso o evento
+  history.pushState({ nivel: 'articulo' }, '', `?t=${tipo}&i=${index}`);
   window.listaArticulosGlobal = datos; window.indiceArticuloActual = index; window.tipoArticuloActual = tipo;
   const d = datos[index]; if(!d) return;
   document.getElementById('bvTitle').textContent = d.titulo;
@@ -1495,7 +1499,8 @@ window.abrirArticuloModal = (datos, index, tipo) => {
   const imgEl = document.getElementById('bvImage');
   if(d.imagen){ imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
   document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
-  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
+  // Pasamos los datos exactos al botón de compartir
+  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo, d.imagen, tipo, index);
   
   document.getElementById('blogViewer').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1553,15 +1558,14 @@ document.addEventListener('keydown', e => {
   if(e.key === 'ArrowLeft') {
     if(document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(-1);
     else if(document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(-1);
-  }
+}
 });
 </script>
 
-  
 <script>
 /* === LECTOR DE LINKS COMPARTIDOS DE WHATSAPP === */
 window.addEventListener('load', () => {
-  // Esperamos 1.5 segundos para asegurarnos de que Firebase ya descargó los datos
+  // Esperamos 1.5 segundos a que Firebase descargue los datos
   setTimeout(() => {
     const params = new URLSearchParams(window.location.search);
     const tipo = params.get('t');
@@ -1571,13 +1575,10 @@ window.addEventListener('load', () => {
       if (tipo === 'blog' && window.blogDataGlobal[id]) window.abrirArticuloModal(window.blogDataGlobal, id, 'blog');
       else if (tipo === 'aviso' && window.avisosDataGlobal[id]) window.abrirArticuloModal(window.avisosDataGlobal, id, 'aviso');
       else if (tipo === 'evento' && window.eventosDataGlobal[id]) window.abrirArticuloModal(window.eventosDataGlobal, id, 'evento');
-      else if (tipo === 'album' && albumsData[id]) window.abrirAlbum(id);
+      else if (tipo === 'album' && window.albumsData[id]) window.abrirAlbum(id);
     }
   }, 1500); 
 });
 </script>
-
-
-  
 </body>
 </html>
