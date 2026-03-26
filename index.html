@@ -30,27 +30,25 @@
       color: var(--white);
     }
 
+    /* ── SCROLL SIN SNAP — navegación libre ── */
     .scroll-wrap {
       height: 100dvh;
-      min-height: 100dvh;
       overflow-y: auto;
-      scroll-snap-type: y mandatory;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
     }
 
+    /* Cada sección ocupa mínimo el viewport pero crece si necesita más */
     .page {
       min-height: 100dvh;
       height: auto;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
       position: relative;
       overflow: visible;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6.5rem 0 2.5rem;
+      padding: 6rem 0 3rem;
     }
 
     /* ── NAV ── */
@@ -105,127 +103,103 @@
     .gold-line { width: 46px; height: 2px; background: var(--gold); margin: 1.1rem auto; }
     .gold-line.left { margin: 1.1rem 0; }
     .section-label { font-size: .68rem; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
-    .section-title { font-family: 'Cinzel', serif; font-size: clamp(1.9rem, 3.5vw, 2.9rem); font-weight: 600; line-height: 1.15; margin-top: .85rem; }
-    .page-num { position: absolute; bottom: 1.75rem; right: 2.5rem; font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .3em; color: rgba(255,255,255,.18); }
+    .section-title { font-family: 'Cinzel', serif; font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 600; line-height: 1.15; margin-top: .6rem; }
+    .page-num { position: absolute; bottom: 1.25rem; right: 2.5rem; font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .3em; color: rgba(255,255,255,.18); }
 
-/* ── INICIO ── */
+    /* ── INICIO ── */
     #inicio { background: var(--navy-deep); }
-    #starCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    #starCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: .55; }
     .hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 65% 55% at 50% 60%, rgba(15,11,50,.0) 0%, rgba(7,5,30,.9) 100%); pointer-events: none; }
     .hero-content { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .hero-logo { width: 340px; height: 340px; margin-bottom: 1.5rem; animation: fadeDown 1.2s ease both; filter: drop-shadow(0 0 24px rgba(201,169,110,.35)); }
-    .hero-name { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .18em; line-height: 1; animation: fadeUp 1.2s ease .2s both; font-size: clamp(1.2rem, 2.5vw, 2rem); max-width: 600px; }
-    .hero-sub { font-size: clamp(.75rem, 1.2vw, .95rem); font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-top: .7rem; animation: fadeUp 1.2s ease .35s both; }
-    .hero-verse { font-style: italic; font-size: clamp(.78rem, 1vw, .92rem); color: var(--muted); max-width: 420px; margin-top: 1.75rem; line-height: 1.8; animation: fadeUp 1.2s ease .5s both; }
+    .hero-logo { width: 280px; height: 280px; margin-bottom: 1.2rem; animation: fadeDown 1.2s ease both; filter: drop-shadow(0 0 18px rgba(201,169,110,.28)); }
+    .hero-name { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .18em; line-height: 1.1; animation: fadeUp 1.2s ease .2s both; font-size: clamp(1rem, 2.2vw, 1.8rem); max-width: 560px; }
+    .hero-sub { font-size: clamp(.72rem, 1.1vw, .9rem); font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-top: .6rem; animation: fadeUp 1.2s ease .35s both; }
+    .hero-verse { font-style: italic; font-size: clamp(.75rem, .95vw, .88rem); color: var(--muted); max-width: 380px; margin-top: 1.4rem; line-height: 1.8; animation: fadeUp 1.2s ease .5s both; }
     .hero-verse cite { color: var(--gold); font-style: normal; font-size: .8em; letter-spacing: .08em; }
-    .scroll-cue { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; opacity: .35; animation: cueBounce 2.5s ease infinite; }
-    .scroll-cue span { font-size: .6rem; letter-spacing: .25em; text-transform: uppercase; }
-    .scroll-cue::after { content: ''; width: 1px; height: 36px; background: var(--white); }
+    .scroll-cue { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; opacity: .3; animation: cueBounce 2.5s ease infinite; }
+    .scroll-cue span { font-size: .58rem; letter-spacing: .25em; text-transform: uppercase; }
+    .scroll-cue::after { content: ''; width: 1px; height: 28px; background: var(--white); }
 
     /* ── NOSOTROS ── */
     #nosotros { background: var(--navy); }
-    .nos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; padding: 2rem 6rem; max-width: 1200px; width: 100%; }
-    .nos-body { font-size: .92rem; line-height: 1.9; color: var(--muted); margin-top: 1.4rem; }
-    .nos-list { list-style: none; margin-top: 1.75rem; display: flex; flex-direction: column; gap: .9rem; }
+    .nos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 1.5rem 5rem; max-width: 1100px; width: 100%; }
+    .nos-body { font-size: .88rem; line-height: 1.85; color: var(--muted); margin-top: 1.1rem; }
+    .nos-list { list-style: none; margin-top: 1.4rem; display: flex; flex-direction: column; gap: .75rem; }
     .nos-list li { display: flex; align-items: flex-start; gap: 1rem; }
-    .nos-list li::before { content: ''; flex-shrink: 0; width: 22px; height: 1px; background: var(--gold); margin-top: .68em; }
-    .nos-list li span { font-size: .88rem; color: var(--muted); line-height: 1.6; }
+    .nos-list li::before { content: ''; flex-shrink: 0; width: 22px; height: 1px; background: var(--gold); margin-top: .65em; }
+    .nos-list li span { font-size: .86rem; color: var(--muted); line-height: 1.55; }
     .nos-visual { display: flex; align-items: center; justify-content: center; position: relative; }
-    .ring { width: 300px; height: 300px; border-radius: 50%; border: 1px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; position: relative; animation: spin 30s linear infinite; }
-    .ring::before { content: ''; position: absolute; width: 248px; height: 248px; border-radius: 50%; border: 1px solid var(--glass-b); }
-    .ring-inner { width: 188px; height: 188px; background: var(--glass); border: 1px solid var(--glass-b); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: spin 30s linear infinite reverse; }
-    .ring-inner svg { width: 110px; height: 110px; opacity: .85; }
-    .stat { position: absolute; padding: .7rem 1.15rem; text-align: center; background: rgba(201,169,110,.1); border: 1px solid var(--gold-dim); border-radius: 6px; backdrop-filter: blur(8px); animation: spin 30s linear infinite; }
-    .stat:nth-child(2) { top: 6%; right: -24px; }
-    .stat:nth-child(3) { bottom: 10%; left: -24px; }
-    .stat-num { font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); animation: spin 30s linear infinite reverse; }
-    .stat-lbl { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: .18rem; animation: spin 30s linear infinite reverse; }
+    .ring { width: 260px; height: 260px; border-radius: 50%; border: 1px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; position: relative; animation: spin 30s linear infinite; }
+    .ring::before { content: ''; position: absolute; width: 215px; height: 215px; border-radius: 50%; border: 1px solid var(--glass-b); }
+    .ring-inner { width: 165px; height: 165px; background: var(--glass); border: 1px solid var(--glass-b); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: spin 30s linear infinite reverse; }
+    .ring-inner svg { width: 95px; height: 95px; opacity: .85; }
+    .stat { position: absolute; padding: .6rem 1rem; text-align: center; background: rgba(201,169,110,.1); border: 1px solid var(--gold-dim); border-radius: 6px; backdrop-filter: blur(8px); animation: spin 30s linear infinite; }
+    .stat:nth-child(2) { top: 6%; right: -20px; }
+    .stat:nth-child(3) { bottom: 10%; left: -20px; }
+    .stat-num { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; color: var(--gold); animation: spin 30s linear infinite reverse; }
+    .stat-lbl { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: .15rem; animation: spin 30s linear infinite reverse; }
 
-/* ── CULTOS (Ex Mensajes) ── */
+    /* ── CULTOS ── */
     #cultos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
-    .cultos-wrap { text-align: center; max-width: 1180px; width: 100%; padding: 2rem 3rem; }
-    
-    /* Clases de tarjetas de reuniones (se usarán en Comunidad) */
-    .culto-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 2.5rem; text-align: left; }
-    .culto-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
-    .culto-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); transform: scaleX(0); transition: transform .4s; }
-    .culto-card:hover { border-color: var(--gold-dim); transform: translateY(-5px); }
-    .culto-card:hover::after { transform: scaleX(1); }
-    .culto-dia { font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); }
-    .culto-nombre { font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 600; margin-top: .65rem; }
-    .culto-hora { font-size: 2.1rem; font-weight: 300; margin-top: .85rem; }
-    .culto-desc { font-size: .78rem; color: var(--muted); margin-top: .65rem; line-height: 1.65; }
+    .cultos-wrap { text-align: center; max-width: 1100px; width: 100%; padding: 1.5rem 2.5rem; }
 
-    /* ─── VIDEO SECTION ─── */
-    .video-section { margin-top: 2.25rem; text-align: left; }
-    .video-featured-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 2rem 1.6rem; position: relative; transition: border-color .4s; }
+    .culto-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 2rem; text-align: left; }
+    .culto-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.4rem 1.2rem; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
+    .culto-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); transform: scaleX(0); transition: transform .4s; }
+    .culto-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .culto-card:hover::after { transform: scaleX(1); }
+    .culto-dia { font-size: .64rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); }
+    .culto-nombre { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 600; margin-top: .5rem; }
+    .culto-hora { font-size: 1.8rem; font-weight: 300; margin-top: .65rem; }
+    .culto-desc { font-size: .75rem; color: var(--muted); margin-top: .5rem; line-height: 1.6; }
+
+    /* VIDEO SECTION */
+    .video-section { margin-top: 1.75rem; text-align: left; }
+    .video-featured-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.5rem 1.75rem 1.4rem; position: relative; transition: border-color .4s; }
     .video-featured-card.is-playing { border-color: rgba(201,169,110,.38); }
     .video-featured-card.is-loading .video-featured-title::after { content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); margin-left: .6rem; vertical-align: middle; animation: pulse 1.2s ease infinite; }
-    .video-featured-eyebrow { display: flex; align-items: center; gap: .75rem; margin-bottom: .9rem; flex-wrap: wrap; }
+    .video-featured-eyebrow { display: flex; align-items: center; gap: .75rem; margin-bottom: .8rem; flex-wrap: wrap; }
     .video-featured-label { font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .2rem .6rem; border-radius: 1px; font-weight: 700; }
     .video-featured-date { font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-    .video-featured-title { font-family: 'Cinzel', serif; font-size: clamp(1rem, 2.2vw, 1.55rem); font-weight: 600; line-height: 1.3; color: var(--white); }
-    .video-featured-desc { margin-top: .6rem; font-size: .79rem; color: var(--muted); line-height: 1.7; max-width: 700px; }
+    .video-featured-title { font-family: 'Cinzel', serif; font-size: clamp(.95rem, 2vw, 1.45rem); font-weight: 600; line-height: 1.3; color: var(--white); }
+    .video-featured-desc { margin-top: .5rem; font-size: .77rem; color: var(--muted); line-height: 1.65; max-width: 680px; }
     .video-inline-player { overflow: hidden; max-height: 0; transition: max-height .55s cubic-bezier(.4,0,.2,1), margin-top .55s; margin-top: 0; }
-    .video-inline-player.open { max-height: 560px; margin-top: 1.5rem; }
+    .video-inline-player.open { max-height: 520px; margin-top: 1.25rem; }
     .video-inline-player iframe { width: 100%; aspect-ratio: 16/9; display: block; border: 0; border-radius: 2px; }
-    .video-featured-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.3rem; flex-wrap: wrap; }
-    .video-play-btn { display: inline-flex; align-items: center; gap: .6rem; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: .58rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: .22s ease; }
+    .video-featured-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.1rem; flex-wrap: wrap; }
+    .video-play-btn { display: inline-flex; align-items: center; gap: .6rem; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: .52rem 1.1rem; font-family: 'Raleway', sans-serif; font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: .22s ease; }
     .video-play-btn:hover, .video-play-btn.is-playing { background: var(--gold); color: var(--navy); }
     .video-play-btn svg { flex-shrink: 0; transition: transform .2s; }
     .video-play-btn:hover svg { transform: scale(1.2); }
     .video-total-count { font-size: .68rem; color: var(--muted); letter-spacing: .06em; }
 
-    .video-filter-row { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; margin-top: 1.75rem; padding-bottom: .9rem; border-bottom: 1px solid rgba(255,255,255,.07); }
-    .video-filter-label-sm { font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-right: .25rem; }
-    .vchip { background: transparent; border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.45); border-radius: 1px; padding: .34rem .75rem; font-family: 'Raleway', sans-serif; font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: .18s ease; }
-    .vchip:hover { border-color: rgba(201,169,110,.5); color: var(--gold); }
-    .vchip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.08); }
-
-    .video-month-group { margin-top: 1.4rem; }
-    .video-month-header { font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: .75rem; margin-bottom: .2rem; }
-    .video-month-header::after { content: ''; flex: 1; height: 1px; background: rgba(201,169,110,.14); }
-    .video-row { display: grid; grid-template-columns: 4.2rem 1fr 2rem; align-items: center; gap: 0 1.1rem; padding: .72rem .3rem .72rem .5rem; border-bottom: 1px solid rgba(255,255,255,.04); cursor: pointer; transition: background .18s; position: relative; }
-    .video-row::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 2px; background: var(--gold); transform: scaleY(0); transition: transform .2s; transform-origin: center; }
-    .video-row:hover { background: rgba(255,255,255,.025); }
-    .video-row.vr-active { background: rgba(201,169,110,.04); }
-    .video-row.vr-active::before { transform: scaleY(1); }
-    .vr-day { font-size: .66rem; color: var(--muted); letter-spacing: .06em; white-space: nowrap; }
-    .vr-title { font-size: .82rem; color: rgba(255,255,255,.8); line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .18s; }
-    .video-row:hover .vr-title, .video-row.vr-active .vr-title { color: var(--white); }
-    .vr-play { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: .18s ease; color: var(--muted); }
-    .video-row:hover .vr-play { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.1); }
-    .video-row.vr-active .vr-play { border-color: var(--gold); background: var(--gold); color: var(--navy); }
-    .video-empty-msg { text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: .8rem; border: 1px dashed rgba(255,255,255,.08); border-radius: 3px; margin-top: 1.25rem; }
-
-    /* ── COMUNIDAD (Estructura Combinada) ── */
+    /* ── COMUNIDAD ── */
     #comunidad { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
-    .comunidad-wrap { text-align: center; max-width: 1180px; width: 100%; padding: 2rem 3rem; margin: 0 auto; }
-    .comunidad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3.5rem; text-align: left; }
-    .comunidad-col-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.1rem; border-bottom: 1px solid var(--glass-b); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+    .comunidad-wrap { text-align: center; max-width: 1100px; width: 100%; padding: 1.5rem 2.5rem; margin: 0 auto; }
+    .comunidad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 2.5rem; text-align: left; }
+    .comunidad-col-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1rem; border-bottom: 1px solid var(--glass-b); padding-bottom: .45rem; margin-bottom: 1.2rem; }
 
     /* ── EN VIVO ── */
     #envivo { background: var(--navy-deep); }
-    .envivo-wrap { text-align: center; max-width: 880px; width: 100%; padding: 2rem 3rem; }
-    .live-pill { display: inline-flex; align-items: center; gap: .5rem; background: rgba(220,50,50,.12); border: 1px solid rgba(220,50,50,.35); border-radius: 100px; padding: .35rem .9rem; font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: #ff7070; margin-bottom: 1.4rem; }
+    .envivo-wrap { text-align: center; max-width: 820px; width: 100%; padding: 1.5rem 2.5rem; }
+    .live-pill { display: inline-flex; align-items: center; gap: .5rem; background: rgba(220,50,50,.12); border: 1px solid rgba(220,50,50,.35); border-radius: 100px; padding: .3rem .85rem; font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; color: #ff7070; margin-bottom: 1.2rem; }
     .live-dot-r { width: 7px; height: 7px; border-radius: 50%; background: #ff4444; animation: pulse 1.4s ease infinite; }
-    .stream-box { margin-top: 1.75rem; border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.38); aspect-ratio: 16/9; max-height: 48vh; display: flex; align-items: center; justify-content: center; }
-    .stream-ph { display: flex; flex-direction: column; align-items: center; gap: .9rem; color: var(--muted); }
-    .stream-icon { width: 68px; height: 68px; border-radius: 50%; background: rgba(255,255,255,.05); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; }
-    .stream-hint { font-size: .68rem; color: var(--gold); letter-spacing: .14em; text-transform: uppercase; }
+    .stream-box { margin-top: 1.4rem; border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.38); aspect-ratio: 16/9; width: 100%; display: flex; align-items: center; justify-content: center; }
+    .stream-ph { display: flex; flex-direction: column; align-items: center; gap: .85rem; color: var(--muted); padding: 1rem; }
+    .stream-icon { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,.05); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; }
     .stream-box iframe { width: 100%; height: 100%; border: none; }
-    .next-txt { margin-top: 1.4rem; font-size: .8rem; color: var(--muted); }
+    .next-txt { margin-top: 1.2rem; font-size: .78rem; color: var(--muted); }
     .next-txt strong { color: var(--gold); }
 
     /* ── GALERÍA ── */
     #galeria { background: var(--navy); }
-    .galeria-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
-.album-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(350px, 420px)); 
-      justify-content: center; 
-      gap: 1.5rem; 
-      margin-top: 2.5rem; 
+    .galeria-wrap { text-align: center; max-width: 1000px; width: 100%; padding: 1.5rem 2.5rem; }
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 380px));
+      justify-content: center;
+      gap: 1.25rem;
+      margin-top: 2rem;
       width: 100%;
     }
     .album-card { position: relative; cursor: pointer; border-radius: 3px; overflow: hidden; border: 1px solid var(--glass-b); aspect-ratio: 4/3; transition: border-color .3s, transform .3s; }
@@ -234,311 +208,284 @@
     .album-card:hover .album-cover-img { transform: scale(1.04); }
     .album-cover-img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; display: block; }
     .album-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform .5s ease; }
-    .album-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,5,30,.92) 0%, rgba(7,5,30,.25) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem 1rem; opacity: .85; transition: opacity .3s; }
-    .album-count { position: absolute; top: .75rem; right: .75rem; font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .2rem .55rem; border-radius: 2px; }
-    .album-name { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 600; color: var(--white); line-height: 1.3; }
-    .album-date { font-size: .65rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-top: .3rem; }
+    .album-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,5,30,.92) 0%, rgba(7,5,30,.25) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.1rem 1rem; opacity: .85; transition: opacity .3s; }
+    .album-count { position: absolute; top: .65rem; right: .65rem; font-size: .56rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .18rem .5rem; border-radius: 2px; }
+    .album-name { font-family: 'Cinzel', serif; font-size: .85rem; font-weight: 600; color: var(--white); line-height: 1.3; }
+    .album-date { font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-top: .25rem; }
 
     /* Lightbox */
     .lightbox { position: fixed; inset: 0; z-index: 300; background: rgba(7,5,30,.97); backdrop-filter: blur(16px); display: none; flex-direction: column; overflow-y: auto; }
     .lightbox.open { display: flex; }
-    .lightbox-header { position: sticky; top: 0; z-index: 10; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(7,5,30,.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--glass-b); }
-    .lightbox-title { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 600; }
-    .lightbox-date { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: .2rem; }
-    .lightbox-close { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--glass-b); background: var(--glass); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 1.2rem; transition: background .3s; flex-shrink: 0; }
+    .lightbox-header { position: sticky; top: 0; z-index: 10; padding: 1.1rem 1.75rem; display: flex; align-items: center; justify-content: space-between; background: rgba(7,5,30,.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--glass-b); }
+    .lightbox-title { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; }
+    .lightbox-date { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: .2rem; }
+    .lightbox-close { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--glass-b); background: var(--glass); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 1.1rem; transition: background .3s; flex-shrink: 0; }
     .lightbox-close:hover { background: var(--gold-dim); }
-    .lightbox-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; padding: 1.5rem 2rem 3rem; max-width: 1100px; width: 100%; margin: 0 auto; }
+    .lightbox-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; padding: 1.25rem 1.75rem 2.5rem; max-width: 1050px; width: 100%; margin: 0 auto; }
     .lightbox-photo { aspect-ratio: 1; background: var(--glass); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: opacity .3s; }
     .lightbox-photo:hover { opacity: .82; }
     .lightbox-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .lightbox-photo-ph { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; color: rgba(255,255,255,.15); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; }
-    .lightbox-photo-ph svg { opacity: .2; }
     .lightbox-empty { grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: .84rem; line-height: 1.8; }
-    .lightbox-empty span { color: var(--gold); }
-    .lb-upload-hint { margin-top: 1.25rem; display: inline-flex; align-items: center; gap: .5rem; border: 1px dashed rgba(201,169,110,.35); padding: .65rem 1.25rem; border-radius: 3px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
 
     /* ── AVISOS ── */
-    #avisos { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
-    .avisos-wrap { text-align: center; max-width: 880px; width: 100%; padding: 2rem 3rem; }
-.aviso-list { 
-      display: flex; flex-direction: column; gap: 1.2rem; 
-      margin-top: 2rem; text-align: left; align-items: center; 
+    .aviso-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .9rem;
+      margin-top: 1rem;
+      text-align: left;
     }
-    .aviso-card { 
-      background: var(--glass); border: 1px solid var(--glass-b); 
-      border-radius: 4px; padding: 1.25rem; display: flex; 
-      flex-direction: column; /* Imagen arriba, texto abajo */
-      gap: 1rem; transition: border-color 0.3s; width: 100%; max-width: 480px; 
+    .aviso-card {
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: 4px; padding: 1rem; display: flex;
+      flex-direction: column;
+      gap: .75rem; transition: border-color 0.3s; width: 100%;
     }
-    .aviso-img, .evento-img { 
-      width: 100%; max-height: 200px; border-radius: 2px; 
-      overflow: hidden; background: var(--navy-light); 
+    .aviso-img, .evento-img {
+      width: 100%; max-height: 150px; border-radius: 2px;
+      overflow: hidden; background: var(--navy-light);
     }
     .aviso-img img, .evento-img img { width: 100%; height: 100%; object-fit: cover; }
-    .aviso-header-row { display: flex; align-items: flex-start; gap: 1rem; }
+    .aviso-header-row { display: flex; align-items: flex-start; gap: .85rem; }
     .aviso-card:hover { border-color: var(--gold-dim); }
     .aviso-card.urgente { border-left: 3px solid #ff7070; }
     .aviso-card.info { border-left: 3px solid var(--gold); }
     .aviso-card.normal { border-left: 3px solid rgba(255,255,255,.18); }
-    .aviso-ico { width: 36px; height: 36px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
+    .aviso-ico { width: 32px; height: 32px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
     .aviso-ico.urgente { background: rgba(255,112,112,.1); }
     .aviso-ico.info { background: var(--gold-dim); }
     .aviso-ico.normal { background: var(--glass); }
-    .aviso-tag { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; padding: .18rem .55rem; border-radius: 2px; font-weight: 600; }
+    .aviso-tag { font-size: .56rem; letter-spacing: .2em; text-transform: uppercase; padding: .16rem .5rem; border-radius: 2px; font-weight: 600; }
     .aviso-tag.urgente { color: #ff7070; background: rgba(255,112,112,.1); }
     .aviso-tag.info { color: var(--gold); background: var(--gold-dim); }
     .aviso-tag.normal { color: var(--muted); background: var(--glass); }
     .aviso-body { flex: 1; }
-    .aviso-titulo { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; margin-bottom: .35rem; }
-    .aviso-texto { font-size: .82rem; color: var(--muted); line-height: 1.65; }
-    .aviso-footer { display: flex; align-items: center; gap: .75rem; margin-top: .6rem; }
-    .aviso-fecha { font-size: .62rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+    .aviso-titulo { font-family: 'Cinzel', serif; font-size: .85rem; font-weight: 600; margin-bottom: .3rem; }
+    .aviso-texto { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+    .aviso-footer { display: flex; align-items: center; gap: .75rem; margin-top: .5rem; }
+    .aviso-fecha { font-size: .6rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
 
     /* ── EVENTOS ── */
     #eventos { background: var(--navy-deep); }
-    .eventos-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
-
-    /* Grid dinámico — se ajusta por JS según cantidad de items */
-    .evento-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      margin-top: 2.5rem;
-    }
-
-    /* Un solo evento: centrado con ancho máximo elegante */
-    .evento-grid.solo {
-      grid-template-columns: 1fr;
-      max-width: 440px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Dos eventos: columnas de 2 centradas */
-    .evento-grid.par {
-      grid-template-columns: repeat(2, 1fr);
-      max-width: 760px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Estado vacío elegante */
-    .eventos-empty {
-      grid-column: 1 / -1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 2rem;
-      min-height: 38vh;
-      text-align: center;
-    }
-    .eventos-empty-icon {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      border: 1px solid rgba(201,169,110,.2);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1.5rem;
-      background: rgba(201,169,110,.04);
-    }
-    .eventos-empty-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--gold);
-      letter-spacing: .06em;
-      margin-bottom: .65rem;
-    }
-    .eventos-empty-sub {
-      font-size: .8rem;
-      color: var(--muted);
-      line-height: 1.75;
-      max-width: 320px;
-    }
-    .eventos-empty-line {
-      width: 36px; height: 1px;
-      background: rgba(201,169,110,.3);
-      margin: 1.25rem auto 0;
-    }
-
+    .eventos-wrap { text-align: center; max-width: 1000px; width: 100%; padding: 1.5rem 2.5rem; }
+    .evento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
+    .evento-grid.solo { grid-template-columns: 1fr; max-width: 380px; margin-left: auto; margin-right: auto; }
+    .evento-grid.par { grid-template-columns: repeat(2, 1fr); max-width: 680px; margin-left: auto; margin-right: auto; }
+    .eventos-empty { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; text-align: center; }
+    .eventos-empty-title { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: var(--gold); letter-spacing: .06em; margin-bottom: .5rem; }
     .evento-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 0; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; }
-    .evento-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
-    .evento-date-bar { background: linear-gradient(90deg, rgba(201,169,110,.15), transparent); border-bottom: 1px solid var(--glass-b); padding: .75rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
-    .evento-dia { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); line-height: 1; }
+    .evento-card:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
+    .evento-date-bar { background: linear-gradient(90deg, rgba(201,169,110,.15), transparent); border-bottom: 1px solid var(--glass-b); padding: .65rem 1.1rem; display: flex; align-items: center; gap: .65rem; }
+    .evento-dia { font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); line-height: 1; }
     .evento-mes-hora { display: flex; flex-direction: column; }
-    .evento-mes { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
-    .evento-hora { font-size: .72rem; color: var(--muted); margin-top: .15rem; }
-    .evento-body { padding: 1.1rem 1.25rem 1.4rem; }
-    .evento-tag { font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: .18rem .55rem; border-radius: 2px; display: inline-block; margin-bottom: .6rem; }
-    .evento-tag.urgente { background: rgba(255,112,112,.85); color: #fff; }
-    .evento-titulo { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; line-height: 1.3; }
-    .evento-desc { font-size: .78rem; color: var(--muted); margin-top: .55rem; line-height: 1.65; }
-    .evento-lugar { display: flex; align-items: center; gap: .4rem; font-size: .68rem; color: var(--muted); margin-top: .75rem; }
-    .evento-lugar svg { flex-shrink: 0; }
+    .evento-mes { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+    .evento-hora { font-size: .7rem; color: var(--muted); margin-top: .12rem; }
+    .evento-body { padding: .9rem 1.1rem 1.2rem; }
+    .evento-titulo { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; line-height: 1.3; }
+    .evento-desc { font-size: .75rem; color: var(--muted); margin-top: .45rem; line-height: 1.6; }
 
     /* ── BLOG ── */
     #blog { background: var(--navy); }
-    .blog-wrap { text-align: center; max-width: 1080px; width: 100%; padding: 2rem 3rem; }
-    .blog-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
+    .blog-wrap { text-align: center; max-width: 1000px; width: 100%; padding: 1.5rem 2.5rem; }
+    .blog-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.1rem; margin-top: 2rem; }
     .blog-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; cursor: pointer; }
-    .blog-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .blog-card:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
     .blog-cover { width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
     .blog-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
     .blog-cover img { width: 100%; height: 100%; object-fit: cover; }
-    .blog-card-body { padding: 1.25rem 1.4rem 1.5rem; }
-    .blog-cat { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
-    .blog-titulo { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; line-height: 1.35; margin-top: .45rem; }
-    .blog-excerpt { font-size: .78rem; color: var(--muted); margin-top: .55rem; line-height: 1.7; }
-    .blog-meta { display: flex; align-items: center; gap: .5rem; margin-top: .85rem; font-size: .62rem; color: var(--muted); }
+    .blog-card-body { padding: 1.1rem 1.25rem 1.3rem; }
+    .blog-cat { font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+    .blog-titulo { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 600; line-height: 1.35; margin-top: .4rem; }
+    .blog-excerpt { font-size: .75rem; color: var(--muted); margin-top: .5rem; line-height: 1.65; }
+    .blog-meta { display: flex; align-items: center; gap: .5rem; margin-top: .75rem; font-size: .6rem; color: var(--muted); }
     .blog-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
-    .blog-side { display: flex; flex-direction: column; gap: 1.25rem; }
-    .blog-card-sm { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; display: flex; gap: .9rem; padding: .9rem; overflow: hidden; transition: border-color .3s; cursor: pointer; text-align: left; flex: 1; }
+    .blog-side { display: flex; flex-direction: column; gap: 1.1rem; }
+    .blog-card-sm { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; display: flex; gap: .85rem; padding: .85rem; overflow: hidden; transition: border-color .3s; cursor: pointer; text-align: left; flex: 1; }
     .blog-card-sm:hover { border-color: var(--gold-dim); }
-    .blog-thumb-sm { width: 72px; flex-shrink: 0; border-radius: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .blog-thumb-sm { width: 65px; flex-shrink: 0; border-radius: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .blog-thumb-sm img { width: 100%; height: 100%; object-fit: cover; }
-    .blog-thumb-ph { width: 72px; aspect-ratio: 1; flex-shrink: 0; border-radius: 2px; overflow: hidden; }
+    .blog-thumb-ph { width: 65px; aspect-ratio: 1; flex-shrink: 0; border-radius: 2px; overflow: hidden; }
     .blog-sm-body { flex: 1; min-width: 0; }
-    .blog-sm-titulo { font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 600; line-height: 1.35; }
-    .blog-sm-meta { font-size: .62rem; color: var(--muted); margin-top: .4rem; }
+    .blog-sm-titulo { font-family: 'Cinzel', serif; font-size: .78rem; font-weight: 600; line-height: 1.35; }
+    .blog-sm-meta { font-size: .6rem; color: var(--muted); margin-top: .35rem; }
 
     /* ── CONTACTO ── */
     #contacto { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%); }
-    .cont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 2rem 6rem; max-width: 1100px; width: 100%; }
-    .cont-items { display: flex; flex-direction: column; gap: 1.5rem; }
-    .cont-item { display: flex; align-items: flex-start; gap: 1.1rem; }
-    .cont-ico { width: 40px; height: 40px; flex-shrink: 0; border-radius: 3px; background: var(--gold-dim); border: 1px solid rgba(201,169,110,.4); display: flex; align-items: center; justify-content: center; }
+    .cont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; padding: 1.5rem 5rem; max-width: 1050px; width: 100%; }
+    .cont-items { display: flex; flex-direction: column; gap: 1.3rem; }
+    .cont-item { display: flex; align-items: flex-start; gap: 1rem; }
+    .cont-ico { width: 38px; height: 38px; flex-shrink: 0; border-radius: 3px; background: var(--gold-dim); border: 1px solid rgba(201,169,110,.4); display: flex; align-items: center; justify-content: center; }
     .cont-ico svg { fill: var(--gold); }
-    .cont-lbl { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
-    .cont-val { font-size: .88rem; color: var(--muted); margin-top: .22rem; line-height: 1.55; }
-    .social-row { display: flex; gap: .6rem; margin-top: .35rem; }
-    .soc-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; transition: background .3s, border-color .3s; }
+    .cont-lbl { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+    .cont-val { font-size: .85rem; color: var(--muted); margin-top: .2rem; line-height: 1.5; }
+    .social-row { display: flex; gap: .55rem; margin-top: .3rem; }
+    .soc-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; transition: background .3s, border-color .3s; }
     .soc-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
     .soc-btn svg { fill: var(--white); }
-    .cont-map { border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.28); min-height: 260px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .65rem; color: var(--muted); font-size: .78rem; }
+    .cont-map { border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.28); min-height: 240px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .cont-map iframe { width: 100%; height: 100%; border: none; }
 
     /* ── OFRENDAR ── */
     #ofrendar { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy-light) 100%); }
-    .ofr-wrap { text-align: center; max-width: 680px; width: 100%; padding: 2rem 3rem; }
-    .ofr-verse { font-style: italic; font-size: .84rem; color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.85; }
-    .ofr-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.25rem; }
-    .ofr-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.75rem 1.4rem; transition: border-color .3s; }
+    .ofr-wrap { text-align: center; max-width: 700px; width: 100%; padding: 1.5rem 2.5rem 4rem; }
+    .ofr-verse { font-style: italic; font-size: .82rem; color: var(--muted); max-width: 400px; margin: 0 auto; line-height: 1.85; }
+    .ofr-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; padding: 1.5rem 1.25rem; transition: border-color .3s; }
     .ofr-card:hover { border-color: var(--gold-dim); }
-    .ofr-card-title { font-family: 'Cinzel', serif; font-size: .95rem; color: var(--gold); margin-bottom: .9rem; }
-    .ofr-detail { font-size: .8rem; color: var(--muted); line-height: 2; }
+    .ofr-card-title { font-family: 'Cinzel', serif; font-size: .9rem; color: var(--gold); margin-bottom: .85rem; }
+    .ofr-detail { font-size: .78rem; color: var(--muted); line-height: 2; }
     .ofr-detail strong { color: var(--white); }
-    .qr-ph { width: 96px; height: 96px; margin: 0 auto 1rem; background: rgba(255,255,255,.07); border: 1px dashed rgba(201,169,110,.3); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
-    .ofr-footnote { font-size: .72rem; color: var(--muted); margin-top: 1.75rem; }
+    .ofr-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2rem; }
+    .ofr-reason-block { margin-top: 1.75rem; }
+    .ofr-footnote { font-size: .7rem; color: var(--muted); margin-top: 1.5rem; }
 
     /* ── KEYFRAMES ── */
     @keyframes fadeDown  { from{opacity:0;transform:translateY(-22px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeUp    { from{opacity:0;transform:translateY(22px)}  to{opacity:1;transform:translateY(0)} }
-    @keyframes cueBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(9px)} }
+    @keyframes cueBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
     @keyframes pulse     { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(.68)} }
     @keyframes spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
-    /* ── MOBILE ── */
+    /* ══════════════════════════════════════════
+       RESPONSIVE — TABLET (900-1100px)
+    ══════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .nos-grid { gap: 3rem; padding: 1.5rem 3rem; }
+      .cont-grid { gap: 2.5rem; padding: 1.5rem 3rem; }
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — MÓVIL (≤ 900px)
+    ══════════════════════════════════════════ */
     @media (max-width: 900px) {
       html, body { overflow: hidden; }
-      .scroll-wrap { height: 100dvh; min-height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
-      
-      /* FIX ANTI-CORTES: Padding inferior amplio (6rem) para que puedas ver hasta el último píxel de cada sección */
-      .page { min-height: 100dvh; height: auto; overflow: visible; justify-content: flex-start; padding: 5.5rem 0 6rem; }
+      .scroll-wrap { height: 100dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+      /* Secciones: altura auto, scroll libre interno */
+      .page {
+        min-height: 100dvh;
+        height: auto;
+        justify-content: flex-start;
+        padding: 5rem 0 3.5rem;
+      }
       .page-num { display: none; }
-      .topnav { padding: .9rem 1.1rem; }
+
+      /* NAV */
+      .topnav { padding: .85rem 1rem; }
       .nav-links, .nav-cta { display: none; }
       .hamburger { display: flex; }
       .side-dots { display: none; }
 
-      /* TÍTULOS MÁS COMPACTOS */
-      .section-title { font-size: clamp(1.4rem, 6vw, 1.8rem); margin-top: .4rem; }
-      .gold-line, .gold-line.left { margin: .8rem auto; }
+      /* TIPOGRAFÍA */
+      .section-title { font-size: clamp(1.3rem, 5.5vw, 1.7rem); margin-top: .35rem; }
+      .gold-line, .gold-line.left { margin: .7rem auto; }
 
-      #inicio { min-height: 100dvh; justify-content: center; padding-top: 5rem; padding-bottom: 2rem; }
-      .hero-content { width: 100%; padding: 0 1.2rem; }
-      .hero-logo { width: min(45vw, 160px); height: min(45vw, 160px); margin-bottom: .8rem; }
-      .hero-name { font-size: clamp(1.1rem, 5.5vw, 1.6rem); letter-spacing: .05em; max-width: 100%; }
-      .hero-sub { font-size: .65rem; margin-top: .6rem; }
-      .hero-verse { font-size: .75rem; margin-top: 1rem; }
+      /* ── INICIO ── */
+      #inicio { min-height: 100dvh; justify-content: center; padding: 5rem 0 2rem; }
+      .hero-content { width: 100%; padding: 0 1.25rem; }
+      .hero-logo { width: min(42vw, 140px); height: min(42vw, 140px); margin-bottom: .7rem; }
+      .hero-name { font-size: clamp(.95rem, 5vw, 1.4rem); letter-spacing: .05em; max-width: 100%; }
+      .hero-sub { font-size: .62rem; margin-top: .5rem; }
+      .hero-verse { font-size: .72rem; margin-top: .9rem; max-width: 100%; }
 
-      .nos-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.2rem; }
+      /* ── NOSOTROS ── */
+      .nos-grid { grid-template-columns: 1fr; padding: 0 1.25rem; gap: 1rem; }
       .nos-visual { display: none; }
-      .nos-body { font-size: .85rem; margin-top: 1rem; }
-      .nos-list { margin-top: 1.2rem; gap: .7rem; }
+      .nos-body { font-size: .83rem; margin-top: .85rem; }
+      .nos-list { margin-top: 1rem; gap: .6rem; }
+      .nos-list li span { font-size: .82rem; }
 
-      .cultos-wrap { padding: 0 1.2rem; }
-      
-      /* CULTOS EN 2 COLUMNAS (El 3ro se centra abajo ocupando todo) */
-      .culto-cards { grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1.2rem; }
-      .culto-card { padding: 1rem .8rem; }
+      /* ── CULTOS ── */
+      .cultos-wrap { padding: 0 1.25rem; }
+      .culto-cards { grid-template-columns: repeat(2, 1fr); gap: .55rem; margin-top: 1rem; }
+      .culto-card { padding: .9rem .75rem; }
       .culto-card:last-child { grid-column: 1 / -1; }
-      .culto-hora { font-size: 1.25rem; margin-top: .4rem; }
-      .culto-nombre { font-size: .85rem; line-height: 1.2; }
-      .culto-desc { font-size: .7rem; margin-top: .4rem; }
+      .culto-hora { font-size: 1.2rem; margin-top: .35rem; }
+      .culto-nombre { font-size: .8rem; line-height: 1.2; }
+      .culto-desc { font-size: .68rem; margin-top: .35rem; }
+      .video-section { margin-top: 1rem; }
+      .video-featured-card { padding: .9rem; }
+      .video-featured-title { font-size: .9rem; }
+      .video-inline-player.open { max-height: 220px; }
 
-      .video-section { margin-top: 1.2rem; }
-      .video-featured-card { padding: 1rem; }
-      .video-featured-title { font-size: .95rem; }
-      .video-inline-player.open { max-height: 200px; }
-      .video-row { grid-template-columns: auto 1fr 1.5rem; gap: 0 .5rem; padding: .5rem .3rem; }
-      .vr-day { display: none; }
+      /* ── EN VIVO — Fix reproductor cortado ── */
+      .envivo-wrap { padding: 0 1.25rem; width: 100%; }
+      .stream-box {
+        margin-top: 1rem;
+        aspect-ratio: 16/9;
+        width: 100%;
+        max-height: none;
+        min-height: unset;
+      }
+      .stream-ph { padding: .75rem; }
+      .stream-ph p { font-size: .78rem; }
+      .stream-icon { width: 46px; height: 46px; }
+      .stream-ph button { font-size: .65rem !important; padding: .7rem !important; }
 
-      .envivo-wrap { padding: 0 1.2rem; }
-      .stream-box { margin-top: 1rem; min-height: 180px; }
+      /* ── GALERÍA ── */
+      .galeria-wrap { padding: 0 1.25rem; }
+      .album-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .55rem; margin-top: 1rem; }
+      .album-card { aspect-ratio: 1; }
+      .album-name { font-size: .72rem; }
+      .album-date { font-size: .53rem; }
+      .album-count { top: .35rem; right: .35rem; font-size: .48rem; }
+      .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: .75rem; gap: 2px; }
 
-      /* GALERÍA PRO: 2 COLUMNAS CUADRADAS */
-      .galeria-wrap { padding: 0 1.2rem; }
-      .album-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .6rem; margin-top: 1.2rem; max-width: 100%; }
-      .album-card { aspect-ratio: 1; } 
-      .album-name { font-size: .75rem; }
-      .album-date { font-size: .55rem; }
-      .album-count { top: .4rem; right: .4rem; font-size: .5rem; padding: .15rem .4rem; }
-      .lightbox-grid { grid-template-columns: repeat(2,1fr); padding: 1rem; gap: 2px; }
+      /* ── COMUNIDAD ── */
+      .comunidad-wrap { padding: 0 1.25rem; }
+      .culto-cards { grid-template-columns: repeat(2, 1fr); }
+      .comunidad-grid { grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.5rem; }
+      .comunidad-col-title { font-size: .9rem; margin-bottom: .45rem; }
 
-      /* COMUNIDAD Y AVISOS */
-      .comunidad-wrap { padding: 0 1.2rem; }
-      .comunidad-grid { display: flex !important; flex-direction: column !important; gap: 1.5rem !important; margin-top: 1.5rem; }
-      .comunidad-col-title { font-size: .95rem; margin-bottom: .5rem; }
-      
-      /* Avisos tipo tarjeta horizontal estilo notificación */
-      .aviso-list { margin-top: .5rem; gap: .6rem; }
-      .aviso-card { padding: .8rem; gap: .8rem; flex-direction: row; align-items: center; max-width: 100%; }
-      .aviso-img { width: 70px; height: 70px; flex-shrink: 0; }
-      .aviso-titulo { font-size: .8rem; margin-bottom: .2rem; }
+      /* Avisos: 1 columna en móvil (más legible) */
+      .aviso-list { grid-template-columns: 1fr; gap: .55rem; margin-top: .65rem; }
+      .aviso-card { padding: .75rem; gap: .6rem; }
+      .aviso-titulo { font-size: .78rem; }
       .aviso-texto { font-size: .7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-      
-      /* EVENTOS EN 2 COLUMNAS */
-      .evento-grid, .evento-grid.par, .evento-grid.solo { grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: .5rem; max-width: 100%; }
-      .evento-date-bar { padding: .5rem; gap: .4rem; }
-      .evento-dia { font-size: 1.2rem; }
-      .evento-mes { font-size: .5rem; }
-      .evento-hora { font-size: .6rem; }
-      .evento-body { padding: .8rem; }
-      .evento-titulo { font-size: .8rem; line-height: 1.2; }
-      .evento-desc { font-size: .7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: .4rem; }
 
-      .blog-wrap { padding: 0 1.2rem; }
-      .blog-grid { grid-template-columns: 1fr; gap: .8rem; margin-top: 1.2rem; }
-      .blog-card-body { padding: .8rem 1rem; }
+      /* Eventos: 2 columnas en móvil */
+      .evento-grid,
+      .evento-grid.par,
+      .evento-grid.solo { grid-template-columns: repeat(2, 1fr); gap: .55rem; margin-top: .5rem; max-width: 100%; }
+      .evento-date-bar { padding: .45rem .65rem; gap: .4rem; }
+      .evento-dia { font-size: 1.1rem; }
+      .evento-mes { font-size: .48rem; }
+      .evento-hora { font-size: .58rem; }
+      .evento-body { padding: .7rem .8rem 1rem; }
+      .evento-titulo { font-size: .76rem; line-height: 1.25; }
+      .evento-desc { font-size: .68rem; -webkit-line-clamp: 2; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; margin-top: .35rem; }
 
-      .cont-grid { grid-template-columns: 1fr; padding: 0 1.2rem; gap: 1.5rem; }
-      .cont-map { min-height: 200px; }
+      /* ── BLOG ── */
+      .blog-wrap { padding: 0 1.25rem; }
+      .blog-grid { grid-template-columns: 1fr; gap: .75rem; margin-top: 1rem; }
+      .blog-card-body { padding: .75rem .9rem; }
+      .blog-titulo { font-size: .88rem; }
+      .blog-excerpt { font-size: .72rem; }
 
-      /* OFRENDAR EN 2 COLUMNAS COMPACTAS */
-      .ofr-wrap { padding: 0 1.2rem; }
-      .ofr-cards { grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1.2rem; }
-      .ofr-card { padding: 1rem .8rem; }
-      .ofr-card-title { font-size: .75rem; margin-bottom: .6rem; line-height: 1.2; }
-      .ofr-detail { font-size: .65rem; line-height: 1.5; }
-      .qr-ph { width: 60px; height: 60px; margin: 0 auto .6rem; font-size: .5rem; }
+      /* ── CONTACTO ── */
+      .cont-grid { grid-template-columns: 1fr; padding: 0 1.25rem; gap: 1.25rem; }
+      .cont-map { min-height: 200px; height: 220px; }
+
+      /* ── OFRENDAR ── */
+      .ofr-wrap { padding: 0 1.25rem 3rem; max-width: 100%; }
+      .ofr-reason-block { margin-top: 1.25rem; }
+      .ofr-reason-block > div { padding: 1rem 1.1rem !important; }
+      .ofr-info-grid { grid-template-columns: 1fr !important; gap: .75rem; margin-top: 1.25rem; }
+      .ofr-card { padding: 1rem .9rem; }
+      .ofr-card-title { font-size: .78rem; margin-bottom: .6rem; }
+      .ofr-detail { font-size: .72rem; line-height: 1.75; }
     }
 
     @media (max-width: 480px) {
-      .hero-name { font-size: clamp(1rem, 6vw, 1.3rem); }
-      .section-title { font-size: clamp(1.2rem, 7vw, 1.6rem); }
+      .hero-name { font-size: clamp(.88rem, 5.5vw, 1.2rem); }
+      .section-title { font-size: clamp(1.15rem, 6.5vw, 1.5rem); }
+      .culto-cards { grid-template-columns: 1fr; }
+      .culto-card:last-child { grid-column: auto; }
+      .evento-grid,
+      .evento-grid.par,
+      .evento-grid.solo { grid-template-columns: 1fr; }
     }
 
-    /* --- CAPAS DE BRILLOS (Fondo -> Brillos -> Contenido) --- */
+    /* Fondo base */
     body { background: linear-gradient(140deg, var(--navy-deep) 0%, var(--navy) 100%) !important; }
     .scroll-wrap { position: relative; z-index: 10; }
     .page { background: transparent !important; }
@@ -546,6 +493,7 @@
 </head>
 <body>
 <canvas id="starCanvas"></canvas>
+
 <!-- NAV -->
 <nav class="topnav" id="topnav">
   <a class="nav-logo" href="#inicio" data-target="inicio">
@@ -554,7 +502,7 @@
     </svg>
     <span class="nav-logo-text">PIEBA</span>
   </a>
-<ul class="nav-links">
+  <ul class="nav-links">
     <li><a href="#inicio"    data-target="inicio"    data-section="inicio"    class="active">Inicio</a></li>
     <li><a href="#nosotros"  data-target="nosotros"  data-section="nosotros">Nosotros</a></li>
     <li><a href="#cultos"    data-target="cultos"    data-section="cultos">Cultos</a></li>
@@ -640,22 +588,11 @@
           <li class="reveal d2"><span><strong style="color:var(--white)">Fe Bíblica</strong> &mdash; Fundamentados en la Palabra de Dios</span></li>
           <li class="reveal d3"><span><strong style="color:var(--white)">Comunidad</strong> &mdash; Un lugar donde todos son bienvenidos</span></li>
           <li class="reveal d3"><span><strong style="color:var(--white)">Misión</strong> &mdash; Alcanzando vidas para Cristo</span></li>
-<li class="reveal d4"><span><strong style="color:var(--white)">Adoración</strong> &mdash; Con todo nuestro corazón</span></li>
+          <li class="reveal d4"><span><strong style="color:var(--white)">Adoración</strong> &mdash; Con todo nuestro corazón</span></li>
         </ul>
-        <a href="miembros.html" class="reveal d4" style="
-          display: inline-flex; align-items: center; gap: .6rem;
-          margin-top: 2rem;
-          border: 1px solid var(--gold-dim);
-          color: var(--gold);
-          padding: .65rem 1.5rem;
-          font-size: .68rem; font-weight: 600;
-          text-transform: uppercase; letter-spacing: .18em;
-          text-decoration: none; border-radius: 2px;
-          transition: background .25s, border-color .25s;
-          background: transparent;
-        "
-        onmouseover="this.style.background='rgba(201,169,110,.1)'; this.style.borderColor='var(--gold)'"
-        onmouseout="this.style.background='transparent'; this.style.borderColor='var(--gold-dim)'">
+        <a href="miembros.html" class="reveal d4" style="display:inline-flex;align-items:center;gap:.6rem;margin-top:1.5rem;border:1px solid var(--gold-dim);color:var(--gold);padding:.6rem 1.4rem;font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;text-decoration:none;border-radius:2px;transition:background .25s,border-color .25s;background:transparent;"
+          onmouseover="this.style.background='rgba(201,169,110,.1)';this.style.borderColor='var(--gold)'"
+          onmouseout="this.style.background='transparent';this.style.borderColor='var(--gold-dim)'">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
           Conoce nuestra familia
         </a>
@@ -673,13 +610,12 @@
     <span class="page-num">02 / 10</span>
   </section>
 
-  <!-- 03 MENSAJES -->
-<section class="page" id="cultos">
+  <!-- 03 CULTOS -->
+  <section class="page" id="cultos">
     <div class="cultos-wrap">
       <p class="section-label reveal">Videoteca</p>
       <h2 class="section-title reveal d1" style="text-align:center">Cultos</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="video-section reveal d3" id="videoSectionRoot">
         <div class="video-featured-card is-loading" id="videoFeaturedCard">
           <div class="video-featured-eyebrow">
@@ -697,19 +633,16 @@
             <span class="video-total-count" id="videoTotalCount"></span>
           </div>
         </div>
-
-<div id="videoRowList" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-          </div>
-        
-        <div style="text-align: center; margin-top: 1.5rem;">
-          <a href="https://www.youtube.com/@iglesiabautistadeasuncion/videos" target="_blank" style="display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.05); color: var(--gold); border: 1px solid var(--gold-dim); padding: 0.7rem 1.5rem; border-radius: 2px; font-size: 0.75rem; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;">
+        <div id="videoRowList" style="margin-top:1.75rem;display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;"></div>
+        <div style="text-align:center;margin-top:1.25rem;">
+          <a href="https://www.youtube.com/@iglesiabautistadeasuncion/videos" target="_blank" style="display:inline-flex;align-items:center;gap:.6rem;background:rgba(255,255,255,0.05);color:var(--gold);border:1px solid var(--gold-dim);padding:.65rem 1.4rem;border-radius:2px;font-size:.72rem;font-weight:600;text-decoration:none;text-transform:uppercase;letter-spacing:1px;transition:0.3s;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             Explorar todo el canal
           </a>
         </div>
       </div>
     </div>
-    <span class="page-num">03 / 09</span>
+    <span class="page-num">03 / 10</span>
   </section>
 
   <!-- 04 EN VIVO -->
@@ -718,19 +651,17 @@
       <div class="live-pill reveal"><span class="live-dot-r"></span>En Vivo</div>
       <h2 class="section-title reveal d1" style="text-align:center">Transmisión<br>en Directo</h2>
       <div class="gold-line reveal d2"></div>
-<div class="stream-box reveal d2" id="streamBox">
+      <div class="stream-box reveal d2" id="streamBox">
         <div class="stream-ph" id="livePlaceholder">
           <div class="stream-icon">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
-          <p style="font-size:.9rem; margin-bottom:1.5rem; opacity:0.8;">¿Buscas la transmisión de hoy?</p>
-          
-          <div style="display:flex; flex-direction:column; gap:0.8rem; width:100%; max-width:300px; margin: 0 auto;">
-            <button onclick="checkLive()" style="background:var(--gold); color:var(--navy); border:none; padding:.8rem; border-radius:2px; font-size:.7rem; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">
+          <p style="font-size:.85rem;margin-bottom:1.2rem;opacity:0.75;">¿Buscas la transmisión de hoy?</p>
+          <div style="display:flex;flex-direction:column;gap:.7rem;width:100%;max-width:280px;margin:0 auto;">
+            <button onclick="checkLive()" style="background:var(--gold);color:var(--navy);border:none;padding:.75rem;border-radius:2px;font-size:.68rem;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:1px;">
               Comprobar En Vivo ahora
             </button>
-            
-            <button onclick="verUltimoEnVivo()" style="background:rgba(255,255,255,0.05); color:var(--white); border:1px solid var(--glass-b); padding:.8rem; border-radius:2px; font-size:.7rem; font-weight:500; cursor:pointer; text-transform:uppercase;">
+            <button onclick="verUltimoEnVivo()" style="background:rgba(255,255,255,0.05);color:var(--white);border:1px solid var(--glass-b);padding:.75rem;border-radius:2px;font-size:.68rem;font-weight:500;cursor:pointer;text-transform:uppercase;">
               Ver último culto grabado
             </button>
           </div>
@@ -747,22 +678,21 @@
       <p class="section-label reveal">Momentos</p>
       <h2 class="section-title reveal d1" style="text-align:center">Galería</h2>
       <div class="gold-line reveal d2"></div>
-     <div class="album-grid" id="albumGrid">
-        <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; opacity:.45;">
-          <p style="font-family:'Cinzel',serif; color:var(--gold); font-size:.88rem; letter-spacing:.1em;">Cargando álbumes…</p>
+      <div class="album-grid" id="albumGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;opacity:.45;">
+          <p style="font-family:'Cinzel',serif;color:var(--gold);font-size:.88rem;letter-spacing:.1em;">Cargando álbumes…</p>
         </div>
       </div>
     </div>
     <span class="page-num">05 / 10</span>
   </section>
 
-  <!-- 06 AVISOS -->
-<section class="page" id="comunidad">
+  <!-- 06 COMUNIDAD -->
+  <section class="page" id="comunidad">
     <div class="comunidad-wrap">
       <p class="section-label reveal">Nuestra Familia</p>
       <h2 class="section-title reveal d1" style="text-align:center">Comunidad</h2>
       <div class="gold-line reveal d2"></div>
-
       <div class="culto-cards">
         <div class="culto-card reveal d2">
           <p class="culto-dia">Domingo</p>
@@ -783,48 +713,44 @@
           <p class="culto-desc">Reunión especial para jóvenes con alabanza contemporánea y mensaje relevante.</p>
         </div>
       </div>
-
       <div class="comunidad-grid">
         <div>
           <h3 class="comunidad-col-title reveal d1">Comunicados</h3>
-<div class="aviso-list" id="contenedorAvisos">
-            <div style="text-align:center; padding:2rem 1rem; opacity:.45;">
-              <p style="font-family:'Cinzel',serif; color:var(--gold); font-size:.88rem; letter-spacing:.1em;">Cargando comunicados…</p>
+          <div class="aviso-list" id="contenedorAvisos">
+            <div style="grid-column:1/-1;text-align:center;padding:2rem 1rem;opacity:.45;">
+              <p style="font-family:'Cinzel',serif;color:var(--gold);font-size:.88rem;letter-spacing:.1em;">Cargando comunicados…</p>
             </div>
           </div>
         </div>
-
         <div>
           <h3 class="comunidad-col-title reveal d1">Próximos Eventos</h3>
-          <div class="evento-grid solo" id="contenedorEventos" style="margin-top: 0;">
-            <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; opacity:.45;">
-              <p style="font-family:'Cinzel',serif; color:var(--gold); font-size:.88rem; letter-spacing:.1em;">Cargando agenda…</p>
+          <div class="evento-grid solo" id="contenedorEventos" style="margin-top:0;">
+            <div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;opacity:.45;">
+              <p style="font-family:'Cinzel',serif;color:var(--gold);font-size:.88rem;letter-spacing:.1em;">Cargando agenda…</p>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-    <span class="page-num">06 / 09</span>
+    <span class="page-num">06 / 10</span>
   </section>
 
-  <!-- 08 BLOG -->
+  <!-- 07 BLOG -->
   <section class="page" id="blog">
     <div class="blog-wrap">
       <p class="section-label reveal">Reflexiones</p>
       <h2 class="section-title reveal d1" style="text-align:center">Blog</h2>
       <div class="gold-line reveal d2"></div>
-      
       <div class="blog-grid" id="contenedorBlog">
-        <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; opacity:.45; width:100%;">
-          <p style="font-family:'Cinzel',serif; color:var(--gold); font-size:.88rem; letter-spacing:.1em;">Cargando reflexiones…</p>
+        <div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;opacity:.45;width:100%;">
+          <p style="font-family:'Cinzel',serif;color:var(--gold);font-size:.88rem;letter-spacing:.1em;">Cargando reflexiones…</p>
         </div>
       </div>
-      </div>
-    <span class="page-num">08 / 10</span>
+    </div>
+    <span class="page-num">07 / 10</span>
   </section>
 
-  <!-- 09 CONTACTO -->
+  <!-- 08 CONTACTO -->
   <section class="page" id="contacto">
     <div class="cont-grid">
       <div>
@@ -858,14 +784,14 @@
           </div>
         </div>
       </div>
-<div class="cont-map reveal d3">
-  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1966.988331661605!2d-57.623786919451746!3d-25.28832676961304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945da7a3796ae61d%3A0xfeb764fb83081039!2sPrimera%20Iglesia%20Evang%C3%A9lica%20de%20Asunci%C3%B3n!5e0!3m2!1ses!2spy!4v1774381119047!5m2!1ses!2spy" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-</div>
+      <div class="cont-map reveal d3">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1966.988331661605!2d-57.623786919451746!3d-25.28832676961304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945da7a3796ae61d%3A0xfeb764fb83081039!2sPrimera%20Iglesia%20Evang%C3%A9lica%20de%20Asunci%C3%B3n!5e0!3m2!1ses!2spy!4v1774381119047!5m2!1ses!2spy" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
     </div>
-    <span class="page-num">09 / 10</span>
+    <span class="page-num">08 / 10</span>
   </section>
 
-<!-- 10 OFRENDAR -->
+  <!-- 09 OFRENDAR -->
   <section class="page" id="ofrendar">
     <div class="ofr-wrap">
       <p class="section-label reveal">Generosidad</p>
@@ -874,31 +800,30 @@
 
       <p class="ofr-verse reveal d2">&ldquo;Cada uno dé como propuso en su corazón; no con tristeza, ni por necesidad, porque Dios ama al dador alegre.&rdquo; &mdash; 2 Corintios 9:7</p>
 
-      <div class="reveal d2" style="margin-top:2rem; text-align:center; max-width:520px; margin-left:auto; margin-right:auto;">
-        <p style="font-size:.82rem; color:var(--muted); line-height:1.85;">
+      <div class="ofr-reason-block reveal d2">
+        <p style="font-size:.8rem;color:var(--muted);line-height:1.85;text-align:center;">
           Tu ofrenda a la Primera Iglesia Evangélica Bautista de Asunción es un acto libre y voluntario de fe.
         </p>
-        <div style="margin-top:1.5rem; text-align:left; background:var(--glass); border:1px solid var(--glass-b); border-radius:3px; padding:1.4rem 1.6rem;">
-          <p style="font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:1rem;">¿Por qué dar?</p>
-          <ul style="list-style:none; display:flex; flex-direction:column; gap:.85rem; padding:0; margin:0;">
-            <li style="display:flex; align-items:flex-start; gap:.9rem;">
-              <span style="flex-shrink:0; width:18px; height:1px; background:var(--gold); margin-top:.6em; display:block;"></span>
-              <span style="font-size:.82rem; color:var(--muted); line-height:1.65;">Porque cada peso sembrado multiplica el alcance del evangelio en nuestra ciudad.</span>
+        <div style="margin-top:1.25rem;text-align:left;background:var(--glass);border:1px solid var(--glass-b);border-radius:3px;padding:1.25rem 1.5rem;">
+          <p style="font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.9rem;">¿Por qué dar?</p>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:.75rem;padding:0;margin:0;">
+            <li style="display:flex;align-items:flex-start;gap:.85rem;">
+              <span style="flex-shrink:0;width:18px;height:1px;background:var(--gold);margin-top:.6em;display:block;"></span>
+              <span style="font-size:.8rem;color:var(--muted);line-height:1.65;">Porque cada peso sembrado multiplica el alcance del evangelio en nuestra ciudad.</span>
             </li>
-            <li style="display:flex; align-items:flex-start; gap:.9rem;">
-              <span style="flex-shrink:0; width:18px; height:1px; background:var(--gold); margin-top:.6em; display:block;"></span>
-              <span style="font-size:.82rem; color:var(--muted); line-height:1.65;">Porque sostenemos juntos lo que ninguno podría sostener solo.</span>
+            <li style="display:flex;align-items:flex-start;gap:.85rem;">
+              <span style="flex-shrink:0;width:18px;height:1px;background:var(--gold);margin-top:.6em;display:block;"></span>
+              <span style="font-size:.8rem;color:var(--muted);line-height:1.65;">Porque sostenemos juntos lo que ninguno podría sostener solo.</span>
             </li>
-            <li style="display:flex; align-items:flex-start; gap:.9rem;">
-              <span style="flex-shrink:0; width:18px; height:1px; background:var(--gold); margin-top:.6em; display:block;"></span>
-              <span style="font-size:.82rem; color:var(--muted); line-height:1.65;">Porque tu generosidad es parte del testimonio vivo de esta iglesia ante Asunción.</span>
+            <li style="display:flex;align-items:flex-start;gap:.85rem;">
+              <span style="flex-shrink:0;width:18px;height:1px;background:var(--gold);margin-top:.6em;display:block;"></span>
+              <span style="font-size:.8rem;color:var(--muted);line-height:1.65;">Porque tu generosidad es parte del testimonio vivo de esta iglesia ante Asunción.</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <div class="reveal d3" style="margin-top:2rem; display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; max-width:620px; margin-left:auto; margin-right:auto;">
-
+      <div class="ofr-info-grid reveal d3">
         <div class="ofr-card" style="text-align:center;">
           <p class="ofr-card-title">Transferencia Bancaria</p>
           <div class="ofr-detail" style="line-height:2.1;">
@@ -908,13 +833,12 @@
             <strong>RUC:</strong> 00000000-0
           </div>
         </div>
-
-        <div class="ofr-card" style="display:flex; flex-direction:column; justify-content:center; gap:1rem;">
-          <p style="font-size:.78rem; color:var(--muted); line-height:1.8;">
+        <div class="ofr-card" style="display:flex;flex-direction:column;justify-content:center;gap:.9rem;">
+          <p style="font-size:.78rem;color:var(--muted);line-height:1.8;">
             También puedes ofrendar presencialmente durante nuestros cultos.
           </p>
-          <div style="width:28px; height:1px; background:var(--gold-dim);"></div>
-          <p style="font-size:.78rem; color:var(--muted); line-height:1.8;">
+          <div style="width:28px;height:1px;background:var(--gold-dim);"></div>
+          <p style="font-size:.78rem;color:var(--muted);line-height:1.8;">
             Una vez confirmada la transacción, comuníquese con nosotros al
             <strong style="color:var(--white);">+595 XXX-XXX-XXX</strong>
             o escríbanos a
@@ -922,38 +846,39 @@
             para emitirle el comprobante correspondiente.
           </p>
         </div>
-
       </div>
 
     </div>
 
-    <p style="position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); font-size:.62rem; color:rgba(255,255,255,.18); letter-spacing:.12em; text-transform:uppercase; white-space:nowrap;">
+    <p style="position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);font-size:.6rem;color:rgba(255,255,255,.18);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">
       © PIEBA · Primera Iglesia Evangélica Bautista de Asunción
     </p>
-    <span class="page-num">10 / 10</span>
+    <span class="page-num">09 / 10</span>
   </section>
 
 </div><!-- /scroll-wrap -->
 
 <script>
-/* ── CANVAS STARS GLOBAL ── */
+/* ── CANVAS STARS — reducidas y menos invasivas ── */
 const canvas = document.getElementById('starCanvas');
 const ctx = canvas.getContext('2d');
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 resize();
 window.addEventListener('resize', resize);
-const stars = Array.from({ length: 350 }, () => ({
+
+/* Menos partículas, más pequeñas, menor opacidad base */
+const stars = Array.from({ length: 160 }, () => ({
   x: Math.random(), y: Math.random(),
-  r: Math.random() * 2.2 + 0.6,
-  vy: Math.random() * 0.00015 + 0.00005,
+  r: Math.random() * 1.3 + 0.3,
+  vy: Math.random() * 0.00012 + 0.00004,
   phase: Math.random() * Math.PI * 2,
-  base: Math.random() * 0.8 + 0.25
+  base: Math.random() * 0.45 + 0.1
 }));
 (function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   stars.forEach(s => {
-    s.phase += 0.018;
-    const a = s.base * (0.55 + 0.45 * Math.sin(s.phase));
+    s.phase += 0.014;
+    const a = s.base * (0.5 + 0.5 * Math.sin(s.phase));
     ctx.beginPath();
     ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(201,169,110,${a})`;
@@ -965,17 +890,17 @@ const stars = Array.from({ length: 350 }, () => ({
 })();
 
 /* ── NAV / SCROLL ── */
-const wrap    = document.getElementById('scrollWrap');
-const topnav  = document.getElementById('topnav');
-const ham     = document.getElementById('ham');
+const wrap     = document.getElementById('scrollWrap');
+const topnav   = document.getElementById('topnav');
+const ham      = document.getElementById('ham');
 const mobileNav = document.getElementById('mobileNav');
 
-const dots         = [...document.querySelectorAll('.dot')];
-const navLinks     = [...document.querySelectorAll('.nav-links a[data-section]')];
-const mobileLinks  = [...document.querySelectorAll('.mobile-nav a[data-section]')];
-const allNavLinks  = [...navLinks, ...mobileLinks];
-const sections     = [...document.querySelectorAll('.page')];
-const prefersRM    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dots        = [...document.querySelectorAll('.dot')];
+const navLinks    = [...document.querySelectorAll('.nav-links a[data-section]')];
+const mobileLinks = [...document.querySelectorAll('.mobile-nav a[data-section]')];
+const allNavLinks = [...navLinks, ...mobileLinks];
+const sections    = [...document.querySelectorAll('.page')];
+const prefersRM   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function getTargetTop(target) {
   const wrapRect   = wrap.getBoundingClientRect();
@@ -1022,24 +947,19 @@ document.addEventListener('click', e => {
 
 wrap.addEventListener('scroll', () => { topnav.classList.toggle('scrolled', wrap.scrollTop > 60); });
 
-/* ─────────────────────────────────────────────
-   INTERSECTION OBSERVER
-   — revela .reveal y dispara cargas lazy
-   ───────────────────────────────────────────── */
+/* ── INTERSECTION OBSERVER ── */
 const io = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       setActive(entry.target.id);
       entry.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-
-      /* ── LAZY: YouTube se carga la primera vez que mensajes entra al viewport ── */
       if (entry.target.id === 'cultos' && !vtState._ytLoaded) {
         vtState._ytLoaded = true;
         initYouTube();
       }
     }
   });
-}, { root: wrap, threshold: 0.1 });
+}, { root: wrap, threshold: 0.15 });
 
 sections.forEach(s => io.observe(s));
 document.querySelectorAll('#inicio .reveal').forEach(el => el.classList.add('visible'));
@@ -1048,11 +968,10 @@ if (location.hash) {
   const initId = location.hash.replace('#','');
   if (document.getElementById(initId)) requestAnimationFrame(() => goTo(initId));
 }
-
 </script>
 
 <script>
-/* ─── YOUTUBE — 2 LLAMADAS TOTALES, FILTRO INTELIGENTE POR DURACIÓN ─── */
+/* ─── YOUTUBE ─── */
 const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
 const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
@@ -1061,114 +980,62 @@ const vtState = { cultosDetectados: [], _ytLoaded: false };
 const $id = id => document.getElementById(id);
 const fmtDate = iso => new Date(iso).toLocaleDateString('es-PY', { day: 'numeric', month: 'long' });
 
-/* ── PARSEAR DURACIÓN ISO 8601 → segundos ── */
 function parseDuration(iso) {
   if (!iso) return 0;
   const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
   if (!m) return 0;
-  return (parseInt(m[1] || 0) * 3600) + (parseInt(m[2] || 0) * 60) + (parseInt(m[3] || 0));
+  return (parseInt(m[1]||0)*3600)+(parseInt(m[2]||0)*60)+(parseInt(m[3]||0));
 }
 
-/* ── SCORE: qué tan probable es que sea un culto (0 = no, 1 = sí seguro) ── */
 function scoreCulto(video) {
-  const titulo = (video.snippet.title || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const desc   = (video.snippet.description || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const texto  = titulo + ' ' + desc;
+  const titulo = (video.snippet.title||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const desc   = (video.snippet.description||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const texto  = titulo+' '+desc;
   const dur    = parseDuration(video.contentDetails?.duration);
-
-  /* REGLA 1: Shorts y clips muy cortos → excluir siempre */
-  if (dur < 180) return 0;               // menos de 3 min
-
-  /* REGLA 2: Videos largos → casi seguro culto/mensaje */
-  if (dur >= 1800) {                     // más de 30 min
-    /* Excepción: si parece anuncio/promo y no menciona nada ministerial */
+  if (dur < 180) return 0;
+  if (dur >= 1800) {
     const esAnuncio = /(anuncio|promo|bienvenida|bienvenidos al canal|trailer)/.test(texto);
     if (esAnuncio) return 0;
-    return 2;                            // peso alto
+    return 2;
   }
-
-  /* REGLA 3: Videos medianos (3-30 min) → necesitan keywords */
   const keywords = /(culto|predicacion|sermon|mensaje|adoracion|santa cena|domingo|miercoles|sabado|pastor|devocional|reflexion|estudio biblico)/;
   const biblia   = /(genesis|exodo|salmos?|proverbios|isaias|jeremias|mateo|marcos|lucas|juan|hechos|romanos|corintios|galatas|efesios|filipenses|colosenses|tesalonicenses|timoteo|hebreos|santiago|pedro|apocalipsis)/;
   if (keywords.test(texto) || biblia.test(texto)) return 1;
-
-  return 0;  // video medio sin keywords → probablemente clip musical o anuncio
+  return 0;
 }
 
-/* ── FETCH helper ── */
-async function ytFetch(path, params = {}) {
+async function ytFetch(path, params={}) {
   const url = new URL(`${YT_BASE}/${path}`);
-  Object.entries({ ...params, key: YT_API_KEY }).forEach(([k, v]) => { if (v) url.searchParams.set(k, v); });
+  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v]) => { if(v) url.searchParams.set(k,v); });
   const res = await fetch(url);
   return res.json();
 }
 
-/* ── INIT: sólo 2 llamadas totales ── */
 async function initYouTube() {
   if (vtState._ytLoaded) return;
   vtState._ytLoaded = true;
-
   try {
-    /* LLAMADA 1 (1 quota): canal → playlist uploads */
-    const ch = await ytFetch('channels', { part: 'contentDetails', id: YT_CHANNEL_ID });
+    const ch = await ytFetch('channels',{part:'contentDetails',id:YT_CHANNEL_ID});
     const pid = ch.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
     if (!pid) { mostrarErrorCultos('No se encontró el canal.'); return; }
-
-    /* LLAMADA 2 (1 quota): últimos 20 videos con snippet */
-    const playlist = await ytFetch('playlistItems', {
-      part: 'snippet',
-      playlistId: pid,
-      maxResults: 20
-    });
+    const playlist = await ytFetch('playlistItems',{part:'snippet',playlistId:pid,maxResults:20});
     if (!playlist.items?.length) { mostrarErrorCultos('Sin videos en el canal.'); return; }
-
-    /* LLAMADA 3 (1 quota): duraciones de todos en batch (una sola llamada) */
-    const ids = playlist.items.map(i => i.snippet.resourceId?.videoId).filter(Boolean).join(',');
-    const detalles = await ytFetch('videos', { part: 'contentDetails,snippet', id: ids });
-
-    /* Enriquecer cada video con contentDetails */
+    const ids = playlist.items.map(i=>i.snippet.resourceId?.videoId).filter(Boolean).join(',');
+    const detalles = await ytFetch('videos',{part:'contentDetails,snippet',id:ids});
     const detalleMap = {};
-    (detalles.items || []).forEach(v => { detalleMap[v.id] = v; });
-
-    const videosEnriquecidos = playlist.items
-      .map(item => {
-        const vid = item.snippet.resourceId?.videoId;
-        const detalle = detalleMap[vid];
-        if (!detalle) return null;
-        return {
-          snippet: {
-            ...item.snippet,
-            resourceId: item.snippet.resourceId
-          },
-          contentDetails: detalle.contentDetails
-        };
-      })
-      .filter(Boolean);
-
-    /* Filtrar y ordenar por score descendente (más culto primero) */
+    (detalles.items||[]).forEach(v=>{detalleMap[v.id]=v;});
+    const videosEnriquecidos = playlist.items.map(item => {
+      const vid = item.snippet.resourceId?.videoId;
+      const detalle = detalleMap[vid];
+      if(!detalle) return null;
+      return { snippet:{...item.snippet,resourceId:item.snippet.resourceId}, contentDetails:detalle.contentDetails };
+    }).filter(Boolean);
     vtState.cultosDetectados = videosEnriquecidos
-      .filter(v => scoreCulto(v) > 0)
-      .sort((a, b) => {
-        /* Primero por score descendente, luego por fecha descendente */
-        const ds = scoreCulto(b) - scoreCulto(a);
-        if (ds !== 0) return ds;
-        return new Date(b.snippet.publishedAt) - new Date(a.snippet.publishedAt);
-      });
-
-    /* Guardar también los NO-cultos para estadística (opcional) */
-    vtState.nocultos = videosEnriquecidos.filter(v => scoreCulto(v) === 0);
-
-    if (!vtState.cultosDetectados.length) {
-      mostrarErrorCultos('No se detectaron cultos recientes.');
-      return;
-    }
-
+      .filter(v=>scoreCulto(v)>0)
+      .sort((a,b)=>{const ds=scoreCulto(b)-scoreCulto(a); if(ds!==0)return ds; return new Date(b.snippet.publishedAt)-new Date(a.snippet.publishedAt);});
+    if (!vtState.cultosDetectados.length) { mostrarErrorCultos('No se detectaron cultos recientes.'); return; }
     renderSeccionCultos();
-
-  } catch (e) {
-    console.error('Error YT:', e);
-    mostrarErrorCultos('Error de conexión con YouTube.');
-  }
+  } catch(e) { console.error('Error YT:',e); mostrarErrorCultos('Error de conexión con YouTube.'); }
 }
 
 function mostrarErrorCultos(msg) {
@@ -1181,503 +1048,336 @@ function mostrarErrorCultos(msg) {
 function renderSeccionCultos() {
   const cultos = vtState.cultosDetectados;
   if (!cultos.length) return;
-
-  /* ── CULTO PRINCIPAL (el más reciente de score alto) ── */
   const ultimo = cultos[0].snippet;
   $id('videoFeatCat').textContent   = getDurLabel(cultos[0]);
   $id('videoFeatDate').textContent  = fmtDate(ultimo.publishedAt);
   $id('videoFeatTitle').textContent = ultimo.title;
-  $id('videoFeatDesc').textContent  = (ultimo.description || '').slice(0, 120) + '…';
+  $id('videoFeatDesc').textContent  = (ultimo.description||'').slice(0,120)+'…';
   $id('videoPlayBtn').onclick = () => playVideo(ultimo.resourceId.videoId);
-  $id('videoTotalCount').textContent = cultos.length > 1 ? `${cultos.length} cultos disponibles` : '';
+  $id('videoTotalCount').textContent = cultos.length>1 ? `${cultos.length} cultos disponibles` : '';
   $id('videoFeaturedCard').classList.remove('is-loading');
-
-  /* ── CULTOS ANTERIORES (máximo 3 botones) ── */
   const row = $id('videoRowList');
   row.innerHTML = '';
-  cultos.slice(1, 4).forEach(c => {
+  cultos.slice(1,4).forEach(c => {
     const s = c.snippet;
     const btn = document.createElement('button');
-    btn.style.cssText = 'flex:1;min-width:200px;max-width:340px;background:var(--glass);border:1px solid var(--glass-b);color:var(--white);padding:.9rem 1rem;border-radius:3px;cursor:pointer;text-align:left;transition:.25s;';
-    btn.onmouseover = () => btn.style.borderColor = 'rgba(201,169,110,.4)';
-    btn.onmouseout  = () => btn.style.borderColor = 'rgba(255,255,255,.1)';
-    btn.innerHTML = `
-      <p style="font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.3rem;">
-        ${getDurLabel(c)} &nbsp;·&nbsp; ${fmtDate(s.publishedAt)}
-      </p>
-      <p style="font-size:.82rem;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.title}</p>`;
-    btn.onclick = () => playVideo(s.resourceId.videoId);
+    btn.style.cssText = 'flex:1;min-width:180px;max-width:320px;background:var(--glass);border:1px solid var(--glass-b);color:var(--white);padding:.85rem .95rem;border-radius:3px;cursor:pointer;text-align:left;transition:.25s;';
+    btn.onmouseover = ()=>btn.style.borderColor='rgba(201,169,110,.4)';
+    btn.onmouseout  = ()=>btn.style.borderColor='rgba(255,255,255,.1)';
+    btn.innerHTML = `<p style="font-size:.56rem;color:var(--gold);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.28rem;">${getDurLabel(c)} &nbsp;·&nbsp; ${fmtDate(s.publishedAt)}</p><p style="font-size:.8rem;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.title}</p>`;
+    btn.onclick = ()=>playVideo(s.resourceId.videoId);
     row.appendChild(btn);
   });
 }
 
-/* Etiqueta de duración legible */
 function getDurLabel(video) {
   const dur = parseDuration(video.contentDetails?.duration);
-  if (dur >= 5400) return 'Culto especial';   // 90min+
-  if (dur >= 1800) return 'Culto';            // 30-90min
-  return 'Mensaje';                           // 3-30min (pasó el filtro de keywords)
+  if (dur>=5400) return 'Culto especial';
+  if (dur>=1800) return 'Culto';
+  return 'Mensaje';
 }
 
 function playVideo(id) {
   const player = $id('videoInlinePlayer');
   player.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;aspect-ratio:16/9;border:none;display:block;"></iframe>`;
   player.classList.add('open');
-  $id('videoFeaturedCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $id('videoFeaturedCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-/* ─── EN VIVO (solo por clic del usuario) ─── */
 window.checkLive = async () => {
-  const box    = $id('streamBox');
-  const status = $id('liveStatus');
+  const box=$id('streamBox'), status=$id('liveStatus');
   box.innerHTML = `<div class="stream-ph"><p style="font-size:.8rem;opacity:.7;">Buscando transmisión…</p></div>`;
   try {
-    const live = await ytFetch('search', { part: 'snippet', channelId: YT_CHANNEL_ID, eventType: 'live', type: 'video' });
+    const live = await ytFetch('search',{part:'snippet',channelId:YT_CHANNEL_ID,eventType:'live',type:'video'});
     if (live.items?.length) {
-      const v = live.items[0];
+      const v=live.items[0];
       box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
       status.innerHTML = `<span style="color:#ff7070">● EN VIVO:</span> <strong>${v.snippet.title}</strong>`;
     } else {
-      box.innerHTML = `<div class="stream-ph"><p style="font-size:.85rem;">Sin transmisión activa en este momento.</p></div>`;
+      box.innerHTML = `<div class="stream-ph"><p style="font-size:.82rem;">Sin transmisión activa en este momento.</p></div>`;
       status.textContent = 'La transmisión inicia puntualmente los domingos 10:15 hs.';
     }
-  } catch {
-    box.innerHTML = `<div class="stream-ph"><p style="font-size:.85rem;color:#ff7070;">Error de conexión.</p></div>`;
-  }
+  } catch { box.innerHTML=`<div class="stream-ph"><p style="font-size:.82rem;color:#ff7070;">Error de conexión.</p></div>`; }
 };
 
 window.verUltimoEnVivo = () => {
   if (!vtState.cultosDetectados.length) { initYouTube().then(verUltimoEnVivo); return; }
-  const last = vtState.cultosDetectados[0].snippet;
-  $id('streamBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${last.resourceId.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
-  $id('liveStatus').innerHTML = `Reproduciendo: <strong>${last.title}</strong>`;
+  const last=vtState.cultosDetectados[0].snippet;
+  $id('streamBox').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${last.resourceId.videoId}?autoplay=1&rel=0" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>`;
+  $id('liveStatus').innerHTML=`Reproduciendo: <strong>${last.title}</strong>`;
 };
 
-/* ─── LAZY: se dispara desde el IntersectionObserver ─── */
 initYouTube();
 </script>
 
 <script>
-  /* === MOTOR DE COMPARTIR Y VISUALIZADORES === */
-  window.generarBotonesCompartir = (titulo, urlImagen = '') => {
-    const url = encodeURIComponent(window.location.href.split('#')[0]); 
-    const textoApp = encodeURIComponent(`¡Mira esto en PIEBA!\n${titulo}\n${urlImagen ? urlImagen + '\n' : ''}`);
-    return `
-      <div class="share-row" onclick="event.stopPropagation()">
-        <a href="https://wa.me/?text=${textoApp}${url}" target="_blank" class="share-btn" title="Compartir en WhatsApp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        </a>
-        <a href="mailto:?subject=${encodeURIComponent(titulo)}&body=${textoApp}${url}" class="share-btn" title="Compartir por Correo">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-        </a>
-      </div>
-    `;
-  };
+/* === MOTOR DE COMPARTIR Y VISUALIZADORES === */
+window.generarBotonesCompartir = (titulo, urlImagen='') => {
+  const url = encodeURIComponent(window.location.href.split('#')[0]);
+  const textoApp = encodeURIComponent(`¡Mira esto en PIEBA!\n${titulo}\n${urlImagen?urlImagen+'\n':''}`);
+  return `<div class="share-row" onclick="event.stopPropagation()">
+    <a href="https://wa.me/?text=${textoApp}${url}" target="_blank" class="share-btn" title="WhatsApp"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+    <a href="mailto:?subject=${encodeURIComponent(titulo)}&body=${textoApp}${url}" class="share-btn" title="Correo"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+  </div>`;
+};
 
-  /* ── LÓGICA DE FOTO GRANDE Y GALERÍA ── */
-  window.fotosActuales = [];
-  window.indiceFotoActual = 0;
+window.fotosActuales = [];
+window.indiceFotoActual = 0;
+window.closeLightbox = () => { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; };
+window.abrirFotoGrande = (index) => {
+  window.indiceFotoActual = index;
+  const urlFoto = window.fotosActuales[index];
+  document.getElementById('pvImage').src = urlFoto;
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA',urlFoto);
+  document.getElementById('photoViewer').classList.add('open');
+};
+window.cerrarFoto = () => document.getElementById('photoViewer').classList.remove('open');
+window.moverFoto = (dir) => {
+  window.indiceFotoActual += dir;
+  if (window.indiceFotoActual<0) window.indiceFotoActual=window.fotosActuales.length-1;
+  if (window.indiceFotoActual>=window.fotosActuales.length) window.indiceFotoActual=0;
+  window.abrirFotoGrande(window.indiceFotoActual);
+};
 
-  // ESTA ES LA FUNCIÓN QUE FALTABA PARA CERRAR EL ALBUM
-  window.closeLightbox = () => {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  };
+window.listaArticulosGlobal = [];
+window.indiceArticuloActual = 0;
+window.tipoArticuloActual = 'blog';
 
-  window.abrirFotoGrande = (index) => {
-    window.indiceFotoActual = index;
-    const urlFoto = window.fotosActuales[index];
-    document.getElementById('pvImage').src = urlFoto;
-    document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
-    document.getElementById('photoViewer').classList.add('open');
-  };
-  window.cerrarFoto = () => document.getElementById('photoViewer').classList.remove('open');
-  window.moverFoto = (dir) => {
-    window.indiceFotoActual += dir;
-    if (window.indiceFotoActual < 0) window.indiceFotoActual = window.fotosActuales.length - 1;
-    if (window.indiceFotoActual >= window.fotosActuales.length) window.indiceFotoActual = 0;
-    window.abrirFotoGrande(window.indiceFotoActual);
-  };
+window.abrirArticuloModal = (datos, index, tipo) => {
+  window.listaArticulosGlobal=datos; window.indiceArticuloActual=index; window.tipoArticuloActual=tipo;
+  const d=datos[index]; if(!d) return;
+  document.getElementById('bvTitle').textContent=d.titulo;
+  const fechaStr=d.fecha&&d.fecha.toDate?d.fecha.toDate().toLocaleDateString('es-PY'):'';
+  let meta='';
+  if(tipo==='blog') meta=`${d.autor||'PIEBA'} - ${fechaStr}`;
+  else if(tipo==='evento') meta=`Evento - ${fechaStr}`;
+  else meta=`Comunicado - ${fechaStr}`;
+  document.getElementById('bvMeta').textContent=meta;
+  const imgEl=document.getElementById('bvImage');
+  if(d.imagen){imgEl.src=d.imagen;imgEl.style.display='block';}else{imgEl.style.display='none';}
+  document.getElementById('bvText').innerHTML=d.contenido||d.texto||d.extracto||'Sin información detallada.';
+  document.getElementById('bvShare').innerHTML=window.generarBotonesCompartir(d.titulo);
+  document.getElementById('blogViewer').classList.add('open');
+  document.body.style.overflow='hidden';
+};
 
-  /* ── VISOR UNIVERSAL (BLOG, AVISOS, EVENTOS) ── */
-  window.listaArticulosGlobal = [];
-  window.indiceArticuloActual = 0;
-  window.tipoArticuloActual = 'blog';
+window.cerrarBlogModal = () => {
+  document.getElementById('blogViewer').classList.remove('open');
+  if (!document.getElementById('lightbox').classList.contains('open')) document.body.style.overflow='';
+};
 
-  window.abrirArticuloModal = (datos, index, tipo) => {
-    window.listaArticulosGlobal = datos;
-    window.indiceArticuloActual = index;
-    window.tipoArticuloActual = tipo;
-    
-    const d = datos[index];
-    if (!d) return;
+window.moverBlog = (dir) => {
+  let nuevoIndex=window.indiceArticuloActual+dir;
+  if(nuevoIndex<0) nuevoIndex=window.listaArticulosGlobal.length-1;
+  if(nuevoIndex>=window.listaArticulosGlobal.length) nuevoIndex=0;
+  window.abrirArticuloModal(window.listaArticulosGlobal,nuevoIndex,window.tipoArticuloActual);
+};
 
-    document.getElementById('bvTitle').textContent = d.titulo;
-    const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
-    
-    let meta = '';
-    if (tipo === 'blog') meta = `${d.autor || 'PIEBA'} - ${fechaStr}`;
-    else if (tipo === 'evento') meta = `Evento - ${fechaStr}`;
-    else meta = `Comunicado - ${fechaStr}`;
-    
-    document.getElementById('bvMeta').textContent = meta;
-    
-    const imgEl = document.getElementById('bvImage');
-    if(d.imagen) { imgEl.src = d.imagen; imgEl.style.display = 'block'; }
-    else { imgEl.style.display = 'none'; }
-    
-    document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
-    document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
-    
-    document.getElementById('blogViewer').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
-
-  window.cerrarBlogModal = () => {
-    document.getElementById('blogViewer').classList.remove('open');
-    if (!document.getElementById('lightbox').classList.contains('open')) {
-      document.body.style.overflow = '';
-    }
-  };
-
-  window.moverBlog = (dir) => {
-    let nuevoIndex = window.indiceArticuloActual + dir;
-    if (nuevoIndex < 0) nuevoIndex = window.listaArticulosGlobal.length - 1;
-    if (nuevoIndex >= window.listaArticulosGlobal.length) nuevoIndex = 0;
-    window.abrirArticuloModal(window.listaArticulosGlobal, nuevoIndex, window.tipoArticuloActual);
-  };
-
-  /* Teclado universal */
-  document.addEventListener('keydown', e => { 
-    if (e.key === 'Escape') {
-      window.cerrarFoto();
-      window.cerrarBlogModal();
-      window.closeLightbox(); 
-    }
-    if (e.key === 'ArrowRight') {
-      if (document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(1);
-      else if (document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(1);
-    }
-    if (e.key === 'ArrowLeft') {
-      if (document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(-1);
-      else if (document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(-1);
-    }
-  });
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){window.cerrarFoto();window.cerrarBlogModal();window.closeLightbox();}
+  if(e.key==='ArrowRight'){if(document.getElementById('photoViewer').classList.contains('open'))window.moverFoto(1);else if(document.getElementById('blogViewer').classList.contains('open'))window.moverBlog(1);}
+  if(e.key==='ArrowLeft'){if(document.getElementById('photoViewer').classList.contains('open'))window.moverFoto(-1);else if(document.getElementById('blogViewer').classList.contains('open'))window.moverBlog(-1);}
+});
 </script>
-  
+
 <script type="module">
-  /* ─────────────────────────────────────────────
-     FIREBASE FIRESTORE — AVISOS, EVENTOS Y GALERÍA
-     ───────────────────────────────────────────── */
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  // TU CONFIGURACIÓN
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
-    authDomain: "pieba-database.firebaseapp.com",
-    projectId: "pieba-database",
-    storageBucket: "pieba-database.firebasestorage.app",
-    messagingSenderId: "54248882255",
-    appId: "1:54248882255:web:b635bace1d3d723515aa3a",
-    measurementId: "G-5CXYM9XQ1X"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
+  authDomain: "pieba-database.firebaseapp.com",
+  projectId: "pieba-database",
+  storageBucket: "pieba-database.firebasestorage.app",
+  messagingSenderId: "54248882255",
+  appId: "1:54248882255:web:b635bace1d3d723515aa3a",
+  measurementId: "G-5CXYM9XQ1X"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 
-  const formatDate = (dateObj) => {
-    return dateObj.toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
-  };
-  const formatMonthYear = (dateObj) => {
-    return dateObj.toLocaleDateString('es-PY', { month: 'long', year: 'numeric' });
-  };
+const formatDate = (d) => d.toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
+const formatMonthYear = (d) => d.toLocaleDateString('es-PY',{month:'long',year:'numeric'});
 
-  const icons = {
-    urgente: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#ff7070"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zm-1 5v5h2v-5h-2zm0 6v2h2v-2h-2z"/></svg>`,
-    info: `<svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`,
-    normal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`
-  };
+const icons = {
+  urgente: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#ff7070"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zm-1 5v5h2v-5h-2zm0 6v2h2v-2h-2z"/></svg>`,
+  info: `<svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`,
+  normal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`
+};
 
-  // GLOBALES PARA EL VISOR UNIVERSAL
-  window.avisosDataGlobal = [];
-  window.eventosDataGlobal = [];
-  window.blogDataGlobal = [];
+window.avisosDataGlobal=[]; window.eventosDataGlobal=[]; window.blogDataGlobal=[];
 
-  // ─── 1. CARGAR COMUNIDAD (AVISOS Y EVENTOS) ───
-  async function cargarComunidad() {
-    const contAvisos = document.getElementById('contenedorAvisos');
-    const contEventos = document.getElementById('contenedorEventos');
-    if (!contAvisos || !contEventos) return;
-    try {
-      // CARGAR AVISOS
-      const qAvisos = query(collection(db, "avisos"), orderBy("fecha", "desc"));
-      const snapAvisos = await getDocs(qAvisos);
-      let htmlAvisos = '';
-      if (snapAvisos.empty) {
-        htmlAvisos = `<p style="color:var(--muted); font-size:0.85rem;">No hay comunicados.</p>`;
-      } else {
-        window.avisosDataGlobal = [];
-        let i = 0;
-        snapAvisos.forEach(doc => {
-          const d = doc.data();
-          window.avisosDataGlobal.push(d);
-          const tipo = (d.tipo || 'normal').toLowerCase();
-          htmlAvisos += `
-            <div class="aviso-card ${tipo} reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.avisosDataGlobal, ${i}, 'aviso')">
-              ${d.imagen ? `<div class="aviso-img"><img src="${d.imagen}" loading="lazy"></div>` : ''}
-              <div class="aviso-header-row">
-                <div class="aviso-ico ${tipo}">${icons[tipo] || icons.normal}</div>
-                <div class="aviso-body">
-                  <span class="aviso-tag ${tipo}">${tipo.toUpperCase()}</span>
-                  <p class="aviso-titulo">${d.titulo || ''}</p>
-                  <p class="aviso-texto">${d.texto || ''}</p>
-                  <div class="aviso-footer">
-                    <span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>
-                    ${window.generarBotonesCompartir ? window.generarBotonesCompartir(d.titulo) : ''}
-                  </div>
-                </div>
-              </div>
-            </div>`;
-          i++;
-        });
-      }
-      contAvisos.innerHTML = htmlAvisos;
-
-      // CARGAR EVENTOS
-      const qEventos = query(collection(db, "eventos"), orderBy("fecha", "asc"));
-      const snapEventos = await getDocs(qEventos);
-      const hoy = new Date(); hoy.setHours(0,0,0,0);
-      let fut = [];
-      snapEventos.forEach(doc => { if(doc.data().fecha.toDate() >= hoy) fut.push(doc.data()); });
-      if (fut.length === 0) {
-        contEventos.innerHTML = `<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
-      } else {
-        window.eventosDataGlobal = fut;
-        contEventos.innerHTML = fut.map((e, index) => {
-          const fe = e.fecha.toDate();
-          return `
-            <div class="evento-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.eventosDataGlobal, ${index}, 'evento')">
-              ${e.imagen ? `<div class="evento-img"><img src="${e.imagen}" loading="lazy"></div>` : ''}
-              <div class="evento-date-bar">
-                <div class="evento-dia">${fe.getDate()}</div>
-                <div class="evento-mes-hora">
-                  <span class="evento-mes">${fe.toLocaleDateString('es-PY',{month:'long'})}</span>
-                  <span class="evento-hora">${fe.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}</span>
-                </div>
-              </div>
-              <div class="evento-body">
-                <p class="evento-titulo">${e.titulo || ''}</p>
-                <p class="evento-desc">${e.texto || ''}</p>
-                ${window.generarBotonesCompartir ? window.generarBotonesCompartir(e.titulo) : ''}
-              </div>
-            </div>`;
-        }).join('');
-      }
-    } catch (err) { console.error('Error:', err); }
-  }
-
-  // ─── 2. CARGAR GALERÍA ───
-  let albumsData = [];
-  async function cargarGaleria() {
-    const contGaleria = document.getElementById('albumGrid');
-    if (!contGaleria) return;
-    try {
-      const qGaleria = query(collection(db, "galeria"), orderBy("fecha", "desc"));
-      const snapGaleria = await getDocs(qGaleria);
-      
-      if (snapGaleria.empty) {
-        contGaleria.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--muted);"><p>Aún no hay álbumes publicados.</p></div>`;
-        return;
-      }
-      let htmlGaleria = '';
-      albumsData = [];
-      let index = 0;
-      snapGaleria.forEach(doc => {
-        const data = doc.data();
-        const fechaJs = data.fecha ? data.fecha.toDate() : new Date();
-        const fotos = data.fotos || []; 
-        albumsData.push({ id: index, nombre: data.nombre, fecha: formatMonthYear(fechaJs), fotos: fotos });
-        
-        const portadaUrl = data.portada || (fotos.length > 0 ? fotos[0] : null);
-        const coverHtml = portadaUrl 
-          ? `<img src="${portadaUrl}" class="album-cover-img" alt="${data.nombre}" loading="lazy">`
-          : `<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,.3)" stroke-width="1"><image href=""/></svg></div>`;
-        htmlGaleria += `
-          <div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">
-            ${coverHtml}
-            <div class="album-overlay">
-              <p class="album-name">${data.nombre || 'Sin Título'}</p>
-              <p class="album-date">${formatMonthYear(fechaJs)}</p>
-            </div>
-            <span class="album-count">${fotos.length} fotos</span>
-          </div>`;
-        index++;
-      });
-      contGaleria.innerHTML = htmlGaleria;
-    } catch (err) {
-      console.error('Error Galería:', err);
-      contGaleria.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff7070;"><p>Error al cargar la galería.</p></div>`;
-    }
-  }
-
-  // ─── 3. LÓGICA DEL LIGHTBOX (Galería) ───
-  
-  // Aquí aseguramos que la X funcione para volver a la lista de álbumes
-  window.closeLightbox = () => {
-    const lb = document.getElementById('lightbox');
-    if(lb) {
-        lb.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-  };
-
-  window.abrirAlbum = (albumIndex) => {
-    const album = albumsData[albumIndex];
-    if (!album) return;
-    document.getElementById('lbTitle').textContent = album.nombre;
-    document.getElementById('lbDate').innerHTML = album.fecha + (window.generarBotonesCompartir ? window.generarBotonesCompartir('Álbum: ' + album.nombre) : '');
-    
-    const grid = document.getElementById('lbGrid');
-    grid.innerHTML = '';
-    
-    window.fotosActuales = album.fotos;
-
-    if (album.fotos.length === 0) {
-      grid.innerHTML = `<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`;
+async function cargarComunidad() {
+  const contAvisos=document.getElementById('contenedorAvisos');
+  const contEventos=document.getElementById('contenedorEventos');
+  if(!contAvisos||!contEventos) return;
+  try {
+    const qAvisos=query(collection(db,"avisos"),orderBy("fecha","desc"));
+    const snapAvisos=await getDocs(qAvisos);
+    let htmlAvisos='';
+    if(snapAvisos.empty) {
+      htmlAvisos=`<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:.85rem;padding:1rem;">No hay comunicados.</div>`;
     } else {
-      album.fotos.forEach((url, i) => {
-        grid.innerHTML += `
-          <div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})">
-            <img src="${url}" loading="lazy" alt="Foto de ${album.nombre}">
-          </div>`;
+      window.avisosDataGlobal=[]; let i=0;
+      snapAvisos.forEach(doc=>{
+        const d=doc.data(); window.avisosDataGlobal.push(d);
+        const tipo=(d.tipo||'normal').toLowerCase();
+        htmlAvisos+=`<div class="aviso-card ${tipo} reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.avisosDataGlobal,${i},'aviso')">
+          ${d.imagen?`<div class="aviso-img"><img src="${d.imagen}" loading="lazy"></div>`:''}
+          <div class="aviso-header-row">
+            <div class="aviso-ico ${tipo}">${icons[tipo]||icons.normal}</div>
+            <div class="aviso-body">
+              <span class="aviso-tag ${tipo}">${tipo.toUpperCase()}</span>
+              <p class="aviso-titulo">${d.titulo||''}</p>
+              <p class="aviso-texto">${d.texto||''}</p>
+              <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div>
+            </div>
+          </div></div>`; i++;
       });
     }
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
+    contAvisos.innerHTML=htmlAvisos;
 
-  document.addEventListener('keydown', e => { 
-    if (e.key === 'Escape' && typeof window.closeLightbox === 'function') window.closeLightbox(); 
-  });
-
-  // Ejecutar cargas iniciales
-  cargarComunidad();
-  cargarGaleria();
-
-  // ─── 4. CARGAR BLOG ───
-  async function cargarBlog() {
-    const cont = document.getElementById('contenedorBlog');
-    if(!cont) return;
-    try {
-      const q = query(collection(db, "blog"), orderBy("fecha", "desc"));
-      const snap = await getDocs(q);
-      if(snap.empty) {
-        cont.innerHTML = "<p style='grid-column:1/-1; opacity:0.5;'>Próximamente nuevas reflexiones...</p>";
-        return;
-      }
-      
-      window.blogDataGlobal = [];
-      snap.forEach(d => window.blogDataGlobal.push(d.data()));
-      const docs = window.blogDataGlobal;
-
-      if (docs.length === 1) {
-        cont.style.display = "block"; cont.style.maxWidth = "600px"; cont.style.margin = "2.5rem auto 0";
-      } else {
-        cont.style.display = "grid"; cont.style.maxWidth = "1080px"; cont.style.margin = "2.5rem 0 0";
-      }
-      let html = "";
-      
-      if (docs.length === 1) {
-        const d = docs[0];
-        html = `
-          <div class="blog-card reveal visible" style="width:100%; cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal, 0, 'blog')">
-            <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
-            <div class="blog-card-body">
-              <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
-              <h3 class="blog-titulo" style="font-size:1.5rem; margin-bottom:1rem;">${d.titulo}</h3>
-              <p class="blog-excerpt">${d.extracto || ''}</p>
-              <div class="blog-meta" style="justify-content:space-between;">
-                <div><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block; margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>
-                ${window.generarBotonesCompartir ? window.generarBotonesCompartir(d.titulo) : ''}
-              </div>
-            </div>
-          </div>`;
-      } else {
-        const d = docs[0];
-        html += `
-          <div class="blog-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal, 0, 'blog')">
-            <div class="blog-cover">${d.imagen ? `<img src="${d.imagen}">` : `<div class="blog-cover-ph"></div>`}</div>
-            <div class="blog-card-body">
-              <p class="blog-cat">${d.categoria || 'Reflexión'}</p>
-              <p class="blog-titulo">${d.titulo}</p>
-              <p class="blog-excerpt">${d.extracto || ''}</p>
-              <div class="blog-meta" style="justify-content:space-between; margin-top:1rem;">
-                <div><span>${d.autor || 'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block; margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>
-                ${window.generarBotonesCompartir ? window.generarBotonesCompartir(d.titulo) : ''}
-              </div>
-            </div>
+    const qEventos=query(collection(db,"eventos"),orderBy("fecha","asc"));
+    const snapEventos=await getDocs(qEventos);
+    const hoy=new Date(); hoy.setHours(0,0,0,0);
+    let fut=[];
+    snapEventos.forEach(doc=>{if(doc.data().fecha.toDate()>=hoy) fut.push(doc.data());});
+    if(fut.length===0){
+      contEventos.innerHTML=`<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
+    } else {
+      window.eventosDataGlobal=fut;
+      contEventos.innerHTML=fut.map((e,index)=>{
+        const fe=e.fecha.toDate();
+        return `<div class="evento-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.eventosDataGlobal,${index},'evento')">
+          ${e.imagen?`<div class="evento-img"><img src="${e.imagen}" loading="lazy"></div>`:''}
+          <div class="evento-date-bar">
+            <div class="evento-dia">${fe.getDate()}</div>
+            <div class="evento-mes-hora"><span class="evento-mes">${fe.toLocaleDateString('es-PY',{month:'long'})}</span><span class="evento-hora">${fe.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}</span></div>
           </div>
-          <div class="blog-side">
-            ${docs.slice(1, 4).map((art, i) => `
-              <div class="blog-card-sm reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal, ${i + 1}, 'blog')">
-                <div class="blog-thumb-sm">${art.imagen ? `<img src="${art.imagen}">` : `<div class="blog-thumb-ph"></div>`}</div>
-                <div class="blog-sm-body">
-                  <p class="blog-cat" style="font-size:.58rem;">${art.categoria || 'Comunidad'}</p>
-                  <p class="blog-sm-titulo">${art.titulo}</p>
-                  <p class="blog-sm-meta">${art.autor || 'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>
-                  ${window.generarBotonesCompartir ? window.generarBotonesCompartir(art.titulo) : ''}
-                </div>
-              </div>
-            `).join('')}
-          </div>`;
-      }
-      cont.innerHTML = html;
-    } catch(e) { console.error(e); }
-  }
-  cargarBlog();
+          <div class="evento-body"><p class="evento-titulo">${e.titulo||''}</p><p class="evento-desc">${e.texto||''}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo):''}</div>
+        </div>`;
+      }).join('');
+    }
+  } catch(err){ console.error('Error:',err); }
+}
+
+let albumsData=[];
+async function cargarGaleria() {
+  const contGaleria=document.getElementById('albumGrid');
+  if(!contGaleria) return;
+  try {
+    const qGaleria=query(collection(db,"galeria"),orderBy("fecha","desc"));
+    const snapGaleria=await getDocs(qGaleria);
+    if(snapGaleria.empty){contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--muted);"><p>Aún no hay álbumes publicados.</p></div>`;return;}
+    let htmlGaleria=''; albumsData=[]; let index=0;
+    snapGaleria.forEach(doc=>{
+      const data=doc.data();
+      const fechaJs=data.fecha?data.fecha.toDate():new Date();
+      const fotos=data.fotos||[];
+      albumsData.push({id:index,nombre:data.nombre,fecha:formatMonthYear(fechaJs),fotos:fotos});
+      const portadaUrl=data.portada||(fotos.length>0?fotos[0]:null);
+      const coverHtml=portadaUrl?`<img src="${portadaUrl}" class="album-cover-img" alt="${data.nombre}" loading="lazy">`:`<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);width:100%;height:100%;"></div>`;
+      htmlGaleria+=`<div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">${coverHtml}<div class="album-overlay"><p class="album-name">${data.nombre||'Sin Título'}</p><p class="album-date">${formatMonthYear(fechaJs)}</p></div><span class="album-count">${fotos.length} fotos</span></div>`;
+      index++;
+    });
+    contGaleria.innerHTML=htmlGaleria;
+  } catch(err){ console.error('Error Galería:',err); contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:#ff7070;"><p>Error al cargar la galería.</p></div>`; }
+}
+
+window.closeLightbox=()=>{const lb=document.getElementById('lightbox');if(lb){lb.classList.remove('open');document.body.style.overflow='';}};
+
+window.abrirAlbum=(albumIndex)=>{
+  const album=albumsData[albumIndex]; if(!album) return;
+  document.getElementById('lbTitle').textContent=album.nombre;
+  document.getElementById('lbDate').innerHTML=album.fecha+(window.generarBotonesCompartir?window.generarBotonesCompartir('Álbum: '+album.nombre):'');
+  const grid=document.getElementById('lbGrid'); grid.innerHTML='';
+  window.fotosActuales=album.fotos;
+  if(album.fotos.length===0){grid.innerHTML=`<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`;}
+  else{album.fotos.forEach((url,i)=>{grid.innerHTML+=`<div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})"><img src="${url}" loading="lazy" alt="Foto de ${album.nombre}"></div>`;});}
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+};
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&typeof window.closeLightbox==='function')window.closeLightbox();});
+
+cargarComunidad();
+cargarGaleria();
+
+async function cargarBlog() {
+  const cont=document.getElementById('contenedorBlog'); if(!cont) return;
+  try {
+    const q=query(collection(db,"blog"),orderBy("fecha","desc"));
+    const snap=await getDocs(q);
+    if(snap.empty){cont.innerHTML="<p style='grid-column:1/-1;opacity:0.5;'>Próximamente nuevas reflexiones...</p>";return;}
+    window.blogDataGlobal=[];
+    snap.forEach(d=>window.blogDataGlobal.push(d.data()));
+    const docs=window.blogDataGlobal;
+    if(docs.length===1){cont.style.display="block";cont.style.maxWidth="560px";cont.style.margin="2rem auto 0";}
+    else{cont.style.display="grid";cont.style.maxWidth="1000px";cont.style.margin="2rem 0 0";}
+    let html="";
+    if(docs.length===1){
+      const d=docs[0];
+      html=`<div class="blog-card reveal visible" style="width:100%;cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
+        <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
+        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><h3 class="blog-titulo" style="font-size:1.35rem;margin-bottom:.85rem;">${d.titulo}</h3><p class="blog-excerpt">${d.extracto||''}</p>
+        <div class="blog-meta" style="justify-content:space-between;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div></div></div>`;
+    } else {
+      const d=docs[0];
+      html+=`<div class="blog-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
+        <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
+        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><p class="blog-titulo">${d.titulo}</p><p class="blog-excerpt">${d.extracto||''}</p>
+        <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div></div></div>
+        <div class="blog-side">${docs.slice(1,4).map((art,i)=>`
+          <div class="blog-card-sm reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,${i+1},'blog')">
+            <div class="blog-thumb-sm">${art.imagen?`<img src="${art.imagen}">`:`<div class="blog-thumb-ph"></div>`}</div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo):''}</div>
+          </div>`).join('')}</div>`;
+    }
+    cont.innerHTML=html;
+  } catch(e){ console.error(e); }
+}
+cargarBlog();
 </script>
 
 <style>
-  /* VISUALIZADOR DE FOTOS INDIVIDUALES */
-  .photo-viewer { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; flex-direction: column; }
-  .photo-viewer.open { display: flex; }
-  .pv-close { position: absolute; top: 1.5rem; right: 2rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.2rem; cursor: pointer; z-index: 501; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
-  .pv-close:hover { background: var(--gold-dim); color: var(--gold); }
-  .pv-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: white; font-size: 1.5rem; width: 50px; height: 50px; cursor: pointer; border-radius: 50%; transition: 0.3s; z-index: 501; display: flex; align-items: center; justify-content: center; }
-  .pv-nav:hover { background: var(--gold); color: var(--navy); }
-  .pv-nav.prev { left: 2rem; }
-  .pv-nav.next { right: 2rem; }
-  #pvImage { max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transition: opacity 0.3s; }
-  .pv-footer { position: absolute; bottom: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  /* VISUALIZADOR DE FOTOS */
+  .photo-viewer{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.95);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;flex-direction:column;}
+  .photo-viewer.open{display:flex;}
+  .pv-close{position:absolute;top:1.25rem;right:1.75rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:38px;height:38px;color:white;font-size:1.1rem;cursor:pointer;z-index:501;transition:0.3s;display:flex;align-items:center;justify-content:center;}
+  .pv-close:hover{background:var(--gold-dim);color:var(--gold);}
+  .pv-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:white;font-size:1.4rem;width:46px;height:46px;cursor:pointer;border-radius:50%;transition:0.3s;z-index:501;display:flex;align-items:center;justify-content:center;}
+  .pv-nav:hover{background:var(--gold);color:var(--navy);}
+  .pv-nav.prev{left:1.5rem;} .pv-nav.next{right:1.5rem;}
+  #pvImage{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
+  .pv-footer{position:absolute;bottom:1.75rem;display:flex;flex-direction:column;align-items:center;gap:0.5rem;}
 
-  /* LECTOR DE BLOG FLOTANTE */
-  .blog-viewer { position: fixed; inset: 0; z-index: 450; background: rgba(7,5,30,0.96); backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; padding: 2rem; }
-  .blog-viewer.open { display: flex; }
-  .bv-content { background: var(--navy-deep); border: 1px solid var(--glass-b); width: 100%; max-width: 750px; max-height: 85vh; border-radius: 4px; overflow-y: auto; padding: 2.5rem; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-  .bv-close { position: absolute; top: 1.5rem; right: 1.5rem; background: var(--glass); border: 1px solid var(--glass-b); color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display:flex; align-items:center; justify-content:center; transition:0.3s;}
-  .bv-close:hover { background: var(--gold-dim); color: var(--gold); }
-  .bv-header { margin-bottom: 1.5rem; padding-right: 2rem; border-bottom: 1px solid var(--glass-b); padding-bottom: 1rem; }
-  #bvTitle { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--gold); line-height: 1.3; margin-bottom: 0.5rem; }
-  #bvMeta { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
-  .bv-body { font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.8; margin-bottom: 2rem; }
-  .bv-body img { max-width: 100%; border-radius: 4px; margin: 1rem 0; }
-  .bv-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-b); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-  .bv-controls button { background: transparent; border: 1px solid rgba(201,169,110,0.5); color: var(--gold); padding: 0.6rem 1.2rem; border-radius: 2px; cursor: pointer; font-family: 'Raleway', sans-serif; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.15em; transition: 0.3s; }
-  .bv-controls button:hover { background: var(--gold); color: var(--navy); }
+  /* LECTOR BLOG */
+  .blog-viewer{position:fixed;inset:0;z-index:450;background:rgba(7,5,30,0.96);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:2rem;}
+  .blog-viewer.open{display:flex;}
+  .bv-content{background:var(--navy-deep);border:1px solid var(--glass-b);width:100%;max-width:720px;max-height:88vh;border-radius:4px;overflow-y:auto;padding:2.25rem;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+  .bv-close{position:absolute;top:1.25rem;right:1.25rem;background:var(--glass);border:1px solid var(--glass-b);color:white;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:0.3s;}
+  .bv-close:hover{background:var(--gold-dim);color:var(--gold);}
+  .bv-header{margin-bottom:1.25rem;padding-right:2rem;border-bottom:1px solid var(--glass-b);padding-bottom:.9rem;}
+  #bvTitle{font-family:'Cinzel',serif;font-size:1.65rem;color:var(--gold);line-height:1.3;margin-bottom:0.4rem;}
+  #bvMeta{font-size:0.72rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;}
+  .bv-body{font-size:0.92rem;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:1.75rem;}
+  .bv-body img{max-width:100%;border-radius:4px;margin:1rem 0;}
+  .bv-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--glass-b);padding-top:1.25rem;flex-wrap:wrap;gap:.85rem;}
+  .bv-controls button{background:transparent;border:1px solid rgba(201,169,110,0.5);color:var(--gold);padding:0.55rem 1.1rem;border-radius:2px;cursor:pointer;font-family:'Raleway',sans-serif;text-transform:uppercase;font-size:0.62rem;letter-spacing:0.15em;transition:0.3s;}
+  .bv-controls button:hover{background:var(--gold);color:var(--navy);}
 
-  /* BOTONES DE COMPARTIR (GLOBAL) */
-  .share-row { display: flex; gap: 0.4rem; margin-top: 0.75rem; }
-  .share-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-b); color: var(--white); cursor: pointer; transition: 0.3s; text-decoration: none; }
-  .share-btn:hover { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+  /* SHARE */
+  .share-row{display:flex;gap:0.35rem;margin-top:0.65rem;}
+  .share-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-b);color:var(--white);cursor:pointer;transition:0.3s;text-decoration:none;}
+  .share-btn:hover{background:var(--gold-dim);border-color:var(--gold);transform:translateY(-2px);}
 
-  @media (max-width: 768px) {
-    .pv-nav { width: 40px; height: 40px; font-size: 1.2rem; }
-    .pv-nav.prev { left: 0.5rem; }
-    .pv-nav.next { right: 0.5rem; }
-    .bv-content { padding: 1.5rem; max-height: 90vh; }
-    #bvTitle { font-size: 1.4rem; }
-    .blog-viewer { padding: 1rem; }
+  @media(max-width:768px){
+    .pv-nav{width:38px;height:38px;font-size:1.1rem;}
+    .pv-nav.prev{left:.5rem;} .pv-nav.next{right:.5rem;}
+    .bv-content{padding:1.25rem;max-height:92vh;}
+    #bvTitle{font-size:1.3rem;}
+    .blog-viewer{padding:.75rem;}
   }
 </style>
 
@@ -1692,11 +1392,8 @@ initYouTube();
 <div class="blog-viewer" id="blogViewer">
   <div class="bv-content">
     <button class="bv-close" onclick="cerrarBlogModal()">✕</button>
-    <div class="bv-header">
-      <h2 id="bvTitle">Título</h2>
-      <p id="bvMeta">Autor - Fecha</p>
-    </div>
-    <img id="bvImage" src="" alt="Portada" style="width:100%; border-radius:3px; margin-bottom:1.5rem; display:none;">
+    <div class="bv-header"><h2 id="bvTitle">Título</h2><p id="bvMeta">Autor - Fecha</p></div>
+    <img id="bvImage" src="" alt="Portada" style="width:100%;border-radius:3px;margin-bottom:1.25rem;display:none;">
     <div class="bv-body" id="bvText"></div>
     <div class="bv-footer">
       <div id="bvShare"></div>
@@ -1707,9 +1404,6 @@ initYouTube();
     </div>
   </div>
 </div>
-
-
-
 
 </body>
 </html>
