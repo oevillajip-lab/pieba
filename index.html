@@ -408,14 +408,22 @@
       .nos-list { margin-top: 1rem; gap: .6rem; }
       .nos-list li span { font-size: .82rem; }
 
-      /* ── CULTOS ── */
+/* ── CULTOS / TARJETAS COMUNIDAD ── */
       .cultos-wrap { padding: 0 1.25rem; }
-      .culto-cards { grid-template-columns: repeat(2, 1fr); gap: .55rem; margin-top: 1rem; }
-      .culto-card { padding: .9rem .75rem; }
-      .culto-card:last-child { grid-column: 1 / -1; }
-      .culto-hora { font-size: 1.2rem; margin-top: .35rem; }
-      .culto-nombre { font-size: .8rem; line-height: 1.2; }
-      .culto-desc { font-size: .68rem; margin-top: .35rem; }
+      
+      /* Forzamos 3 columnas y anulamos la regla vieja que bajaba la 3ra tarjeta */
+      .culto-cards { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: .35rem !important; margin-top: 1rem; }
+      .culto-card { padding: .75rem .45rem !important; text-align: center; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease; width: auto !important; }
+      .culto-card:last-child { grid-column: auto !important; } 
+      
+      /* Efecto de agrandarse al tocar / mantener presionado */
+      .culto-card:hover, .culto-card:active { transform: scale(1.08); border-color: var(--gold); z-index: 10; background: rgba(7,5,30,.98); }
+      
+      /* Tamaños de texto ajustados para que las 3 entren perfectas */
+      .culto-dia { font-size: .42rem; letter-spacing: .12em; }
+      .culto-nombre { font-size: .58rem; margin-top: .35rem; line-height: 1.15; }
+      .culto-hora { font-size: .95rem; margin-top: .35rem; }
+      .culto-desc { font-size: .5rem; margin-top: .35rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
       .video-section { margin-top: 1rem; }
       .video-featured-card { padding: .9rem; }
       .video-featured-title { font-size: .9rem; }
