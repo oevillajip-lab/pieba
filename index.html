@@ -1295,7 +1295,7 @@ async function cargarComunidad() {
   } catch(err){ console.error('Error:',err); }
 }
 
-let albumsData=[];
+window.albumsData = []; // Declarado globalmente para que el gestor de estado lo encuentre
 async function cargarGaleria() {
   const contGaleria=document.getElementById('albumGrid');
   if(!contGaleria) return;
@@ -1303,12 +1303,12 @@ async function cargarGaleria() {
     const qGaleria=query(collection(db,"galeria"),orderBy("fecha","desc"));
     const snapGaleria=await getDocs(qGaleria);
     if(snapGaleria.empty){contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--muted);"><p>Aún no hay álbumes publicados.</p></div>`;return;}
-    let htmlGaleria=''; albumsData=[]; let index=0;
+    let htmlGaleria=''; window.albumsData=[]; let index=0;
     snapGaleria.forEach(doc=>{
       const data=doc.data();
       const fechaJs=data.fecha?data.fecha.toDate():new Date();
       const fotos=data.fotos||[];
-      albumsData.push({id:index,nombre:data.nombre,fecha:formatMonthYear(fechaJs),fotos:fotos});
+      window.albumsData.push({id:index,nombre:data.nombre,fecha:formatMonthYear(fechaJs),fotos:fotos});
       const portadaUrl=data.portada||(fotos.length>0?fotos[0]:null);
       const coverHtml=portadaUrl?`<img src="${portadaUrl}" class="album-cover-img" alt="${data.nombre}" loading="lazy">`:`<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);width:100%;height:100%;"></div>`;
       htmlGaleria+=`<div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">${coverHtml}<div class="album-overlay"><p class="album-name">${data.nombre||'Sin Título'}</p><p class="album-date">${formatMonthYear(fechaJs)}</p></div><span class="album-count">${fotos.length} fotos</span></div>`;
@@ -1317,22 +1317,6 @@ async function cargarGaleria() {
     contGaleria.innerHTML=htmlGaleria;
   } catch(err){ console.error('Error Galería:',err); contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:#ff7070;"><p>Error al cargar la galería.</p></div>`; }
 }
-
-window.closeLightbox=()=>{const lb=document.getElementById('lightbox');if(lb){lb.classList.remove('open');document.body.style.overflow='';}};
-
-window.abrirAlbum=(albumIndex)=>{
-  const album=albumsData[albumIndex]; if(!album) return;
-  document.getElementById('lbTitle').textContent=album.nombre;
-  document.getElementById('lbDate').innerHTML=album.fecha+(window.generarBotonesCompartir?window.generarBotonesCompartir('Álbum: '+album.nombre):'');
-  const grid=document.getElementById('lbGrid'); grid.innerHTML='';
-  window.fotosActuales=album.fotos;
-  if(album.fotos.length===0){grid.innerHTML=`<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`;}
-  else{album.fotos.forEach((url,i)=>{grid.innerHTML+=`<div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})"><img src="${url}" loading="lazy" alt="Foto de ${album.nombre}"></div>`;});}
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow='hidden';
-};
-
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&typeof window.closeLightbox==='function')window.closeLightbox();});
 
 cargarComunidad();
 cargarGaleria();
@@ -1408,7 +1392,7 @@ cargarBlog();
   @media(max-width:768px){
     .pv-nav{width:38px;height:38px;font-size:1.1rem;}
     .pv-nav.prev{left:.5rem;} .pv-nav.next{right:.5rem;}
-.bv-content{padding:1.25rem;max-height:none;}
+    .bv-content{padding:1.25rem;max-height:none;}
     #bvTitle{font-size:1.3rem;}
     .blog-viewer{padding:.75rem;align-items:flex-start;}
   }
@@ -1416,9 +1400,9 @@ cargarBlog();
 
 <div class="photo-viewer" id="photoViewer">
   <button class="pv-close" onclick="cerrarFoto()">✕</button>
-  <button class="pv-nav prev" onclick="moverFoto(-1)">&#10094;</button>
+  <button class="pv-nav prev" onclick="moverFoto(-1)">❮</button>
   <img id="pvImage" src="" alt="Foto PIEBA">
-  <button class="pv-nav next" onclick="moverFoto(1)">&#10095;</button>
+  <button class="pv-nav next" onclick="moverFoto(1)">❯</button>
   <div class="pv-footer" id="pvShareContainer"></div>
 </div>
 
@@ -1431,43 +1415,44 @@ cargarBlog();
     <div class="bv-footer">
       <div id="bvShare"></div>
       <div class="bv-controls">
-        <button onclick="moverBlog(-1)">&#10094; Anterior</button>
-        <button onclick="moverBlog(1)">Siguiente &#10095;</button>
+        <button onclick="moverBlog(-1)">❮ Anterior</button>
+        <button onclick="moverBlog(1)">Siguiente ❯</button>
       </div>
     </div>
   </div>
 </div>
 
-
 <script>
-/* === GESTOR DE ESTADO PROFESIONAL (MODALES Y BOTÓN ATRÁS) === */
+/* === GESTOR DE ESTADO PROFESIONAL Y MODALES UNIFICADO === */
 
-// 1. EL CEREBRO: Escucha los cambios del historial (Gesto Atrás del celular o botón de PC)
+// EL CEREBRO: El popstate escucha el botón atrás del celular y la X
 window.addEventListener('popstate', function(event) {
   const state = event.state;
-  
-  // Nivel 0: Si no hay estado, estamos en la web principal. CERRAMOS TODO.
+  const photo = document.getElementById('photoViewer');
+  const blog  = document.getElementById('blogViewer');
+  const light = document.getElementById('lightbox');
+
+  // Si no hay estado o el estado es nulo, significa "estamos en la web principal". Cerramos TODO.
   if (!state || !state.nivel) {
-    document.getElementById('photoViewer').classList.remove('open');
-    document.getElementById('blogViewer').classList.remove('open');
-    document.getElementById('lightbox').classList.remove('open');
+    if (photo) photo.classList.remove('open');
+    if (blog) blog.classList.remove('open');
+    if (light) light.classList.remove('open');
     document.body.style.overflow = '';
     return;
   }
 
-  // Nivel 1 (Álbum): Si volvimos al álbum desde una foto, cerramos la foto y mantenemos el álbum
+  // Si el estado dice "album", significa que salimos de la "foto" y debemos mantener el álbum abierto
   if (state.nivel === 'album') {
-    document.getElementById('photoViewer').classList.remove('open');
-    document.getElementById('lightbox').classList.add('open');
+    if (photo) photo.classList.remove('open');
+    if (light) light.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 });
 
-// 2. FUNCIONES DE ABRIR: Ahora empujan el "Estado" correcto al historial
+// FUNCIONES DE ABRIR (Empujan el Estado al navegador)
 window.abrirAlbum = (albumIndex) => {
-  const album = albumsData[albumIndex]; if(!album) return;
-  
-  // Le decimos al navegador: "Acabamos de entrar al Nivel Álbum"
+  const album = window.albumsData[albumIndex]; if(!album) return;
+  // Registramos en el historial que abrimos un Álbum
   history.pushState({ nivel: 'album' }, '', location.href);
   
   document.getElementById('lbTitle').textContent = album.nombre;
@@ -1483,9 +1468,8 @@ window.abrirAlbum = (albumIndex) => {
 };
 
 window.abrirFotoGrande = (index) => {
-  // Le decimos al navegador: "Acabamos de entrar al Nivel Foto"
+  // Registramos en el historial que abrimos una Foto
   history.pushState({ nivel: 'foto' }, '', location.href);
-  
   window.indiceFotoActual = index;
   const urlFoto = window.fotosActuales[index];
   document.getElementById('pvImage').src = urlFoto;
@@ -1494,9 +1478,8 @@ window.abrirFotoGrande = (index) => {
 };
 
 window.abrirArticuloModal = (datos, index, tipo) => {
-  // Le decimos al navegador: "Acabamos de entrar al Nivel Artículo/Evento"
+  // Registramos en el historial que abrimos el Blog/Evento
   history.pushState({ nivel: 'articulo' }, '', location.href);
-  
   window.listaArticulosGlobal = datos; window.indiceArticuloActual = index; window.tipoArticuloActual = tipo;
   const d = datos[index]; if(!d) return;
   document.getElementById('bvTitle').textContent = d.titulo;
@@ -1516,12 +1499,60 @@ window.abrirArticuloModal = (datos, index, tipo) => {
   document.body.style.overflow = 'hidden';
 };
 
-// 3. BOTONES X: Ya no hacen magia rara, solo ejecutan el comando "Atrás" del navegador
+// FUNCIONES DE CERRAR (Los botones "X" ahora simplemente dicen "Atrás", y el cerebro de arriba hace la magia)
 window.closeLightbox = () => { history.back(); };
 window.cerrarFoto = () => { history.back(); };
 window.cerrarBlogModal = () => { history.back(); };
 
-</script>
+// NAVEGACIÓN DENTRO DE MODALES
+window.moverFoto = (dir) => {
+  window.indiceFotoActual += dir;
+  if (window.indiceFotoActual < 0) window.indiceFotoActual = window.fotosActuales.length - 1;
+  if (window.indiceFotoActual >= window.fotosActuales.length) window.indiceFotoActual = 0;
+  const urlFoto = window.fotosActuales[window.indiceFotoActual];
+  document.getElementById('pvImage').src = urlFoto;
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
+};
 
+window.moverBlog = (dir) => {
+  let nuevoIndex = window.indiceArticuloActual + dir;
+  if(nuevoIndex < 0) nuevoIndex = window.listaArticulosGlobal.length - 1;
+  if(nuevoIndex >= window.listaArticulosGlobal.length) nuevoIndex = 0;
+  
+  const d = window.listaArticulosGlobal[nuevoIndex]; if(!d) return;
+  window.indiceArticuloActual = nuevoIndex;
+  document.getElementById('bvTitle').textContent = d.titulo;
+  const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
+  let meta = '';
+  if(window.tipoArticuloActual === 'blog') meta = `${d.autor||'PIEBA'} - ${fechaStr}`;
+  else if(window.tipoArticuloActual === 'evento') meta = `Evento - ${fechaStr}`;
+  else meta = `Comunicado - ${fechaStr}`;
+  document.getElementById('bvMeta').textContent = meta;
+  const imgEl = document.getElementById('bvImage');
+  if(d.imagen){ imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+  document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
+  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
+};
+
+// TECLADO (Escape cierra simulando Atrás)
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') {
+    const photo = document.getElementById('photoViewer');
+    const blog  = document.getElementById('blogViewer');
+    const light = document.getElementById('lightbox');
+    if((photo && photo.classList.contains('open')) || (blog && blog.classList.contains('open')) || (light && light.classList.contains('open'))) {
+      history.back();
+    }
+  }
+  if(e.key === 'ArrowRight') {
+    if(document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(1);
+    else if(document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(1);
+  }
+  if(e.key === 'ArrowLeft') {
+    if(document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(-1);
+    else if(document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(-1);
+  }
+});
+</script>
 </body>
 </html>
