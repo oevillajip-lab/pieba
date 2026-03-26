@@ -1440,74 +1440,97 @@ cargarBlog();
 
 
 <script>
-/* === GESTIÓN DEL BOTÓN ATRÁS Y MODALES (CORREGIDO) === */
+/* === GESTIÓN DEL BOTÓN ATRÁS Y MODALES (DEFINITIVO) === */
 (function() {
-  // Un contador estricto para saber exactamente cuántas ventanas hemos abierto
-  let modalHistoryCount = 0;
+  // Función maestra: empuja un "paso falso" en el historial de tu celular
+  function pushModalState() {
+    history.pushState({ modalAbierto: true }, '', location.href);
+  }
 
-  // 1. Interceptar las funciones de ABRIR para registrar el historial de forma segura
-  const originalAbrirAlbum = window.abrirAlbum;
-  window.abrirAlbum = function(index) {
-    history.pushState({ isModal: true }, '', location.href);
-    modalHistoryCount++;
-    if(originalAbrirAlbum) originalAbrirAlbum(index);
-  };
-
-  const originalAbrirFoto = window.abrirFotoGrande;
-  window.abrirFotoGrande = function(index) {
-    history.pushState({ isModal: true }, '', location.href);
-    modalHistoryCount++;
-    if(originalAbrirFoto) originalAbrirFoto(index);
-  };
-
-  const originalAbrirArticulo = window.abrirArticuloModal;
-  window.abrirArticuloModal = function(datos, index, tipo) {
-    history.pushState({ isModal: true }, '', location.href);
-    modalHistoryCount++;
-    if(originalAbrirArticulo) originalAbrirArticulo(datos, index, tipo);
+  // 1. REESCRIBIMOS LAS FUNCIONES DE ABRIR (Aseguran que se guarde el historial)
+  window.abrirAlbum = (albumIndex) => {
+    const album = albumsData[albumIndex]; if(!album) return;
+    pushModalState(); // <-- CLAVE: Guarda el estado antes de abrir
+    document.getElementById('lbTitle').textContent=album.nombre;
+    document.getElementById('lbDate').innerHTML=album.fecha+(window.generarBotonesCompartir?window.generarBotonesCompartir('Álbum: '+album.nombre):'');
+    const grid=document.getElementById('lbGrid'); grid.innerHTML='';
+    window.fotosActuales=album.fotos;
+    if(album.fotos.length===0){grid.innerHTML=`<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`;}
+    else{album.fotos.forEach((url,i)=>{grid.innerHTML+=`<div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})"><img src="${url}" loading="lazy" alt="Foto de ${album.nombre}"></div>`;});}
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow='hidden';
   };
 
-  // 2. Lógica limpia de cerrado (sin tocar el historial todavía)
-  const cerrarLightboxLimpio = () => {
-    const lb = document.getElementById('lightbox');
-    if(lb) { lb.classList.remove('open'); document.body.style.overflow=''; }
-  };
-  const cerrarFotoLimpio = () => {
-    const pv = document.getElementById('photoViewer');
-    if(pv) pv.classList.remove('open');
-  };
-  const cerrarBlogLimpio = () => {
-    const bv = document.getElementById('blogViewer');
-    if(bv) bv.classList.remove('open');
-    if (!document.getElementById('lightbox').classList.contains('open')) document.body.style.overflow='';
+  window.abrirFotoGrande = (index) => {
+    pushModalState(); // <-- CLAVE
+    window.indiceFotoActual = index;
+    const urlFoto = window.fotosActuales[index];
+    document.getElementById('pvImage').src = urlFoto;
+    document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA',urlFoto);
+    document.getElementById('photoViewer').classList.add('open');
   };
 
-  // 3. Interceptar las funciones de los botones "X"
-  window.closeLightbox = function() {
-    if(modalHistoryCount > 0) { history.back(); } else { cerrarLightboxLimpio(); }
-  };
-  window.cerrarFoto = function() {
-    if(modalHistoryCount > 0) { history.back(); } else { cerrarFotoLimpio(); }
-  };
-  window.cerrarBlogModal = function() {
-    if(modalHistoryCount > 0) { history.back(); } else { cerrarBlogLimpio(); }
+  window.abrirArticuloModal = (datos, index, tipo) => {
+    pushModalState(); // <-- CLAVE
+    window.listaArticulosGlobal=datos; window.indiceArticuloActual=index; window.tipoArticuloActual=tipo;
+    const d=datos[index]; if(!d) return;
+    document.getElementById('bvTitle').textContent=d.titulo;
+    const fechaStr=d.fecha&&d.fecha.toDate?d.fecha.toDate().toLocaleDateString('es-PY'):'';
+    let meta='';
+    if(tipo==='blog') meta=`${d.autor||'PIEBA'} - ${fechaStr}`;
+    else if(tipo==='evento') meta=`Evento - ${fechaStr}`;
+    else meta=`Comunicado - ${fechaStr}`;
+    document.getElementById('bvMeta').textContent=meta;
+    const imgEl=document.getElementById('bvImage');
+    if(d.imagen){imgEl.src=d.imagen;imgEl.style.display='block';}else{imgEl.style.display='none';}
+    document.getElementById('bvText').innerHTML=d.contenido||d.texto||d.extracto||'Sin información detallada.';
+    document.getElementById('bvShare').innerHTML=window.generarBotonesCompartir(d.titulo);
+    document.getElementById('blogViewer').classList.add('open');
+    document.body.style.overflow='hidden';
   };
 
-  // 4. Escuchar el GESTO ATRÁS del celular o cuando nosotros llamamos a history.back()
+  // 2. REESCRIBIMOS LOS BOTONES "X" (Hacen que la X actúe igual que el gesto Atrás)
+  window.closeLightbox = () => {
+    if(document.getElementById('lightbox').classList.contains('open')) {
+      if (history.state && history.state.modalAbierto) { history.back(); } 
+      else { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; }
+    }
+  };
+
+  window.cerrarFoto = () => {
+    if(document.getElementById('photoViewer').classList.contains('open')) {
+      if (history.state && history.state.modalAbierto) { history.back(); } 
+      else { document.getElementById('photoViewer').classList.remove('open'); }
+    }
+  };
+
+  window.cerrarBlogModal = () => {
+    if(document.getElementById('blogViewer').classList.contains('open')) {
+      if (history.state && history.state.modalAbierto) { history.back(); } 
+      else { 
+        document.getElementById('blogViewer').classList.remove('open'); 
+        if (!document.getElementById('lightbox').classList.contains('open')) document.body.style.overflow=''; 
+      }
+    }
+  };
+
+  // 3. EL MOTOR REAL: Escucha cuando deslizas para Atrás o cuando tocas la X
   window.addEventListener('popstate', function(e) {
-    if(modalHistoryCount > 0) modalHistoryCount--;
-
     const photo = document.getElementById('photoViewer');
     const blog  = document.getElementById('blogViewer');
     const light = document.getElementById('lightbox');
 
-    // Cierra en orden de prioridad (el que esté más arriba)
+    // Cierra de a UNA capa por vez, empezando por la más superficial
     if (photo && photo.classList.contains('open')) {
-      cerrarFotoLimpio();
-    } else if (blog && blog.classList.contains('open')) {
-      cerrarBlogLimpio();
-    } else if (light && light.classList.contains('open')) {
-      cerrarLightboxLimpio();
+      photo.classList.remove('open');
+    } 
+    else if (blog && blog.classList.contains('open')) {
+      blog.classList.remove('open');
+      if (!light || !light.classList.contains('open')) document.body.style.overflow = '';
+    } 
+    else if (light && light.classList.contains('open')) {
+      light.classList.remove('open');
+      document.body.style.overflow = '';
     }
   });
 })();
