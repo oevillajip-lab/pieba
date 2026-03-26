@@ -177,8 +177,9 @@
     .video-featured-date { font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
     .video-featured-title { font-family: 'Cinzel', serif; font-size: clamp(.95rem, 2vw, 1.45rem); font-weight: 600; line-height: 1.3; color: var(--white); }
     .video-featured-desc { margin-top: .5rem; font-size: .77rem; color: var(--muted); line-height: 1.65; max-width: 680px; }
+    /* ── FIX 1: max-height aumentado para no cortar los controles del player ── */
     .video-inline-player { overflow: hidden; max-height: 0; transition: max-height .55s cubic-bezier(.4,0,.2,1), margin-top .55s; margin-top: 0; }
-    .video-inline-player.open { max-height: 520px; margin-top: 1.25rem; }
+    .video-inline-player.open { max-height: 800px; margin-top: 1.25rem; }
     .video-inline-player iframe { width: 100%; aspect-ratio: 16/9; display: block; border: 0; border-radius: 2px; }
     .video-featured-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.1rem; flex-wrap: wrap; }
     .video-play-btn { display: inline-flex; align-items: center; gap: .6rem; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: .52rem 1.1rem; font-family: 'Raleway', sans-serif; font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: .22s ease; }
@@ -427,7 +428,8 @@
       .video-section { margin-top: 1rem; }
       .video-featured-card { padding: .9rem; }
       .video-featured-title { font-size: .9rem; }
-      .video-inline-player.open { max-height: 220px; }
+      /* ── FIX 1 MÓVIL: max-height dinámico según ancho de pantalla ── */
+      .video-inline-player.open { max-height: 56vw; }
 
       /* ── EN VIVO — Fix reproductor cortado ── */
       .envivo-wrap { padding: 0 1.25rem; width: 100%; }
@@ -1144,9 +1146,16 @@ initYouTube();
 </script>
 
 <script>
-/* === MOTOR DE COMPARTIR Y VISUALIZADORES === */
-window.generarBotonesCompartir = (titulo, urlImagen='') => {
-  const url = encodeURIComponent(window.location.href.split('#')[0]);
+/* ===================================================================
+   FIX 2: generarBotonesCompartir ahora acepta un 3er parámetro
+   'seccion' para armar la URL con el hash correcto de la SPA.
+   Ej: generarBotonesCompartir('Título', '', 'comunidad')
+       → comparte https://tusite.com/#comunidad
+=================================================================== */
+window.generarBotonesCompartir = (titulo, urlImagen='', seccion='') => {
+  const baseUrl = window.location.href.split('#')[0];
+  const urlConSeccion = baseUrl + (seccion ? '#' + seccion : '');
+  const url = encodeURIComponent(urlConSeccion);
   const textoApp = encodeURIComponent(`¡Mira esto en PIEBA!\n${titulo}\n${urlImagen?urlImagen+'\n':''}`);
   return `<div class="share-row" onclick="event.stopPropagation()">
     <a href="https://wa.me/?text=${textoApp}${url}" target="_blank" class="share-btn" title="WhatsApp"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
@@ -1161,7 +1170,7 @@ window.abrirFotoGrande = (index) => {
   window.indiceFotoActual = index;
   const urlFoto = window.fotosActuales[index];
   document.getElementById('pvImage').src = urlFoto;
-  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA',urlFoto);
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto, 'galeria');
   document.getElementById('photoViewer').classList.add('open');
 };
 window.cerrarFoto = () => document.getElementById('photoViewer').classList.remove('open');
@@ -1169,7 +1178,9 @@ window.moverFoto = (dir) => {
   window.indiceFotoActual += dir;
   if (window.indiceFotoActual<0) window.indiceFotoActual=window.fotosActuales.length-1;
   if (window.indiceFotoActual>=window.fotosActuales.length) window.indiceFotoActual=0;
-  window.abrirFotoGrande(window.indiceFotoActual);
+  const urlFoto = window.fotosActuales[window.indiceFotoActual];
+  document.getElementById('pvImage').src = urlFoto;
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto, 'galeria');
 };
 
 window.listaArticulosGlobal = [];
@@ -1189,7 +1200,8 @@ window.abrirArticuloModal = (datos, index, tipo) => {
   const imgEl=document.getElementById('bvImage');
   if(d.imagen){imgEl.src=d.imagen;imgEl.style.display='block';}else{imgEl.style.display='none';}
   document.getElementById('bvText').innerHTML=d.contenido||d.texto||d.extracto||'Sin información detallada.';
-  document.getElementById('bvShare').innerHTML=window.generarBotonesCompartir(d.titulo);
+  const seccionModal = tipo === 'blog' ? 'blog' : 'comunidad';
+  document.getElementById('bvShare').innerHTML=window.generarBotonesCompartir(d.titulo, '', seccionModal);
   document.getElementById('blogViewer').classList.add('open');
   document.body.style.overflow='hidden';
 };
@@ -1203,7 +1215,20 @@ window.moverBlog = (dir) => {
   let nuevoIndex=window.indiceArticuloActual+dir;
   if(nuevoIndex<0) nuevoIndex=window.listaArticulosGlobal.length-1;
   if(nuevoIndex>=window.listaArticulosGlobal.length) nuevoIndex=0;
-  window.abrirArticuloModal(window.listaArticulosGlobal,nuevoIndex,window.tipoArticuloActual);
+  const d=window.listaArticulosGlobal[nuevoIndex]; if(!d) return;
+  window.indiceArticuloActual=nuevoIndex;
+  document.getElementById('bvTitle').textContent=d.titulo;
+  const fechaStr=d.fecha&&d.fecha.toDate?d.fecha.toDate().toLocaleDateString('es-PY'):'';
+  let meta='';
+  if(window.tipoArticuloActual==='blog') meta=`${d.autor||'PIEBA'} - ${fechaStr}`;
+  else if(window.tipoArticuloActual==='evento') meta=`Evento - ${fechaStr}`;
+  else meta=`Comunicado - ${fechaStr}`;
+  document.getElementById('bvMeta').textContent=meta;
+  const imgEl=document.getElementById('bvImage');
+  if(d.imagen){imgEl.src=d.imagen;imgEl.style.display='block';}else{imgEl.style.display='none';}
+  document.getElementById('bvText').innerHTML=d.contenido||d.texto||d.extracto||'Sin información detallada.';
+  const seccionModal = window.tipoArticuloActual === 'blog' ? 'blog' : 'comunidad';
+  document.getElementById('bvShare').innerHTML=window.generarBotonesCompartir(d.titulo, '', seccionModal);
 };
 
 document.addEventListener('keydown',e=>{
@@ -1264,7 +1289,7 @@ async function cargarComunidad() {
               <span class="aviso-tag ${tipo}">${tipo.toUpperCase()}</span>
               <p class="aviso-titulo">${d.titulo||''}</p>
               <p class="aviso-texto">${d.texto||''}</p>
-              <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div>
+              <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','comunidad'):''}</div>
             </div>
           </div></div>`; i++;
       });
@@ -1288,14 +1313,14 @@ async function cargarComunidad() {
             <div class="evento-dia">${fe.getDate()}</div>
             <div class="evento-mes-hora"><span class="evento-mes">${fe.toLocaleDateString('es-PY',{month:'long'})}</span><span class="evento-hora">${fe.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}</span></div>
           </div>
-          <div class="evento-body"><p class="evento-titulo">${e.titulo||''}</p><p class="evento-desc">${e.texto||''}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo):''}</div>
+          <div class="evento-body"><p class="evento-titulo">${e.titulo||''}</p><p class="evento-desc">${e.texto||''}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo,'','comunidad'):''}</div>
         </div>`;
       }).join('');
     }
   } catch(err){ console.error('Error:',err); }
 }
 
-window.albumsData = []; // Declarado globalmente para que el gestor de estado lo encuentre
+window.albumsData = [];
 async function cargarGaleria() {
   const contGaleria=document.getElementById('albumGrid');
   if(!contGaleria) return;
@@ -1338,17 +1363,17 @@ async function cargarBlog() {
       html=`<div class="blog-card reveal visible" style="width:100%;cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
         <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
         <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><h3 class="blog-titulo" style="font-size:1.35rem;margin-bottom:.85rem;">${d.titulo}</h3><p class="blog-excerpt">${d.extracto||''}</p>
-        <div class="blog-meta" style="justify-content:space-between;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div></div></div>`;
+        <div class="blog-meta" style="justify-content:space-between;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>`;
     } else {
       const d=docs[0];
       html+=`<div class="blog-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
         <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
         <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><p class="blog-titulo">${d.titulo}</p><p class="blog-excerpt">${d.extracto||''}</p>
-        <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo):''}</div></div></div>
+        <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>
         <div class="blog-side">${docs.slice(1,4).map((art,i)=>`
           <div class="blog-card-sm reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,${i+1},'blog')">
             <div class="blog-thumb-sm">${art.imagen?`<img src="${art.imagen}">`:`<div class="blog-thumb-ph"></div>`}</div>
-            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo):''}</div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo,'','blog'):''}</div>
           </div>`).join('')}</div>`;
     }
     cont.innerHTML=html;
@@ -1425,14 +1450,12 @@ cargarBlog();
 <script>
 /* === GESTOR DE ESTADO PROFESIONAL Y MODALES UNIFICADO === */
 
-// EL CEREBRO: El popstate escucha el botón atrás del celular y la X
 window.addEventListener('popstate', function(event) {
   const state = event.state;
   const photo = document.getElementById('photoViewer');
   const blog  = document.getElementById('blogViewer');
   const light = document.getElementById('lightbox');
 
-  // Si no hay estado o el estado es nulo, significa "estamos en la web principal". Cerramos TODO.
   if (!state || !state.nivel) {
     if (photo) photo.classList.remove('open');
     if (blog) blog.classList.remove('open');
@@ -1441,7 +1464,6 @@ window.addEventListener('popstate', function(event) {
     return;
   }
 
-  // Si el estado dice "album", significa que salimos de la "foto" y debemos mantener el álbum abierto
   if (state.nivel === 'album') {
     if (photo) photo.classList.remove('open');
     if (light) light.classList.add('open');
@@ -1449,14 +1471,12 @@ window.addEventListener('popstate', function(event) {
   }
 });
 
-// FUNCIONES DE ABRIR (Empujan el Estado al navegador)
 window.abrirAlbum = (albumIndex) => {
   const album = window.albumsData[albumIndex]; if(!album) return;
-  // Registramos en el historial que abrimos un Álbum
   history.pushState({ nivel: 'album' }, '', location.href);
   
   document.getElementById('lbTitle').textContent = album.nombre;
-  document.getElementById('lbDate').innerHTML = album.fecha + (window.generarBotonesCompartir ? window.generarBotonesCompartir('Álbum: ' + album.nombre) : '');
+  document.getElementById('lbDate').innerHTML = album.fecha + (window.generarBotonesCompartir ? window.generarBotonesCompartir('Álbum: ' + album.nombre, '', 'galeria') : '');
   const grid = document.getElementById('lbGrid'); grid.innerHTML = '';
   window.fotosActuales = album.fotos;
   
@@ -1468,17 +1488,15 @@ window.abrirAlbum = (albumIndex) => {
 };
 
 window.abrirFotoGrande = (index) => {
-  // Registramos en el historial que abrimos una Foto
   history.pushState({ nivel: 'foto' }, '', location.href);
   window.indiceFotoActual = index;
   const urlFoto = window.fotosActuales[index];
   document.getElementById('pvImage').src = urlFoto;
-  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto, 'galeria');
   document.getElementById('photoViewer').classList.add('open');
 };
 
 window.abrirArticuloModal = (datos, index, tipo) => {
-  // Registramos en el historial que abrimos el Blog/Evento
   history.pushState({ nivel: 'articulo' }, '', location.href);
   window.listaArticulosGlobal = datos; window.indiceArticuloActual = index; window.tipoArticuloActual = tipo;
   const d = datos[index]; if(!d) return;
@@ -1493,25 +1511,24 @@ window.abrirArticuloModal = (datos, index, tipo) => {
   const imgEl = document.getElementById('bvImage');
   if(d.imagen){ imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
   document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
-  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
+  const seccionModal = tipo === 'blog' ? 'blog' : 'comunidad';
+  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo, '', seccionModal);
   
   document.getElementById('blogViewer').classList.add('open');
   document.body.style.overflow = 'hidden';
 };
 
-// FUNCIONES DE CERRAR (Los botones "X" ahora simplemente dicen "Atrás", y el cerebro de arriba hace la magia)
 window.closeLightbox = () => { history.back(); };
 window.cerrarFoto = () => { history.back(); };
 window.cerrarBlogModal = () => { history.back(); };
 
-// NAVEGACIÓN DENTRO DE MODALES
 window.moverFoto = (dir) => {
   window.indiceFotoActual += dir;
   if (window.indiceFotoActual < 0) window.indiceFotoActual = window.fotosActuales.length - 1;
   if (window.indiceFotoActual >= window.fotosActuales.length) window.indiceFotoActual = 0;
   const urlFoto = window.fotosActuales[window.indiceFotoActual];
   document.getElementById('pvImage').src = urlFoto;
-  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto);
+  document.getElementById('pvShareContainer').innerHTML = window.generarBotonesCompartir('Galería PIEBA', urlFoto, 'galeria');
 };
 
 window.moverBlog = (dir) => {
@@ -1531,10 +1548,10 @@ window.moverBlog = (dir) => {
   const imgEl = document.getElementById('bvImage');
   if(d.imagen){ imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
   document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
-  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo);
+  const seccionModal = window.tipoArticuloActual === 'blog' ? 'blog' : 'comunidad';
+  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo, '', seccionModal);
 };
 
-// TECLADO (Escape cierra simulando Atrás)
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape') {
     const photo = document.getElementById('photoViewer');
