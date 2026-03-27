@@ -45,7 +45,7 @@
       background: #eef2fb;
       color: #0f0b32;
     }
-    body.day #starCanvas { opacity: 0.38; pointer-events: none; }
+    body.day #starCanvas { opacity: 0.55; pointer-events: none; }
     body.day .hero-glow { background: radial-gradient(ellipse 65% 55% at 50% 60%, transparent 0%, rgba(238,242,251,.85) 100%); }
     body.day .topnav { background: linear-gradient(to bottom, rgba(238,242,251,.98) 0%, transparent 100%); }
     body.day .topnav.scrolled { background: rgba(238,242,251,.96); }
@@ -58,14 +58,14 @@
     body.day .mobile-nav a { color: #0f0b32; }
     body.day .dot { background: rgba(15,11,50,.18); }
     body.day .dot.active { background: var(--gold); }
-    body.day #nosotros { background: rgba(224,232,244,0.82) !important; }
-    body.day #cultos { background: linear-gradient(140deg, rgba(238,242,251,0.82) 0%, rgba(224,232,244,0.82) 100%) !important; }
-    body.day #envivo { background: rgba(238,242,251,0.82) !important; }
-    body.day #galeria { background: rgba(224,232,244,0.82) !important; }
-    body.day #comunidad { background: linear-gradient(140deg, rgba(238,242,251,0.82) 0%, rgba(224,232,244,0.82) 100%) !important; }
-    body.day #blog { background: rgba(224,232,244,0.82) !important; }
-    body.day #contacto { background: linear-gradient(140deg, rgba(238,242,251,0.82) 0%, rgba(224,232,244,0.82) 100%) !important; }
-    body.day #ofrendar { background: linear-gradient(140deg, rgba(238,242,251,0.82) 0%, rgba(200,214,233,0.82) 100%) !important; }
+    body.day #nosotros { background: rgba(224,232,244,0.78) !important; }
+    body.day #cultos { background: linear-gradient(140deg, rgba(238,242,251,0.78) 0%, rgba(224,232,244,0.78) 100%) !important; }
+    body.day #envivo { background: rgba(238,242,251,0.78) !important; }
+    body.day #galeria { background: rgba(224,232,244,0.78) !important; }
+    body.day #comunidad { background: linear-gradient(140deg, rgba(238,242,251,0.78) 0%, rgba(224,232,244,0.78) 100%) !important; }
+    body.day #blog { background: rgba(224,232,244,0.78) !important; }
+    body.day #contacto { background: linear-gradient(140deg, rgba(238,242,251,0.78) 0%, rgba(224,232,244,0.78) 100%) !important; }
+    body.day #ofrendar { background: linear-gradient(140deg, rgba(238,242,251,0.78) 0%, rgba(200,214,233,0.78) 100%) !important; }
     body.day .culto-card, body.day .blog-card, body.day .blog-card-sm,
     body.day .evento-card, body.day .aviso-card, body.day .ofr-card,
     body.day .video-featured-card { background: rgba(255,255,255,.72); border-color: rgba(15,11,50,.11); }
@@ -1493,30 +1493,8 @@ cargarBlog();
 /* ─── Helpers de URL ─── */
 function getModalParams() {
   const p = new URLSearchParams(location.search);
-  return { modal: p.get('modal'), id: p.get('id') ? parseInt(p.get('id')) : null, album: p.get('album') ? parseInt(p.get('album')) : null, foto: p.get('foto') ? parseInt(p.get('foto')) : null };
+  return { modal: p.get('modal'), id: p.get('id') ? parseInt(p.get('id')) : null, album: p.get('album') ? parseInt(p.get('album')) : null };
 }
-
-/* ─── Restaurar modal desde URL al cargar la página ─── */
-function intentarRestaurarModal() {
-  const p = getModalParams();
-  if (!p.modal) return;
-
-  if (p.modal === 'blog' && p.id !== null && window.blogDataGlobal && window.blogDataGlobal.length > p.id) {
-    window.abrirArticuloModal(window.blogDataGlobal, p.id, 'blog');
-  } else if (p.modal === 'aviso' && p.id !== null && window.avisosDataGlobal && window.avisosDataGlobal.length > p.id) {
-    window.abrirArticuloModal(window.avisosDataGlobal, p.id, 'aviso');
-  } else if (p.modal === 'evento' && p.id !== null && window.eventosDataGlobal && window.eventosDataGlobal.length > p.id) {
-    window.abrirArticuloModal(window.eventosDataGlobal, p.id, 'evento');
-  } else if (p.modal === 'galeria' && p.album !== null && window.albumsData && window.albumsData.length > p.album) {
-    window.abrirAlbum(p.album);
-    if (p.foto !== null) setTimeout(() => window.abrirFotoGrande(p.foto), 120);
-  } else {
-    // Datos aún no cargados, reintentamos en 800ms
-    setTimeout(intentarRestaurarModal, 800);
-  }
-}
-// Iniciamos el intento de restauración con un pequeño delay para que Firebase cargue
-setTimeout(intentarRestaurarModal, 1200);
 
 function setModalUrl(params) {
   const url = new URL(location.href);
@@ -1665,3 +1643,32 @@ document.addEventListener('keydown', e => {
     else if (document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(-1);
   }
 });
+/* ─── DEEP LINKS: restaurar modal al cargar desde URL compartida ─── */
+function intentarRestaurarModal(intentos) {
+  intentos = intentos || 0;
+  if (intentos > 15) return; // máximo 12 segundos de intentos
+  var p = new URLSearchParams(location.search);
+  var modal = p.get('modal');
+  var id = p.get('id') !== null ? parseInt(p.get('id')) : null;
+  var album = p.get('album') !== null ? parseInt(p.get('album')) : null;
+  var foto = p.get('foto') !== null ? parseInt(p.get('foto')) : null;
+  if (!modal) return;
+
+  if (modal === 'blog' && id !== null && window.blogDataGlobal && window.blogDataGlobal.length > id) {
+    window.abrirArticuloModal(window.blogDataGlobal, id, 'blog');
+  } else if (modal === 'aviso' && id !== null && window.avisosDataGlobal && window.avisosDataGlobal.length > id) {
+    window.abrirArticuloModal(window.avisosDataGlobal, id, 'aviso');
+  } else if (modal === 'evento' && id !== null && window.eventosDataGlobal && window.eventosDataGlobal.length > id) {
+    window.abrirArticuloModal(window.eventosDataGlobal, id, 'evento');
+  } else if (modal === 'galeria' && album !== null && window.albumsData && window.albumsData.length > album) {
+    window.abrirAlbum(album);
+    if (foto !== null) setTimeout(function(){ window.abrirFotoGrande(foto); }, 150);
+  } else {
+    setTimeout(function(){ intentarRestaurarModal(intentos + 1); }, 800);
+  }
+}
+setTimeout(function(){ intentarRestaurarModal(0); }, 1400);
+
+</script>
+</body>
+</html>
