@@ -309,11 +309,10 @@
     .envivo-wrap { text-align: center; max-width: 980px; width: 100%; padding: 1.5rem 3.5rem; }
     .live-pill { display: inline-flex; align-items: center; gap: .5rem; background: rgba(220,50,50,.12); border: 1px solid rgba(220,50,50,.35); border-radius: 100px; padding: .3rem .85rem; font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; color: #ff7070; margin-bottom: 1.2rem; }
     .live-dot-r { width: 7px; height: 7px; border-radius: 50%; background: #ff4444; animation: pulse 1.4s ease infinite; }
-    .stream-box { margin-top: 1.4rem; border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.38); width: 100%; display: flex; align-items: center; justify-content: center; }
-    .stream-box.has-video { aspect-ratio: 16/9; min-height: unset; }
-    .stream-box:not(.has-video) { min-height: 260px; }
-    .stream-ph { display: flex; flex-direction: column; align-items: center; gap: .85rem; color: var(--muted); padding: 1.25rem 1rem 1.5rem; width: 100%; box-sizing: border-box; align-self: stretch; }
-    .stream-icon { width: 58px; height: 58px; min-width: 58px; min-height: 58px; max-width: 58px; max-height: 58px; aspect-ratio: 1 / 1; flex-shrink: 0; align-self: center; border-radius: 50%; background: rgba(255,255,255,.05); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; }
+    .stream-box { margin-top: 1.4rem; border-radius: 5px; overflow: hidden; border: 1px solid var(--glass-b); background: rgba(0,0,0,.38); width: 100%; }
+    .stream-box iframe { width: 100%; aspect-ratio: 16/9; display: block; border: none; }
+    .stream-ph { display: flex; flex-direction: column; align-items: center; gap: .85rem; color: var(--muted); padding: 2rem 1.5rem; width: 100%; box-sizing: border-box; }
+    .stream-icon { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,.05); border: 1px solid var(--glass-b); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .stream-box iframe { width: 100%; height: 100%; border: none; display: block; min-height: 320px; }
     .stream-icon svg { flex-shrink: 0; }
     body.day .stream-icon { background: rgba(15,11,50,.08); border-color: rgba(15,11,50,.2); }
@@ -561,13 +560,12 @@
 
       /* ── EN VIVO ── */
       .envivo-wrap { padding: 0 1.25rem; width: 100%; }
-      .stream-box { margin-top: 1rem; width: 100%; max-height: none; aspect-ratio: unset !important; height: auto; padding: 0; }
-      .stream-box:not(.has-video) { min-height: unset; }
-      .stream-box.has-video { aspect-ratio: 16/9 !important; height: auto; }
-      .stream-box iframe { width: 100%; aspect-ratio: 16/9; min-height: 56vw; border: none; display: block; }
-      .stream-ph { padding: 1.1rem .85rem 1.5rem; width: 100%; box-sizing: border-box; }
+      .stream-box { margin-top: 1rem; width: 100%; }
+      .stream-box iframe { width: 100%; aspect-ratio: 16/9; display: block; border: none; }
+      .stream-ph { padding: 1.5rem 1rem; width: 100%; box-sizing: border-box; }
       .stream-ph > div { max-width: 100% !important; width: 100% !important; }
-      .stream-icon { width: 48px; height: 48px; min-width: 48px; min-height: 48px; max-width: 48px; max-height: 48px; aspect-ratio: 1 / 1; flex-shrink: 0; align-self: center; }
+      .stream-ph > div:first-child { width: 58px !important; max-width: 58px !important; height: 58px !important; }
+      .stream-icon { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; }
       .stream-ph p { font-size: .86rem; }
       .stream-ph button { font-size: .72rem !important; padding: .75rem !important; width: 100%; box-sizing: border-box; }
 
@@ -807,8 +805,8 @@
       <div class="gold-line reveal d2"></div>
       <div class="stream-box reveal d2" id="streamBox">
         <div class="stream-ph" id="livePlaceholder">
-          <div class="stream-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <div style="width:58px;height:58px;min-width:58px;min-height:58px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;box-sizing:content-box;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,0.8)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
           <p style="font-size:.85rem;margin-bottom:1.2rem;opacity:0.75;">¿Buscas la transmisión de hoy?</p>
           <div style="display:flex;flex-direction:column;gap:.7rem;width:100%;max-width:280px;margin:0 auto;">
