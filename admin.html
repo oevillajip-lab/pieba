@@ -774,6 +774,21 @@ function formatDate(ts) {
   return d.toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 function todayISO() { return new Date().toISOString().slice(0,10); }
+  async function getCloudinarySignedConfig(folder = 'pieba/galeria') {
+  const res = await fetch('/api/cloudinary-sign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ folder })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.error || 'No se pudo obtener la firma de Cloudinary');
+  }
+
+  return data;
+}
 
 window.showSection = (id) => {
   document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -786,27 +801,42 @@ window.closeModal = (id) => { document.getElementById(id).classList.remove('open
 window.openModal  = (id) => { document.getElementById(id).classList.add('open'); };
 
 /* ─── CLOUDINARY UPLOAD ─── */
-window.uploadImage = (ctx) => {
-  if (CLD_CLOUD === 'TU_CLOUD_NAME') {
-    toast('Configura CLD_CLOUD y CLD_PRESET en admin.html primero', 'error'); return;
+window.uploadImage = async (ctx) => {
+  if (typeof cloudinary === 'undefined') {
+    toast('Cloudinary no cargó, recarga la página', 'error');
+    return;
   }
-  if (typeof cloudinary === 'undefined') { toast('Cloudinary no cargó, recarga la página', 'error'); return; }
-  cloudinary.openUploadWidget({
-    cloudName: CLD_CLOUD, uploadPreset: CLD_PRESET,
-    sources: ['local', 'camera'], cropping: false,
-    multiple: false, resourceType: 'image',
-    language: 'es', text: { es: { or: 'o', menu: { files: 'Archivos locales', camera: 'Cámara' } } }
-  }, (err, result) => {
-    if (!err && result?.event === 'success') {
-      const url = result.info.secure_url;
-      document.getElementById(`${ctx}Imagen`) && (document.getElementById(`${ctx}Imagen`).value = url);
-      document.getElementById(`${ctx === 'album' ? 'albumPortada' : ctx + 'Imagen'}`).value = url;
-      const prev = document.getElementById(`${ctx}ImgPreview`);
-      const clr  = document.getElementById(`${ctx}ImgClear`);
-      if (prev) { prev.src = url; prev.classList.add('show'); }
-      if (clr)  { clr.classList.add('show'); }
-    }
-  });
+
+  try {
+    const signed = await getCloudinarySignedConfig('pieba/galeria');
+
+    cloudinary.openUploadWidget({
+      cloudName: signed.cloudName,
+      apiKey: signed.apiKey,
+      uploadSignature: signed.signature,
+      uploadSignatureTimestamp: signed.timestamp,
+      folder: signed.folder,
+      sources: ['local', 'camera'],
+      cropping: false,
+      multiple: false,
+      resourceType: 'image',
+      language: 'es',
+      text: { es: { or: 'o', menu: { files: 'Archivos locales', camera: 'Cámara' } } }
+    }, (err, result) => {
+      if (!err && result?.event === 'success') {
+        const url = result.info.secure_url;
+        document.getElementById(`${ctx}Imagen`) && (document.getElementById(`${ctx}Imagen`).value = url);
+        document.getElementById(`${ctx === 'album' ? 'albumPortada' : ctx + 'Imagen'}`).value = url;
+        const prev = document.getElementById(`${ctx}ImgPreview`);
+        const clr  = document.getElementById(`${ctx}ImgClear`);
+        if (prev) { prev.src = url; prev.classList.add('show'); }
+        if (clr)  { clr.classList.add('show'); }
+      }
+    });
+  } catch (e) {
+    toast('Error al preparar la subida segura', 'error');
+    console.error(e);
+  }
 };
 
 window.clearImage = (ctx) => {
@@ -820,18 +850,36 @@ window.clearImage = (ctx) => {
 
 /* ── Album multi-photo upload ── */
 let albumPhotos = [];
-window.uploadAlbumPhoto = () => {
-  if (CLD_CLOUD === 'TU_CLOUD_NAME') { toast('Configura Cloudinary primero', 'error'); return; }
-  cloudinary.openUploadWidget({
-    cloudName: CLD_CLOUD, uploadPreset: CLD_PRESET,
-    sources: ['local', 'camera'], multiple: true, resourceType: 'image'
-  }, (err, result) => {
-    if (!err && result?.event === 'success') {
-      albumPhotos.push(result.info.secure_url);
-      renderAlbumPhotosGrid();
-    }
-  });
+window.uploadAlbumPhoto = async () => {
+  if (typeof cloudinary === 'undefined') {
+    toast('Cloudinary no cargó, recarga la página', 'error');
+    return;
+  }
+
+  try {
+    const signed = await getCloudinarySignedConfig('pieba/galeria');
+
+    cloudinary.openUploadWidget({
+      cloudName: signed.cloudName,
+      apiKey: signed.apiKey,
+      uploadSignature: signed.signature,
+      uploadSignatureTimestamp: signed.timestamp,
+      folder: signed.folder,
+      sources: ['local', 'camera'],
+      multiple: true,
+      resourceType: 'image'
+    }, (err, result) => {
+      if (!err && result?.event === 'success') {
+        albumPhotos.push(result.info.secure_url);
+        renderAlbumPhotosGrid();
+      }
+    });
+  } catch (e) {
+    toast('Error al preparar la subida segura', 'error');
+    console.error(e);
+  }
 };
+  
 function renderAlbumPhotosGrid() {
   const grid = document.getElementById('albumPhotosGrid');
   grid.innerHTML = albumPhotos.map((url, i) => `
