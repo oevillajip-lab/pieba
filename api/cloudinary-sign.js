@@ -10,14 +10,20 @@ export default async function handler(req, res) {
     const folder = body.folder || 'pieba/galeria';
     const timestamp = Math.floor(Date.now() / 1000);
 
-    const params = new URLSearchParams({
+    const paramsToSign = {
       folder,
-      timestamp: String(timestamp),
-    });
+      source: 'uw',
+      timestamp
+    };
+
+    const sortedParams = Object.keys(paramsToSign)
+      .sort()
+      .map((key) => `${key}=${paramsToSign[key]}`)
+      .join('&');
 
     const signature = crypto
       .createHash('sha1')
-      .update(params.toString() + process.env.CLOUDINARY_API_SECRET)
+      .update(sortedParams + process.env.CLOUDINARY_API_SECRET)
       .digest('hex');
 
     return res.status(200).json({
