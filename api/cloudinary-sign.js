@@ -6,15 +6,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { folder = 'pieba/galeria' } = req.body || {};
-
+    const body = req.body || {};
+    const folder = body.folder || 'pieba/galeria';
     const timestamp = Math.floor(Date.now() / 1000);
 
-    const paramsToSign = `folder=${folder}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
+    const params = new URLSearchParams({
+      folder,
+      timestamp: String(timestamp),
+    });
 
     const signature = crypto
       .createHash('sha1')
-      .update(paramsToSign)
+      .update(params.toString() + process.env.CLOUDINARY_API_SECRET)
       .digest('hex');
 
     return res.status(200).json({
