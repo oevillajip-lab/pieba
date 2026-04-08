@@ -769,6 +769,14 @@ function formatDate(ts) {
   return d.toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 function todayISO() { return new Date().toISOString().slice(0,10); }
+  function escapeHtml(str = '') {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 async function getCloudinarySignedConfig(folder = 'pieba/galeria') {
   const user = auth.currentUser;
   if (!user) throw new Error('No hay sesión activa');
