@@ -769,10 +769,18 @@ function formatDate(ts) {
   return d.toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 function todayISO() { return new Date().toISOString().slice(0,10); }
-  async function getCloudinarySignedConfig(folder = 'pieba/galeria') {
+async function getCloudinarySignedConfig(folder = 'pieba/galeria') {
+  const user = auth.currentUser;
+  if (!user) throw new Error('No hay sesión activa');
+
+  const token = await user.getIdToken();
+
   const res = await fetch('/api/cloudinary-sign', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
     body: JSON.stringify({ folder })
   });
 
