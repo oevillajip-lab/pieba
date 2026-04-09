@@ -185,9 +185,25 @@ body { font-family: 'Raleway', sans-serif; background: var(--navy-deep); color: 
   .member-photo, .member-photo-ph { width: 66px; height: 66px; }
   .member-name { font-size: .8rem; }
 }
+
+/* ── MODO DÍA ── */
+body.day {
+  --navy:       #e0e8f4;
+  --navy-deep:  #eef2fb;
+  --navy-light: #c8d6e9;
+  --white:      #0f0b32;
+  --gold:       #b82e22;
+  --gold-dim:   rgba(184,46,34,0.16);
+  --muted:      rgba(15,11,50,0.56);
+  --glass:      rgba(15,11,50,0.04);
+  --glass-b:    rgba(15,11,50,0.10);
+  background: #eef2fb;
+  color: #0f0b32;
+}
 </style>
 </head>
 <body>
+<script>if(localStorage.getItem('pieba-theme')==='day')document.body.classList.add('day');</script>
 
 <!-- NAVBAR -->
 <nav class="navbar">
