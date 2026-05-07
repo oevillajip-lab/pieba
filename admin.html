@@ -782,7 +782,7 @@ async function getCloudinarySignedConfig(folder = 'pieba/galeria') {
   const user = auth.currentUser;
   if (!user) throw new Error('No hay sesión activa');
 
-  const token = await user.getIdToken();
+  const token = await user.getIdToken(true);
 
   const res = await fetch('/api/cloudinary-sign', {
     method: 'POST',
