@@ -302,7 +302,29 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
       </div>
     </div>
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Gestión</div>
+      
+      <div class="nav-section-label">Configuración Web</div>
+      <div class="nav-item" onclick="showSection('cfg-inicio')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Página Inicio
+      </div>
+      <div class="nav-item" onclick="showSection('cfg-nosotros')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        Nosotros
+      </div>
+      <div class="nav-item" onclick="showSection('cfg-comunidad')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c1.96-1.66 3.49-2.93 5.33-3.56C9.81 5.55 9.35 6.75 9.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+        Comunidad
+      </div>
+      <div class="nav-item" onclick="showSection('cfg-contacto')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Contacto
+      </div>
+      <div class="nav-item" onclick="showSection('cfg-ofrendas')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        Ofrendas
+      </div>
+      <div class="nav-section-label" style="margin-top:1.5rem;">Gestión</div>
       <div class="nav-item active" onclick="showSection('dashboard')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
         Inicio
@@ -365,6 +387,119 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
             <div class="dash-card-lbl">Artículos del blog</div>
           </div>
         </div>
+      </div>
+    </div>
+
+    
+    <!-- CONFIGURACIÓN WEB SECTIONS -->
+    <div class="content-section" id="sec-cfg-inicio">
+      <div class="page-header">
+        <div><div class="page-label">Configuración</div><h1 class="page-title">Página de Inicio</h1></div>
+        <button class="btn-add" onclick="saveWebConfig('inicio')">Guardar cambios</button>
+      </div>
+      <div style="max-width: 600px;">
+        <div class="form-field">
+          <label>Título principal</label>
+          <input type="text" id="cfg-ini-titulo" value="">
+        </div>
+        <div class="form-field">
+          <label>Subtítulo</label>
+          <input type="text" id="cfg-ini-subtitulo" value="">
+        </div>
+        <div class="form-field">
+          <label>Versículo (hero)</label>
+          <textarea id="cfg-ini-versiculo" rows="4" style="resize:vertical;"></textarea>
+        </div>
+        <div class="form-field">
+          <label>Referencia</label>
+          <input type="text" id="cfg-ini-referencia" value="">
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section" id="sec-cfg-nosotros">
+      <div class="page-header">
+        <div><div class="page-label">Configuración</div><h1 class="page-title">Nosotros</h1></div>
+        <button class="btn-add" onclick="saveWebConfig('nosotros')">Guardar cambios</button>
+      </div>
+      <div style="max-width: 600px;">
+        <div class="form-field">
+          <label>Texto principal</label>
+          <textarea id="cfg-nos-texto" rows="6" style="resize:vertical;"></textarea>
+        </div>
+        <div class="form-field">
+          <label>Nuestros valores (4 puntos)</label>
+          <input type="text" id="cfg-nos-v1" value="" style="margin-bottom: .5rem;">
+          <input type="text" id="cfg-nos-v2" value="" style="margin-bottom: .5rem;">
+          <input type="text" id="cfg-nos-v3" value="" style="margin-bottom: .5rem;">
+          <input type="text" id="cfg-nos-v4" value="">
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section" id="sec-cfg-comunidad">
+      <div class="page-header">
+        <div><div class="page-label">Configuración</div><h1 class="page-title">Comunidad (Cultos)</h1></div>
+        <button class="btn-add" onclick="saveWebConfig('comunidad')">Guardar cambios</button>
+      </div>
+      <div style="max-width: 800px; display: grid; gap: 2rem;">
+        <div style="background:var(--glass); border:1px solid var(--glass-b); padding:1.5rem; border-radius:6px;">
+          <h3 style="margin-bottom:1rem; font-family:'Cinzel',serif; color:var(--gold);">Culto 1</h3>
+          <div class="form-row">
+            <div class="form-field"><label>Nombre</label><input type="text" id="cfg-com-c1-nombre"></div>
+            <div class="form-field"><label>Día</label><input type="text" id="cfg-com-c1-dia"></div>
+            <div class="form-field"><label>Hora</label><input type="text" id="cfg-com-c1-hora"></div>
+          </div>
+          <div class="form-field"><label>Descripción</label><textarea id="cfg-com-c1-desc" rows="3"></textarea></div>
+        </div>
+        <div style="background:var(--glass); border:1px solid var(--glass-b); padding:1.5rem; border-radius:6px;">
+          <h3 style="margin-bottom:1rem; font-family:'Cinzel',serif; color:var(--gold);">Culto 2</h3>
+          <div class="form-row">
+            <div class="form-field"><label>Nombre</label><input type="text" id="cfg-com-c2-nombre"></div>
+            <div class="form-field"><label>Día</label><input type="text" id="cfg-com-c2-dia"></div>
+            <div class="form-field"><label>Hora</label><input type="text" id="cfg-com-c2-hora"></div>
+          </div>
+          <div class="form-field"><label>Descripción</label><textarea id="cfg-com-c2-desc" rows="3"></textarea></div>
+        </div>
+        <div style="background:var(--glass); border:1px solid var(--glass-b); padding:1.5rem; border-radius:6px;">
+          <h3 style="margin-bottom:1rem; font-family:'Cinzel',serif; color:var(--gold);">Culto 3</h3>
+          <div class="form-row">
+            <div class="form-field"><label>Nombre</label><input type="text" id="cfg-com-c3-nombre"></div>
+            <div class="form-field"><label>Día</label><input type="text" id="cfg-com-c3-dia"></div>
+            <div class="form-field"><label>Hora</label><input type="text" id="cfg-com-c3-hora"></div>
+          </div>
+          <div class="form-field"><label>Descripción</label><textarea id="cfg-com-c3-desc" rows="3"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section" id="sec-cfg-contacto">
+      <div class="page-header">
+        <div><div class="page-label">Configuración</div><h1 class="page-title">Contacto & Redes</h1></div>
+        <button class="btn-add" onclick="saveWebConfig('contacto')">Guardar cambios</button>
+      </div>
+      <div style="max-width: 600px;">
+        <div class="form-field"><label>Dirección</label><input type="text" id="cfg-con-dir"></div>
+        <div class="form-field"><label>Teléfono</label><input type="text" id="cfg-con-tel"></div>
+        <div class="form-field"><label>Email</label><input type="text" id="cfg-con-email"></div>
+        <div class="form-field"><label>Facebook (URL)</label><input type="text" id="cfg-con-fb"></div>
+        <div class="form-field"><label>Instagram (URL)</label><input type="text" id="cfg-con-ig"></div>
+        <div class="form-field"><label>YouTube (URL)</label><input type="text" id="cfg-con-yt"></div>
+        <div class="form-field"><label>WhatsApp (Número con código de país)</label><input type="text" id="cfg-con-wa" placeholder="+595..."></div>
+      </div>
+    </div>
+
+    <div class="content-section" id="sec-cfg-ofrendas">
+      <div class="page-header">
+        <div><div class="page-label">Configuración</div><h1 class="page-title">Ofrendas y Diezmos</h1></div>
+        <button class="btn-add" onclick="saveWebConfig('ofrendas')">Guardar cambios</button>
+      </div>
+      <div style="max-width: 600px;">
+        <div class="form-field"><label>Versículo</label><textarea id="cfg-ofr-versiculo" rows="3"></textarea></div>
+        <div class="form-field"><label>Banco</label><input type="text" id="cfg-ofr-banco"></div>
+        <div class="form-field"><label>Cuenta N°</label><input type="text" id="cfg-ofr-cuenta"></div>
+        <div class="form-field"><label>Titular</label><input type="text" id="cfg-ofr-titular"></div>
+        <div class="form-field"><label>RUC/CI</label><input type="text" id="cfg-ofr-ruc"></div>
       </div>
     </div>
 
@@ -712,7 +847,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc, doc, query, orderBy, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 /* ─── CONFIG (mismo que index.html) ─── */
 const firebaseConfig = {
@@ -1270,7 +1405,7 @@ window.deleteBlog = async (id) => {
 };
 
 async function loadAll() {
-  await Promise.all([loadAvisos(), loadEventos(), loadGaleria(), loadBlog(), loadMiembros()]);
+  await Promise.all([loadAvisos(), loadEventos(), loadGaleria(), loadBlog(), loadMiembros(), loadWebConfig()]);
 }
 
 /* ════════════════════════════════
@@ -1385,7 +1520,128 @@ window.closeSidebar = function() {
   if (ov) ov.classList.remove('open');
 };
 
+
+/* ══════════════════════════════════════════
+   CONFIGURACION WEB (Inicio, Nosotros, etc)
+══════════════════════════════════════════ */
+window.loadWebConfig = async () => {
+  try {
+    const docSnap = await getDoc(doc(db, "avisos", "webconfig"));
+    if (docSnap.exists()) {
+      const d = docSnap.data();
+      if(d.inicio) {
+        if(d.inicio.titulo) document.getElementById('cfg-ini-titulo').value = d.inicio.titulo;
+        if(d.inicio.subtitulo) document.getElementById('cfg-ini-subtitulo').value = d.inicio.subtitulo;
+        if(d.inicio.versiculo) document.getElementById('cfg-ini-versiculo').value = d.inicio.versiculo;
+        if(d.inicio.referencia) document.getElementById('cfg-ini-referencia').value = d.inicio.referencia;
+      }
+      if(d.nosotros) {
+        if(d.nosotros.texto) document.getElementById('cfg-nos-texto').value = d.nosotros.texto;
+        if(d.nosotros.v1) document.getElementById('cfg-nos-v1').value = d.nosotros.v1;
+        if(d.nosotros.v2) document.getElementById('cfg-nos-v2').value = d.nosotros.v2;
+        if(d.nosotros.v3) document.getElementById('cfg-nos-v3').value = d.nosotros.v3;
+        if(d.nosotros.v4) document.getElementById('cfg-nos-v4').value = d.nosotros.v4;
+      }
+      if(d.comunidad) {
+        for(let i=1; i<=3; i++) {
+          if(d.comunidad['c'+i]) {
+            if(d.comunidad['c'+i].dia) document.getElementById('cfg-com-c'+i+'-dia').value = d.comunidad['c'+i].dia;
+            if(d.comunidad['c'+i].hora) document.getElementById('cfg-com-c'+i+'-hora').value = d.comunidad['c'+i].hora;
+            if(d.comunidad['c'+i].nombre) document.getElementById('cfg-com-c'+i+'-nombre').value = d.comunidad['c'+i].nombre;
+            if(d.comunidad['c'+i].desc) document.getElementById('cfg-com-c'+i+'-desc').value = d.comunidad['c'+i].desc;
+          }
+        }
+      }
+      if(d.contacto) {
+        if(d.contacto.dir) document.getElementById('cfg-con-dir').value = d.contacto.dir;
+        if(d.contacto.tel) document.getElementById('cfg-con-tel').value = d.contacto.tel;
+        if(d.contacto.email) document.getElementById('cfg-con-email').value = d.contacto.email;
+        if(d.contacto.fb) document.getElementById('cfg-con-fb').value = d.contacto.fb;
+        if(d.contacto.ig) document.getElementById('cfg-con-ig').value = d.contacto.ig;
+        if(d.contacto.yt) document.getElementById('cfg-con-yt').value = d.contacto.yt;
+        if(d.contacto.wa) document.getElementById('cfg-con-wa').value = d.contacto.wa;
+      }
+      if(d.ofrendas) {
+        if(d.ofrendas.versiculo) document.getElementById('cfg-ofr-versiculo').value = d.ofrendas.versiculo;
+        if(d.ofrendas.banco) document.getElementById('cfg-ofr-banco').value = d.ofrendas.banco;
+        if(d.ofrendas.cuenta) document.getElementById('cfg-ofr-cuenta').value = d.ofrendas.cuenta;
+        if(d.ofrendas.titular) document.getElementById('cfg-ofr-titular').value = d.ofrendas.titular;
+        if(d.ofrendas.ruc) document.getElementById('cfg-ofr-ruc').value = d.ofrendas.ruc;
+      }
+    }
+  } catch(e) { console.error('Error loadWebConfig:', e); }
+};
+
+window.saveWebConfig = async (seccion) => {
+  const btn = event.target;
+  const oldText = btn.textContent;
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
+
+  try {
+    let payload = {};
+    if (seccion === 'inicio') {
+      payload = { inicio: {
+        titulo: document.getElementById('cfg-ini-titulo').value,
+        subtitulo: document.getElementById('cfg-ini-subtitulo').value,
+        versiculo: document.getElementById('cfg-ini-versiculo').value,
+        referencia: document.getElementById('cfg-ini-referencia').value
+      }};
+    } else if (seccion === 'nosotros') {
+      payload = { nosotros: {
+        texto: document.getElementById('cfg-nos-texto').value,
+        v1: document.getElementById('cfg-nos-v1').value,
+        v2: document.getElementById('cfg-nos-v2').value,
+        v3: document.getElementById('cfg-nos-v3').value,
+        v4: document.getElementById('cfg-nos-v4').value
+      }};
+    } else if (seccion === 'comunidad') {
+      payload = { comunidad: {
+        c1: { dia: document.getElementById('cfg-com-c1-dia').value, hora: document.getElementById('cfg-com-c1-hora').value, nombre: document.getElementById('cfg-com-c1-nombre').value, desc: document.getElementById('cfg-com-c1-desc').value },
+        c2: { dia: document.getElementById('cfg-com-c2-dia').value, hora: document.getElementById('cfg-com-c2-hora').value, nombre: document.getElementById('cfg-com-c2-nombre').value, desc: document.getElementById('cfg-com-c2-desc').value },
+        c3: { dia: document.getElementById('cfg-com-c3-dia').value, hora: document.getElementById('cfg-com-c3-hora').value, nombre: document.getElementById('cfg-com-c3-nombre').value, desc: document.getElementById('cfg-com-c3-desc').value }
+      }};
+    } else if (seccion === 'contacto') {
+      payload = { contacto: {
+        dir: document.getElementById('cfg-con-dir').value,
+        tel: document.getElementById('cfg-con-tel').value,
+        email: document.getElementById('cfg-con-email').value,
+        fb: document.getElementById('cfg-con-fb').value,
+        ig: document.getElementById('cfg-con-ig').value,
+        yt: document.getElementById('cfg-con-yt').value,
+        wa: document.getElementById('cfg-con-wa').value
+      }};
+    } else if (seccion === 'ofrendas') {
+      payload = { ofrendas: {
+        versiculo: document.getElementById('cfg-ofr-versiculo').value,
+        banco: document.getElementById('cfg-ofr-banco').value,
+        cuenta: document.getElementById('cfg-ofr-cuenta').value,
+        titular: document.getElementById('cfg-ofr-titular').value,
+        ruc: document.getElementById('cfg-ofr-ruc').value
+      }};
+    }
+
+    await setDoc(doc(db, "avisos", "webconfig"), payload, { merge: true });
+    
+    btn.textContent = '¡Guardado!';
+    btn.style.background = 'var(--gold)';
+    btn.style.color = 'var(--navy-deep)';
+    setTimeout(() => {
+      btn.textContent = oldText;
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.disabled = false;
+    }, 2500);
+  } catch (error) {
+    console.error(error);
+    alert("Error al guardar la configuración.");
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }
+};
+
 /* close modal on overlay click */
+
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
 });

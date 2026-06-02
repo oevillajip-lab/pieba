@@ -22,7 +22,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -36,6 +37,16 @@
       --muted:       rgba(255,255,255,0.55);
       --glass:       rgba(255,255,255,0.05);
       --glass-b:     rgba(255,255,255,0.1);
+    }
+
+    @font-face {
+      font-family: 'Aneliza Black';
+      src: url('fonts/AnelizaBlack/ac3809c46d235469b96f80daa6d43afd.woff2') format('woff2'),
+           url('fonts/AnelizaBlack/ac3809c46d235469b96f80daa6d43afd.woff') format('woff'),
+           url('fonts/AnelizaBlack/ac3809c46d235469b96f80daa6d43afd.ttf') format('truetype');
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
     }
 
     /* ── MODO DÍA ── */
@@ -243,7 +254,7 @@
     .hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 65% 55% at 50% 60%, rgba(15,11,50,.0) 0%, rgba(7,5,30,.9) 100%); pointer-events: none; }
     .hero-content { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; }
     .hero-logo { width: 300px; height: 300px; margin-bottom: 1.4rem; animation: fadeDown 1.2s ease both; filter: drop-shadow(0 0 18px rgba(201,169,110,.28)); }
-    .hero-name { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .18em; line-height: 1.1; animation: fadeUp 1.2s ease .2s both; font-size: clamp(1.1rem, 2.4vw, 2rem); max-width: 640px; }
+    .hero-name { font-family: 'Aneliza Black', sans-serif; text-transform: uppercase; letter-spacing: .18em; line-height: 1.1; animation: fadeUp 1.2s ease .2s both; font-size: clamp(1.1rem, 2.4vw, 2rem); max-width: 640px; }
     .hero-sub { font-size: clamp(.82rem, 1.2vw, 1rem); font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--gold); margin-top: .6rem; animation: fadeUp 1.2s ease .35s both; }
     .hero-verse { font-style: italic; font-size: clamp(.82rem, 1vw, .96rem); color: var(--muted); max-width: 420px; margin-top: 1.5rem; line-height: 1.9; animation: fadeUp 1.2s ease .5s both; }
     .hero-verse cite { color: var(--gold); font-style: normal; font-size: .82em; letter-spacing: .08em; }
@@ -422,15 +433,19 @@
     #blog { background: var(--navy); }
     .blog-wrap { text-align: center; max-width: 1300px; width: 100%; padding: 1.5rem 3.5rem; }
     .blog-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.25rem; margin-top: 2rem; }
-    .blog-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; cursor: pointer; }
+    .blog-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; transition: border-color .3s, transform .3s; text-align: left; cursor: pointer; align-self: start; }
     .blog-card:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
     .blog-cover { width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
     .blog-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
     .blog-cover img { width: 100%; height: 100%; object-fit: cover; }
     .blog-card-body { padding: 1.25rem 1.4rem 1.5rem; }
+    
+    .ver-todo-wrap { display: flex; justify-content: center; margin-top: 2.5rem; width: 100%; grid-column: 1 / -1; }
+    .btn-ver-todo { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 0.8rem 2rem; font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; border-radius: 3px; display: inline-flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+    .btn-ver-todo:hover { background: var(--gold); color: var(--navy); }
     .blog-cat { font-size: .68rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
     .blog-titulo { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 600; line-height: 1.35; margin-top: .4rem; }
-    .blog-excerpt { font-size: .86rem; color: var(--muted); margin-top: .5rem; line-height: 1.7; }
+    .blog-excerpt { font-size: .86rem; color: var(--muted); margin-top: .5rem; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
     .blog-meta { display: flex; align-items: center; gap: .5rem; margin-top: .75rem; font-size: .7rem; color: var(--muted); }
     .blog-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
     .blog-side { display: flex; flex-direction: column; gap: 1.1rem; }
@@ -724,9 +739,9 @@
       <svg class="hero-logo" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
         <path class="hero-logo-path" fill="white" d="M227.69,251.12c9.26-17.65,26.75-44.61,41.46-57.11l66.2-12.72c43.45-8.35,83.46-16.19,128.05-11.15,32.72,3.7,62.96,15.79,88.96,36.23,1.64,10.22,3.07,19.65,3.99,30.13,3.48,39.5,6.03,78.43,6.97,118.2.45,19.19-1.51,37.48,6.52,55.7,4.31,9.79,12.61,14.02,22.98,14.15,11.28.15,22.08.86,33.41,1.67,38.52,2.76,87.79,6.78,124.11,18.82,5.85,1.94,10.68,4.87,15.44,9.04l19.61,90.12c2.28,10.46,4.1,20.98,3.7,31.53-.49,12.79,6.82,23.31,20.96,23.22,29.94-.2,60.38-29.28,74.79-4.17-1.49,33.87-6.25,66.37-12.13,99.65l-33.8,107.49c-5.35,17-11.83,32.54-19.27,48.55-3.02,6.5-7.27,11.78-12.49,16.68-12.51,11.76-24.31,23.45-37.92,34.11-9,7.05-66.83,14.58-81.41,15.46-11.07.67-22.14-3.05-32.33-6.46l-38.33-12.84c-26.83-8.99-55.06-16.25-83.22-10.55-6.87,1.39-10.58,8.06-9.02,14.34,3.3,13.32,18.19,7.06,26.87,6.93,14.28-.22,28.09,1.6,41.6,6.06l45.83,15.12c14.94,4.93,29.99,9.91,45.83,10.64,13.96.64,27.61-2.61,41.47-4.53,16.86-2.34,32.85-5.82,48.9-11.13,5.28-1.75,9.86-5.31,13.74-9.14,14.52-14.3,30.94-26.13,43.61-42.25,19-24.18,53.29-139.46,61.96-173.89,8.54-33.96,10.34-68.51,13.55-103,.69-7.36-2.28-13.17-6.37-18.32-11.25-14.19-28.77-19.71-46.47-15.08-16.7,4.37-26.5,9.67-42.48,13.03-1.17-12.5-2.04-23.45-4.64-35.51l-18.22-84.35c-2.36-10.93-7.48-19.23-17.49-24.98s-20.46-10.04-31.78-12.94c-45.73-11.75-102.2-14.18-149.97-16.88-5.37-12.6-4.06-31.42-4.39-45.28-1.02-42.38-4.71-115.88-12.23-156.25-1.13-6.07-4.75-9.26-9.24-12.7-31.14-23.86-67.33-37.4-106.66-40.4-28.23-2.15-55.79-1.02-83.79,4.27l-83.9,15.85-28.15,5.26c-14.89,2.78-42.19,45.83-50.36,59.42-7.01,11.66-12,23.43-15.39,36.7-5.37,21.01-9.68,41.38-12.84,63l-12.86,87.94c-1.11,7.59.39,13.73,5.53,19.44,28.33,31.47,120.49,131.07,154.11,145.55,22.56,9.72,52.26,5.1,68.45,14.64l63.05,37.13,113.79,62.18c10.96,5.99,18.35,18.29,20.7,29.95,1.36,6.76,4.11,11.48,10.83,12.16,5.43.54,11.83-3.04,12.79-9.74l20.11-139.6c.85-5.88-2.26-12.7-8.65-13.65l-50.31-7.48,2.81-19.11,47.47,6.85c6.78.98,13.71-2.03,14.81-9.54l6.36-43.33,24.93,3.52-6.12,42.07c-.95,6.54,2.43,13.35,9.75,14.43l49.1,7.21-2.64,18.82-50.06-6.96c-6.37-.89-11.55,4.31-12.42,10.34l-20.02,139.01c-1.03,7.13,4.73,12.28,10.91,12.9,5.67.57,11.21-3.45,12.17-10.08l18.39-127.47,48.83,7c6.78.97,12.48-3.16,13.56-9.78l6.02-41.85c.82-6.37-3.14-12.32-9.73-13.28l-49.28-7.18,6.13-43.33c.88-6.23-3.13-11.83-9.11-13.17l-50.32-7.11c-5.45.11-10.54,3.69-11.39,9.47l-6.44,43.81-49.35-7.04c-6.31-.9-11.41,3.32-12.96,9.35l-6.15,42.9c-.64,6.41,3.63,12.07,10.21,13.02l48.93,7.12-13.26,91.93c-5.53-5.67-10.65-9.89-17.47-13.64l-135.84-74.77-39.97-24.17c-22.5-13.6-60.51-4.12-81.45-21.38-12.96-10.42-24.78-20.78-36.87-32.47-33.63-32.5-65.58-65.94-96.99-100.56l12.33-85.44c3.14-21.78,11.38-67.28,21.36-86.3Z"/>
       </svg>
-      <h1 class="hero-name">Primera Iglesia Evangélica Bautista de Asunción</h1>
-      <p class="hero-sub">Comunidad de Fe &nbsp;&middot;&nbsp; Esperanza &nbsp;&middot;&nbsp; Amor</p>
-      <p class="hero-verse">
+      <h1 class="hero-name" id="web-ini-titulo">Primera Iglesia Evangélica Bautista de Asunción</h1>
+      <p class="hero-sub" id="web-ini-subtitulo">Comunidad de Fe &nbsp;&middot;&nbsp; Esperanza &nbsp;&middot;&nbsp; Amor</p>
+      <p class="hero-verse" id="web-ini-versiculo">
         &ldquo;Porque yo sé los pensamientos que tengo acerca de vosotros,<br>pensamientos de paz y no de mal.&rdquo;
         <br><cite>&mdash; Jeremías 29:11</cite>
       </p>
@@ -742,12 +757,12 @@
         <p class="section-label reveal">Quiénes Somos</p>
         <h2 class="section-title reveal d1">Una iglesia<br>con propósito</h2>
         <div class="gold-line left reveal d2"></div>
-        <p class="nos-body reveal d2">Somos una comunidad de creyentes comprometidos con el evangelio de Jesucristo. Nos reunimos para adorar, crecer en la fe y servir a nuestra comunidad con amor genuino.<br><br>Nuestra misión es hacer discípulos que transformen sus hogares, su ciudad y el mundo.</p>
+        <p class="nos-body reveal d2" id="web-nos-texto">Somos una comunidad de creyentes comprometidos con el evangelio de Jesucristo. Nos reunimos para adorar, crecer en la fe y servir a nuestra comunidad con amor genuino.<br><br>Nuestra misión es hacer discípulos que transformen sus hogares, su ciudad y el mundo.</p>
         <ul class="nos-list">
-          <li class="reveal d2"><span><strong style="color:var(--white)">Fe Bíblica</strong> &mdash; Fundamentados en la Palabra de Dios</span></li>
-          <li class="reveal d3"><span><strong style="color:var(--white)">Comunidad</strong> &mdash; Un lugar donde todos son bienvenidos</span></li>
-          <li class="reveal d3"><span><strong style="color:var(--white)">Misión</strong> &mdash; Alcanzando vidas para Cristo</span></li>
-          <li class="reveal d4"><span><strong style="color:var(--white)">Adoración</strong> &mdash; Con todo nuestro corazón</span></li>
+          <li class="reveal d2"><span id="web-nos-v1"><strong style="color:var(--white)">Fe Bíblica</strong> &mdash; Fundamentados en la Palabra de Dios</span></li>
+          <li class="reveal d3"><span id="web-nos-v2"><strong style="color:var(--white)">Comunidad</strong> &mdash; Un lugar donde todos son bienvenidos</span></li>
+          <li class="reveal d3"><span id="web-nos-v3"><strong style="color:var(--white)">Misión</strong> &mdash; Alcanzando vidas para Cristo</span></li>
+          <li class="reveal d4"><span id="web-nos-v4"><strong style="color:var(--white)">Adoración</strong> &mdash; Con todo nuestro corazón</span></li>
         </ul>
         <a href="miembros.html" class="reveal d4" style="display:inline-flex;align-items:center;gap:.6rem;margin-top:1.5rem;border:1px solid var(--gold-dim);color:var(--gold);padding:.6rem 1.4rem;font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;text-decoration:none;border-radius:2px;transition:background .25s,border-color .25s;background:transparent;"
           onmouseover="this.style.background='rgba(201,169,110,.1)';this.style.borderColor='var(--gold)'"
@@ -854,22 +869,22 @@
       <div class="gold-line reveal d2"></div>
       <div class="culto-cards">
         <div class="culto-card reveal d2">
-          <p class="culto-dia">Domingo</p>
-          <h3 class="culto-nombre">Culto Principal</h3>
-          <p class="culto-hora">10:15 AM</p>
-          <p class="culto-desc">Servicio de adoración, alabanza y predicación de la Palabra. Toda la familia es bienvenida.</p>
+          <p class="culto-dia" id="web-com-c1-dia">Domingo</p>
+          <h3 class="culto-nombre" id="web-com-c1-nombre">Culto Principal</h3>
+          <p class="culto-hora" id="web-com-c1-hora">10:15 AM</p>
+          <p class="culto-desc" id="web-com-c1-desc">Servicio de adoración, alabanza y predicación de la Palabra. Toda la familia es bienvenida.</p>
         </div>
         <div class="culto-card reveal d3">
-          <p class="culto-dia">Miércoles</p>
-          <h3 class="culto-nombre">Estudio Bíblico</h3>
-          <p class="culto-hora">19:30</p>
-          <p class="culto-desc">Profundizamos en la Palabra de Dios en un ambiente íntimo y de comunidad.</p>
+          <p class="culto-dia" id="web-com-c2-dia">Miércoles</p>
+          <h3 class="culto-nombre" id="web-com-c2-nombre">Estudio Bíblico</h3>
+          <p class="culto-hora" id="web-com-c2-hora">19:30 PM</p>
+          <p class="culto-desc" id="web-com-c2-desc">Tiempo de oración y estudio profundo de la Biblia en grupos pequeños.</p>
         </div>
         <div class="culto-card reveal d4">
-          <p class="culto-dia">Sábado</p>
-          <h3 class="culto-nombre">MJ Pieba</h3>
-          <p class="culto-hora">18:30</p>
-          <p class="culto-desc">Reunión especial para jóvenes con alabanza contemporánea y mensaje relevante.</p>
+          <p class="culto-dia" id="web-com-c3-dia">Sábado</p>
+          <h3 class="culto-nombre" id="web-com-c3-nombre">Reunión de Jóvenes</h3>
+          <p class="culto-hora" id="web-com-c3-hora">19:00 PM</p>
+          <p class="culto-desc" id="web-com-c3-desc">Un espacio dinámico para jóvenes y adolescentes con música, juegos y un mensaje relevante.</p>
         </div>
       </div>
       <div class="comunidad-grid">
@@ -919,25 +934,25 @@
         <div class="cont-items">
           <div class="cont-item reveal d2">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
-            <div><p class="cont-lbl">Dirección</p><p class="cont-val">Avda. Mcal. López 1073 c/ Brasil<br>Asunción, Paraguay</p></div>
+            <div><p class="cont-lbl">Dirección</p><p class="cont-val" id="web-con-dir">Mcal. Estigarribia 2361 casi Cnel. Romero</p></div>
           </div>
           <div class="cont-item reveal d2">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
-            <div><p class="cont-lbl">Teléfono / WhatsApp</p><p class="cont-val">+595 982 949 322</p></div>
+            <div><p class="cont-lbl">Teléfono / WhatsApp</p><p class="cont-val" id="web-con-tel">+595 982-949-322</p></div>
           </div>
           <div class="cont-item reveal d3">
             <div class="cont-ico"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
-            <div><p class="cont-lbl">Correo</p><p class="cont-val"><a href="mailto:info@primeradeasuncion.org.py">info@primeradeasuncion.org.py</a></p></div>
+            <div><p class="cont-lbl">Correo</p><p class="cont-val"><a href="mailto:info@primeradeasuncion.org.py" id="web-con-email">info@primeradeasuncion.org.py</a></p></div>
           </div>
           <div class="cont-item reveal d4">
             <div class="cont-ico" style="background:transparent;border-color:transparent;"></div>
             <div>
               <p class="cont-lbl">Redes Sociales</p>
               <div class="social-row">
-                <a href="https://www.facebook.com/primeradeasuncion" class="soc-btn" title="Facebook"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-                <a href="https://www.instagram.com/primeradeasuncion" class="soc-btn" title="Instagram"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-                <a href="https://www.youtube.com/@iglesiabautistadeasuncion" class="soc-btn" title="YouTube"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0f0b32" stroke="none"/></svg></a>
-                <a href="https://wa.me/595982949322" class="soc-btn" title="WhatsApp"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+                <a href="https://www.facebook.com/primeradeasuncion" class="soc-btn" id="web-con-fb" title="Facebook"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                <a href="https://www.instagram.com/primeradeasuncion" class="soc-btn" id="web-con-ig" title="Instagram"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                <a href="https://www.youtube.com/@iglesiabautistadeasuncion" class="soc-btn" id="web-con-yt" title="YouTube"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0f0b32" stroke="none"/></svg></a>
+                <a href="https://wa.me/595982949322" class="soc-btn" id="web-con-wa" title="WhatsApp"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
               </div>
             </div>
           </div>
@@ -957,7 +972,7 @@
       <h2 class="section-title reveal d1" style="text-align:center">Ofrendar</h2>
       <div class="gold-line reveal d2"></div>
 
-      <p class="ofr-verse reveal d2">&ldquo;Cada uno dé como propuso en su corazón; no con tristeza, ni por necesidad, porque Dios ama al dador alegre.&rdquo; &mdash; 2 Corintios 9:7</p>
+      <p class="ofr-verse reveal d2" id="web-ofr-versiculo">&ldquo;Cada uno dé como propuso en su corazón; no con tristeza, ni por necesidad, porque Dios ama al dador alegre.&rdquo; &mdash; 2 Corintios 9:7</p>
 
       <div class="ofr-reason-block reveal d2">
         <p style="font-size:.8rem;color:var(--muted);line-height:1.85;text-align:center;">
@@ -986,10 +1001,10 @@
         <div class="ofr-card" style="text-align:center;">
           <p class="ofr-card-title">Transferencia Bancaria</p>
           <div class="ofr-detail" style="line-height:2.1;">
-            <strong>Banco:</strong> ITAÚ PARAGUAY S.A.<br>
-            <strong>Cuenta:</strong> 100025813<br>
-            <strong>Titular:</strong> Primera Iglesia Evangélica Bautista de Asunción<br>
-            <strong>RUC:</strong> 80028885-8
+            <strong>Banco:</strong> <span id="web-ofr-banco">ITAÚ PARAGUAY S.A.</span><br>
+            <strong>Cuenta:</strong> <span id="web-ofr-cuenta">100025813</span><br>
+            <strong>Titular:</strong> <span id="web-ofr-titular">Primera Iglesia Evangélica Bautista de Asunción</span><br>
+            <strong>RUC:</strong> <span id="web-ofr-ruc">80028885-8</span>
           </div>
         </div>
         <div class="ofr-card" style="display:flex;flex-direction:column;justify-content:center;gap:.9rem;">
@@ -1294,14 +1309,7 @@ initYouTube();
 </script>
 
 <script>
-/* ===================================================================
-   FIX 2: generarBotonesCompartir ahora acepta un 3er parámetro
-   'seccion' para armar la URL con el hash correcto de la SPA.
-   Ej: generarBotonesCompartir('Título', '', 'comunidad')
-       → comparte https://tusite.com/#comunidad
-=================================================================== */
 window.generarBotonesCompartir = (titulo, urlImagen='', seccion='') => {
-  // Usamos la URL real actual (que puede incluir ?modal=... para deep links)
   const currentUrl = location.href.split('#')[0];
   const urlConSeccion = currentUrl + (seccion ? '#' + seccion : '');
   const url = encodeURIComponent(urlConSeccion);
@@ -1321,7 +1329,7 @@ window.tipoArticuloActual = 'blog';
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
@@ -1345,14 +1353,74 @@ const icons = {
   normal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`
 };
 
+
 window.avisosDataGlobal=[]; window.eventosDataGlobal=[]; window.blogDataGlobal=[];
+
+function stripHtml(html) {
+  let tmp = document.createElement("DIV");
+  tmp.innerHTML = (html || '').replace(/<\/(p|div|h[1-6]|li)>/gi, ' </$1>').replace(/<br[^>]*>/gi, ' ');
+  return (tmp.textContent || tmp.innerText || "").replace(/\s+/g, ' ').trim();
+}
+
+async function cargarWebConfig() {
+  try {
+    const snap = await getDoc(doc(db, 'avisos', 'webconfig'));
+    if (!snap.exists()) return;
+    const d = snap.data();
+    if (d.inicio) {
+      if (d.inicio.titulo) { const el = document.getElementById('web-ini-titulo'); if (el) el.textContent = d.inicio.titulo; }
+      if (d.inicio.subtitulo) { const el = document.getElementById('web-ini-subtitulo'); if (el) el.textContent = d.inicio.subtitulo; }
+      if (d.inicio.versiculo && d.inicio.referencia) { const el = document.getElementById('web-ini-versiculo'); if (el) el.innerHTML = '&ldquo;'+d.inicio.versiculo+'&rdquo;<br><cite>&mdash; '+d.inicio.referencia+'</cite>'; }
+    }
+    if (d.nosotros) {
+      if (d.nosotros.texto) { const el = document.getElementById('web-nos-texto'); if (el) el.innerHTML = d.nosotros.texto.replace(/\n/g, '<br>'); }
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (!el || !val) return;
+        let parts = [];
+        if (val.includes('\u2014')) parts = val.split('\u2014');
+        else if (val.includes('\u2013')) parts = val.split('\u2013');
+        else parts = val.split('-');
+        const title = parts[0] ? parts[0].trim() : '';
+        const desc = parts.slice(1).join('-').trim();
+        el.innerHTML = desc ? '<strong>'+title+'</strong> &mdash; '+desc : val;
+      };
+      setVal('web-nos-v1', d.nosotros.v1);
+      setVal('web-nos-v2', d.nosotros.v2);
+      setVal('web-nos-v3', d.nosotros.v3);
+      setVal('web-nos-v4', d.nosotros.v4);
+    }
+    if (d.comunidad) {
+      const c = d.comunidad;
+      if (c.c1) { if (document.getElementById('web-com-c1-dia')) document.getElementById('web-com-c1-dia').textContent = c.c1.dia; if (document.getElementById('web-com-c1-hora')) document.getElementById('web-com-c1-hora').textContent = c.c1.hora; if (document.getElementById('web-com-c1-nombre')) document.getElementById('web-com-c1-nombre').textContent = c.c1.nombre; if (document.getElementById('web-com-c1-desc')) document.getElementById('web-com-c1-desc').textContent = c.c1.desc; }
+      if (c.c2) { if (document.getElementById('web-com-c2-dia')) document.getElementById('web-com-c2-dia').textContent = c.c2.dia; if (document.getElementById('web-com-c2-hora')) document.getElementById('web-com-c2-hora').textContent = c.c2.hora; if (document.getElementById('web-com-c2-nombre')) document.getElementById('web-com-c2-nombre').textContent = c.c2.nombre; if (document.getElementById('web-com-c2-desc')) document.getElementById('web-com-c2-desc').textContent = c.c2.desc; }
+      if (c.c3) { if (document.getElementById('web-com-c3-dia')) document.getElementById('web-com-c3-dia').textContent = c.c3.dia; if (document.getElementById('web-com-c3-hora')) document.getElementById('web-com-c3-hora').textContent = c.c3.hora; if (document.getElementById('web-com-c3-nombre')) document.getElementById('web-com-c3-nombre').textContent = c.c3.nombre; if (document.getElementById('web-com-c3-desc')) document.getElementById('web-com-c3-desc').textContent = c.c3.desc; }
+    }
+    if (d.contacto) {
+      if (d.contacto.dir && document.getElementById('web-con-dir')) document.getElementById('web-con-dir').textContent = d.contacto.dir;
+      if (d.contacto.tel && document.getElementById('web-con-tel')) document.getElementById('web-con-tel').textContent = d.contacto.tel;
+      if (d.contacto.email && document.getElementById('web-con-email')) { document.getElementById('web-con-email').textContent = d.contacto.email; document.getElementById('web-con-email').href = "mailto:" + d.contacto.email; }
+      if (d.contacto.fb && document.getElementById('web-con-fb')) document.getElementById('web-con-fb').href = d.contacto.fb;
+      if (d.contacto.ig && document.getElementById('web-con-ig')) document.getElementById('web-con-ig').href = d.contacto.ig;
+      if (d.contacto.yt && document.getElementById('web-con-yt')) document.getElementById('web-con-yt').href = d.contacto.yt;
+      if (d.contacto.wa && document.getElementById('web-con-wa')) document.getElementById('web-con-wa').href = "https://wa.me/" + d.contacto.wa.replace(/\+/g, '').replace(/ /g, '');
+    }
+    if (d.ofrendas) {
+      if (d.ofrendas.versiculo && document.getElementById('web-ofr-versiculo')) document.getElementById('web-ofr-versiculo').textContent = d.ofrendas.versiculo;
+      if (d.ofrendas.banco && document.getElementById('web-ofr-banco')) document.getElementById('web-ofr-banco').textContent = d.ofrendas.banco;
+      if (d.ofrendas.cuenta && document.getElementById('web-ofr-cuenta')) document.getElementById('web-ofr-cuenta').textContent = d.ofrendas.cuenta;
+      if (d.ofrendas.titular && document.getElementById('web-ofr-titular')) document.getElementById('web-ofr-titular').textContent = d.ofrendas.titular;
+      if (d.ofrendas.ruc && document.getElementById('web-ofr-ruc')) document.getElementById('web-ofr-ruc').textContent = d.ofrendas.ruc;
+    }
+  } catch(e) { console.error('Error al cargar config web:', e); }
+}
 
 async function cargarComunidad() {
   const contAvisos=document.getElementById('contenedorAvisos');
   const contEventos=document.getElementById('contenedorEventos');
   if(!contAvisos||!contEventos) return;
   try {
-    const qAvisos=query(collection(db,"avisos"),orderBy("fecha","desc"));
+    const qAvisos=query(collection(db,"avisos"),orderBy("fecha","desc"), limit(5));
     const snapAvisos=await getDocs(qAvisos);
     let htmlAvisos='';
     if(snapAvisos.empty) {
@@ -1374,6 +1442,7 @@ async function cargarComunidad() {
             </div>
           </div></div>`; i++;
       });
+      htmlAvisos+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('avisos')">VER ARCHIVO DE COMUNICADOS</button></div>`;
     }
     contAvisos.innerHTML=htmlAvisos;
 
@@ -1386,7 +1455,7 @@ async function cargarComunidad() {
       contEventos.innerHTML=`<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
     } else {
       window.eventosDataGlobal=fut;
-      contEventos.innerHTML=fut.map((e,index)=>{
+      contEventos.innerHTML=fut.slice(0,5).map((e,index)=>{
         const fe=e.fecha.toDate();
         return `<div class="evento-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.eventosDataGlobal,${index},'evento')">
           ${e.imagen?`<div class="evento-img"><img src="${e.imagen}" loading="lazy"></div>`:''}
@@ -1397,6 +1466,7 @@ async function cargarComunidad() {
           <div class="evento-body"><p class="evento-titulo">${e.titulo||''}</p><p class="evento-desc">${e.texto||''}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo,'','comunidad'):''}</div>
         </div>`;
       }).join('');
+      contEventos.innerHTML+=`<div style="text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('eventos')">VER ARCHIVO DE EVENTOS</button></div>`;
     }
   } catch(err){ console.error('Error:',err); }
 }
@@ -1406,7 +1476,7 @@ async function cargarGaleria() {
   const contGaleria=document.getElementById('albumGrid');
   if(!contGaleria) return;
   try {
-    const qGaleria=query(collection(db,"galeria"),orderBy("fecha","desc"));
+    const qGaleria=query(collection(db,"galeria"),orderBy("fecha","desc"), limit(5));
     const snapGaleria=await getDocs(qGaleria);
     if(snapGaleria.empty){contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--muted);"><p>Aún no hay álbumes publicados.</p></div>`;return;}
     let htmlGaleria=''; window.albumsData=[]; let index=0;
@@ -1420,17 +1490,19 @@ async function cargarGaleria() {
       htmlGaleria+=`<div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">${coverHtml}<div class="album-overlay"><p class="album-name">${data.nombre||'Sin Título'}</p><p class="album-date">${formatMonthYear(fechaJs)}</p></div><span class="album-count">${fotos.length} fotos</span></div>`;
       index++;
     });
+    htmlGaleria+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('galeria')">VER BIBLIOTECA DE FOTOS</button></div>`;
     contGaleria.innerHTML=htmlGaleria;
   } catch(err){ console.error('Error Galería:',err); contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:#ff7070;"><p>Error al cargar la galería.</p></div>`; }
 }
 
 cargarComunidad();
 cargarGaleria();
+cargarWebConfig();
 
 async function cargarBlog() {
   const cont=document.getElementById('contenedorBlog'); if(!cont) return;
   try {
-    const q=query(collection(db,"blog"),orderBy("fecha","desc"));
+    const q=query(collection(db,"blog"),orderBy("fecha","desc"), limit(5));
     const snap=await getDocs(q);
     if(snap.empty){cont.innerHTML="<p style='grid-column:1/-1;opacity:0.5;'>Próximamente nuevas reflexiones...</p>";return;}
     window.blogDataGlobal=[];
@@ -1443,18 +1515,18 @@ async function cargarBlog() {
       const d=docs[0];
       html=`<div class="blog-card reveal visible" style="width:100%;cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
         <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
-        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><h3 class="blog-titulo" style="font-size:1.35rem;margin-bottom:.85rem;">${d.titulo}</h3><p class="blog-excerpt">${d.extracto||''}</p>
+        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><h3 class="blog-titulo" style="font-size:1.35rem;margin-bottom:.85rem;">${d.titulo}</h3><p class="blog-excerpt">${stripHtml(d.extracto).substring(0, 180)}...</p>
         <div class="blog-meta" style="justify-content:space-between;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>`;
     } else {
       const d=docs[0];
       html+=`<div class="blog-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
         <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
-        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><p class="blog-titulo">${d.titulo}</p><p class="blog-excerpt">${d.extracto||''}</p>
+        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><p class="blog-titulo">${d.titulo}</p><p class="blog-excerpt">${stripHtml(d.extracto).substring(0, 180)}...</p>
         <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>
-        <div class="blog-side">${docs.slice(1,4).map((art,i)=>`
+        <div class="blog-side">${docs.slice(1).map((art,i)=>`
           <div class="blog-card-sm reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,${i+1},'blog')">
             <div class="blog-thumb-sm">${art.imagen?`<img src="${art.imagen}">`:`<div class="blog-thumb-ph"></div>`}</div>
-            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} · ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo,'','blog'):''}</div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} • ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo,'','blog'):''}</div>
           </div>`).join('')}</div>`;
     }
     cont.innerHTML=html;
@@ -1475,33 +1547,44 @@ cargarBlog();
   #pvImage{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
   .pv-footer{position:absolute;bottom:1.75rem;display:flex;flex-direction:column;align-items:center;gap:0.5rem;}
 
+  
   /* LECTOR BLOG */
- .blog-viewer{position:fixed;inset:0;z-index:450;background:rgba(7,5,30,0.96);backdrop-filter:blur(12px);display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
+  .blog-viewer{position:fixed;inset:0;z-index:450;background:rgba(7,5,30,0.96);backdrop-filter:blur(12px);display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
   .blog-viewer.open{display:flex;}
-  .bv-content{margin:auto;background:var(--navy-deep);border:1px solid var(--glass-b);width:100%;max-width:720px;max-height:none;border-radius:4px;padding:2.25rem;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
-  .bv-close{position:absolute;top:1.25rem;right:1.25rem;background:var(--glass);border:1px solid var(--glass-b);color:white;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:0.3s;}
-  .bv-close:hover{background:var(--gold-dim);color:var(--gold);}
-  .bv-header{margin-bottom:1.25rem;padding-right:2rem;border-bottom:1px solid var(--glass-b);padding-bottom:.9rem;}
-  #bvTitle{font-family:'Cinzel',serif;font-size:1.65rem;color:var(--gold);line-height:1.3;margin-bottom:0.4rem;}
-  #bvMeta{font-size:0.72rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;}
-  .bv-body{font-size:0.92rem;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:1.75rem;}
-  .bv-body img{max-width:100%;border-radius:4px;margin:1rem 0;}
-  .bv-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--glass-b);padding-top:1.25rem;flex-wrap:wrap;gap:.85rem;}
-  .bv-controls button{background:transparent;border:1px solid rgba(201,169,110,0.5);color:var(--gold);padding:0.55rem 1.1rem;border-radius:2px;cursor:pointer;font-family:'Raleway',sans-serif;text-transform:uppercase;font-size:0.62rem;letter-spacing:0.15em;transition:0.3s;}
-  .bv-controls button:hover{background:var(--gold);color:var(--navy);}
+  .bv-content{margin:auto;background:#fcfaf5;border:1px solid rgba(201,169,110,0.3);width:100%;max-width:760px;max-height:none;border-radius:4px;padding:3rem 3.5rem;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+  .bv-close{position:absolute;top:1.25rem;right:1.25rem;background:transparent;border:1px solid rgba(15,11,50,0.2);color:#1f1c2b;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:0.3s;}
+  .bv-close:hover{background:rgba(201,169,110,0.15);color:#b5904d;border-color:#b5904d;}
+  .bv-header{margin-bottom:1.5rem;padding-right:2rem;border-bottom:1px solid rgba(15,11,50,0.1);padding-bottom:1.2rem;}
+  #bvTitle{font-family:'Cinzel',serif;font-size:1.85rem;color:#130e3a;line-height:1.25;margin-bottom:0.6rem;}
+  #bvMeta{font-size:0.75rem;color:rgba(15,11,50,0.55);letter-spacing:0.15em;text-transform:uppercase;}
+  
+  .bv-body{font-size:1.05rem;color:#2c2836;line-height:1.7;margin-bottom:2rem;font-family:'Raleway',sans-serif;}
+  .bv-body.ql-editor { padding: 0; overflow-y: visible; white-space: pre-wrap; }
+  .bv-body.ql-editor, .bv-body.ql-editor * { font-family: 'Raleway', sans-serif !important; font-size: 1.05rem !important; color:#2c2836 !important; line-height: 1.7 !important; }
+  .bv-body.ql-editor p, .bv-body.ql-editor blockquote, .bv-body.ql-editor h1, .bv-body.ql-editor h2, .bv-body.ql-editor h3 { margin-top: 0 !important; margin-bottom: 0.85rem !important; }
+  .bv-body.ql-editor p:empty, .bv-body.ql-editor p > br:only-child { display: none !important; }
+  .bv-body.ql-editor blockquote { border-left: 3px solid rgba(201,169,110,0.8); padding-left: 1rem; margin-left: 0; font-style: italic; }
+  
+  .bv-body img{max-width:100%;border-radius:4px;margin:1.5rem 0;}
+  .bv-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(15,11,50,0.1);padding-top:1.5rem;flex-wrap:wrap;gap:.85rem;}
+  .bv-controls button{background:transparent;border:1px solid rgba(201,169,110,0.6);color:#b5904d;padding:0.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'Raleway',sans-serif;text-transform:uppercase;font-size:0.65rem;letter-spacing:0.15em;transition:0.3s;}
+  .bv-controls button:hover{background:#b5904d;color:#fff;}
 
   /* SHARE */
-  .share-row{display:flex;gap:0.35rem;margin-top:0.65rem;}
-  .share-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-b);color:var(--white);cursor:pointer;transition:0.3s;text-decoration:none;}
-  .share-btn:hover{background:var(--gold-dim);border-color:var(--gold);transform:translateY(-2px);}
+  .share-row{display:flex;gap:0.4rem;margin-top:0.7rem;}
+  .share-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(15,11,50,0.05);border:1px solid rgba(15,11,50,0.1);color:#1f1c2b;cursor:pointer;transition:0.3s;text-decoration:none;}
+  .share-btn:hover{background:rgba(201,169,110,0.15);border-color:#b5904d;color:#b5904d;transform:translateY(-2px);}
 
   @media(max-width:768px){
     .pv-nav{width:38px;height:38px;font-size:1.1rem;}
     .pv-nav.prev{left:.5rem;} .pv-nav.next{right:.5rem;}
-    .bv-content{padding:1.25rem;max-height:none;}
-    #bvTitle{font-size:1.3rem;}
+    .bv-content{padding:1.5rem 1.25rem;max-height:none;}
+    #bvTitle{font-size:1.45rem;}
     .blog-viewer{padding:.75rem;align-items:flex-start;}
   }
+  #archivoModal .bv-container { max-width: 1200px; padding: 4rem 3.5rem; background: var(--navy-deep); height: 100%; overflow-y: auto; border:none; border-radius:0; box-shadow:none; }
+  .archivo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  @media (max-width: 900px) { #archivoModal .bv-container { padding: 3rem 1.25rem; } .archivo-grid { grid-template-columns: 1fr; } }
 </style>
 
 <div class="photo-viewer" id="photoViewer">
@@ -1517,7 +1600,25 @@ cargarBlog();
     <button class="bv-close" onclick="cerrarBlogModal()">✕</button>
     <div class="bv-header"><h2 id="bvTitle">Título</h2><p id="bvMeta">Autor - Fecha</p></div>
     <img id="bvImage" src="" alt="Portada" style="width:100%;border-radius:3px;margin-bottom:1.25rem;display:none;">
-    <div class="bv-body" id="bvText"></div>
+    <div class="bv-body ql-editor" id="bvText"></div>
+    <div class="bv-footer">
+      <div id="bvShare"></div>
+</style>
+
+<div class="photo-viewer" id="photoViewer">
+  <button class="pv-close" onclick="cerrarFoto()">✕</button>
+  <button class="pv-nav prev" onclick="moverFoto(-1)">❮</button>
+  <img id="pvImage" src="" alt="Foto PIEBA">
+  <button class="pv-nav next" onclick="moverFoto(1)">❯</button>
+  <div class="pv-footer" id="pvShareContainer"></div>
+</div>
+
+<div class="blog-viewer" id="blogViewer">
+  <div class="bv-content">
+    <button class="bv-close" onclick="cerrarBlogModal()">✕</button>
+    <div class="bv-header"><h2 id="bvTitle">Título</h2><p id="bvMeta">Autor - Fecha</p></div>
+    <img id="bvImage" src="" alt="Portada" style="width:100%;border-radius:3px;margin-bottom:1.25rem;display:none;">
+    <div class="bv-body ql-editor" id="bvText"></div>
     <div class="bv-footer">
       <div id="bvShare"></div>
       <div class="bv-controls">
@@ -1525,6 +1626,15 @@ cargarBlog();
         <button onclick="moverBlog(1)">Siguiente ❯</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ARCHIVO MODAL -->
+<div class="blog-viewer" id="archivoModal">
+  <div class="bv-container" style="max-width:1200px; padding:3rem; background:var(--navy-deep); border:none; height:100%; overflow-y:auto; position:relative;">
+    <button class="bv-close" onclick="cerrarArchivoModal()">✕</button>
+    <h2 id="archivoTitulo" style="font-family:'Cinzel',serif;color:var(--gold);font-size:2.2rem;text-align:center;margin-bottom:2.5rem;">Archivo Histórico</h2>
+    <div class="archivo-grid" id="archivoGrid"></div>
   </div>
 </div>
 
@@ -1708,8 +1818,68 @@ function intentarRestaurarModal(intentos) {
     setTimeout(function(){ intentarRestaurarModal(intentos + 1); }, 800);
   }
 }
+// ARCHIVO HISTORICO
+let archivoDataGlobal = [];
+let archivoTipoGlobal = '';
+window.abrirArchivo = async (tipo) => {
+  archivoTipoGlobal = tipo;
+  const titulos = { 'blog': 'Archivo de Reflexiones', 'galeria': 'Archivo de Galerías', 'eventos': 'Agenda de Eventos', 'avisos': 'Archivo de Comunicados' };
+  document.getElementById('archivoTitulo').textContent = titulos[tipo];
+  document.getElementById('archivoGrid').innerHTML = '<p style="text-align:center;color:white;width:100%;grid-column:1/-1;">Cargando historial...</p>';
+  document.getElementById('archivoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  
+  try {
+    let coll = tipo;
+    let ord = (tipo === 'eventos') ? orderBy('fechaInicio','desc') : orderBy('fecha','desc');
+    const q = query(collection(db, coll), ord, limit(60));
+    const snap = await getDocs(q);
+    archivoDataGlobal = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    
+    const grid = document.getElementById('archivoGrid');
+    if(!archivoDataGlobal.length) { grid.innerHTML = '<p style="text-align:center;color:white;grid-column:1/-1;">No hay elementos aún.</p>'; return; }
+    
+    if(tipo === 'blog') {
+      grid.innerHTML = archivoDataGlobal.map((d, i) => `
+        <div class="blog-card" style="align-self:stretch;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, 'blog'), 300)">
+          <div class="blog-cover" style="aspect-ratio:16/9;">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
+          <div class="blog-card-body" style="padding:1rem;">
+            <p class="blog-cat">${d.categoria||'Reflexión'}</p>
+            <p class="blog-titulo" style="font-size:1.1rem;margin-bottom:0.5rem;">${d.titulo}</p>
+            <p class="blog-excerpt" style="font-size:0.8rem;">${stripHtml(d.extracto).substring(0, 100)}...</p>
+          </div>
+        </div>
+      `).join('');
+    } else if (tipo === 'galeria') {
+      grid.innerHTML = archivoDataGlobal.map((d, i) => `
+        <div class="album-card" style="align-self:stretch;aspect-ratio:1;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirAlbum(archivoDataGlobal, ${i}), 300)">
+          <div class="album-cover">${d.portada?`<img src="${d.portada}">`:`<div class="album-cover-ph"></div>`}</div>
+          <div class="album-body" style="padding:1rem;text-align:center;">
+            <h3 style="color:var(--gold);font-family:'Cinzel',serif;font-size:1.1rem;">${d.titulo}</h3>
+            <p style="color:rgba(255,255,255,0.6);font-size:0.8rem;margin-top:0.3rem;">${formatDate(d.fecha.toDate())}</p>
+          </div>
+        </div>
+      `).join('');
+    } else if (tipo === 'eventos' || tipo === 'avisos') {
+      grid.innerHTML = archivoDataGlobal.map((d, i) => `
+        <div style="background:var(--glass);border:1px solid var(--glass-b);padding:1.5rem;border-radius:3px;cursor:pointer;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, '${tipo=== 'eventos'?'evento':'blog'}'), 300)">
+          <h4 style="color:white;font-size:1.1rem;margin-bottom:0.5rem;">${d.titulo}</h4>
+          <p style="color:var(--gold);font-size:0.8rem;margin-bottom:0.5rem;">${d.fechaInicio ? formatDate(d.fechaInicio.toDate()) : formatDate(d.fecha.toDate())}</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:0.85rem;">${stripHtml(d.descripcion || d.extracto || '').substring(0, 100)}...</p>
+        </div>
+      `).join('');
+    }
+  } catch(e) { console.error(e); }
+};
+
+window.cerrarArchivoModal = () => {
+  document.getElementById('archivoModal').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
 setTimeout(function(){ intentarRestaurarModal(0); }, 1400);
 
 </script>
 </body>
 </html>
+
