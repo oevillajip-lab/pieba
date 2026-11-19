@@ -441,8 +441,11 @@
     .blog-card-body { padding: 1.25rem 1.4rem 1.5rem; }
     
     .ver-todo-wrap { display: flex; justify-content: center; margin-top: 2.5rem; width: 100%; grid-column: 1 / -1; }
-    .btn-ver-todo { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 0.8rem 2rem; font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; border-radius: 3px; display: inline-flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-    .btn-ver-todo:hover { background: var(--gold); color: var(--navy); }
+    .btn-ver-todo, .btn-gold { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 0.8rem 2rem; font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; cursor: pointer; transition: 0.3s; border-radius: 3px; display: inline-flex; align-items: center; gap: 0.6rem; text-transform: uppercase; }
+    .btn-ver-todo:hover, .btn-gold:hover { background: var(--gold); color: var(--navy); }
+    .btn-gold::after { content: '→'; font-family: 'Raleway', sans-serif; transition: transform .3s; }
+    .btn-gold:hover::after { transform: translateX(4px); }
+    .btn-gold:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
     .blog-cat { font-size: .68rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
     .blog-titulo { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 600; line-height: 1.35; margin-top: .4rem; }
     .blog-excerpt { font-size: .86rem; color: var(--muted); margin-top: .5rem; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
@@ -1422,6 +1425,7 @@ async function cargarWebConfig() {
   } catch(e) { console.error('Error al cargar config web:', e); }
 }
 
+const BTN_ARCHIVO_EVENTOS = `<div style="text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('eventos')">Ver archivo de eventos</button></div>`;
 async function cargarComunidad() {
   const contAvisos=document.getElementById('contenedorAvisos');
   const contEventos=document.getElementById('contenedorEventos');
@@ -1447,14 +1451,14 @@ async function cargarComunidad() {
             </div>
           </div></div>`;
       });
-      htmlAvisos+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('avisos')">VER ARCHIVO DE COMUNICADOS</button></div>`;
     }
+    htmlAvisos+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('avisos')">Ver archivo de comunicados</button></div>`;
     contAvisos.innerHTML=htmlAvisos;
 
     const hoy=new Date(); hoy.setHours(0,0,0,0);
     const fut = ok(await supabase.from('eventos').select('*').gte('fecha', hoy.toISOString()).order('fecha', { ascending: true }));
     if(fut.length===0){
-      contEventos.innerHTML=`<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
+      contEventos.innerHTML=`<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`+BTN_ARCHIVO_EVENTOS;
     } else {
       window.eventosDataGlobal=fut;
       contEventos.innerHTML=fut.slice(0,5).map((e,index)=>{
@@ -1468,7 +1472,7 @@ async function cargarComunidad() {
           <div class="evento-body"><p class="evento-titulo">${esc(e.titulo)}</p><p class="evento-desc">${esc(e.texto)}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo,'','comunidad'):''}</div>
         </div>`;
       }).join('');
-      contEventos.innerHTML+=`<div style="text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('eventos')">VER ARCHIVO DE EVENTOS</button></div>`;
+      contEventos.innerHTML+=BTN_ARCHIVO_EVENTOS;
     }
   } catch(err){ console.error('Error:',err); }
 }
@@ -1488,7 +1492,7 @@ async function cargarGaleria() {
       const coverHtml=portadaUrl?`<img src="${esc(portadaUrl)}" class="album-cover-img" alt="${esc(data.nombre)}" loading="lazy">`:`<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);width:100%;height:100%;"></div>`;
       htmlGaleria+=`<div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">${coverHtml}<div class="album-overlay"><p class="album-name">${esc(data.nombre||'Sin Título')}</p><p class="album-date">${formatMonthYear(data.fecha)}</p></div><span class="album-count">${fotos.length} fotos</span></div>`;
     });
-    htmlGaleria+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('galeria')">VER BIBLIOTECA DE FOTOS</button></div>`;
+    htmlGaleria+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('galeria')">Ver biblioteca de fotos</button></div>`;
     contGaleria.innerHTML=htmlGaleria;
   } catch(err){ console.error('Error Galería:',err); contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:#ff7070;"><p>Error al cargar la galería.</p></div>`; }
 }
@@ -1568,7 +1572,8 @@ Promise.allSettled([cargarComunidad(), cargarGaleria(), cargarBlog()]).then(() =
 
   /* SHARE */
   .share-row{display:flex;gap:0.4rem;margin-top:0.7rem;}
-  .share-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(15,11,50,0.05);border:1px solid rgba(15,11,50,0.1);color:#1f1c2b;cursor:pointer;transition:0.3s;text-decoration:none;}
+  .share-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.7);cursor:pointer;transition:0.3s;text-decoration:none;}
+  .bv-content .share-btn, body.day .share-btn{background:rgba(15,11,50,0.05);border-color:rgba(15,11,50,0.1);color:#1f1c2b;}
   .share-btn:hover{background:rgba(201,169,110,0.15);border-color:#b5904d;color:#b5904d;transform:translateY(-2px);}
 
   @media(max-width:768px){
@@ -1580,6 +1585,21 @@ Promise.allSettled([cargarComunidad(), cargarGaleria(), cargarBlog()]).then(() =
   }
   #archivoModal .bv-container { max-width: 1200px; padding: 4rem 3.5rem; background: var(--navy-deep); height: 100%; overflow-y: auto; border:none; border-radius:0; box-shadow:none; }
   .archivo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  #archivoModal .bv-close { position: fixed; top: 1.4rem; right: 1.6rem; width: 40px; height: 40px; z-index: 5; color: rgba(255,255,255,.8); border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.05); }
+  #archivoModal .bv-close:hover { color: var(--gold); border-color: var(--gold); background: rgba(201,169,110,.12); }
+  .archivo-sub { text-align: center; color: var(--muted); font-size: .8rem; letter-spacing: .08em; margin: -1.75rem 0 2.5rem; }
+  .archivo-item { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 3px; overflow: hidden; cursor: pointer; transition: border-color .3s, transform .3s; display: flex; flex-direction: column; text-align: left; }
+  .archivo-item:hover { border-color: rgba(201,169,110,.45); transform: translateY(-3px); }
+  .archivo-item-img { aspect-ratio: 16/9; overflow: hidden; background: #1c1760; }
+  .archivo-item-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+  .archivo-item:hover .archivo-item-img img { transform: scale(1.04); }
+  .archivo-item-body { padding: 1.2rem 1.35rem 1.4rem; }
+  .archivo-item-tag { display: inline-block; font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+  .archivo-item-tag.pasado { color: var(--muted); }
+  .archivo-item-tag.urgente { color: #ff8a8a; }
+  .archivo-item-fecha { font-size: .7rem; letter-spacing: .08em; color: var(--muted); margin-left: .5rem; }
+  .archivo-item-titulo { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 600; color: #fff; margin: .5rem 0 .45rem; line-height: 1.35; }
+  .archivo-item-texto { font-size: .84rem; color: var(--muted); line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   @media (max-width: 900px) { #archivoModal .bv-container { padding: 3rem 1.25rem; } .archivo-grid { grid-template-columns: 1fr; } }
 </style>
 
@@ -1612,6 +1632,7 @@ Promise.allSettled([cargarComunidad(), cargarGaleria(), cargarBlog()]).then(() =
   <div class="bv-container" style="max-width:1200px; padding:3rem; background:var(--navy-deep); border:none; height:100%; overflow-y:auto; position:relative;">
     <button class="bv-close" onclick="cerrarArchivoModal()">✕</button>
     <h2 id="archivoTitulo" style="font-family:'Cinzel',serif;color:var(--gold);font-size:2.2rem;text-align:center;margin-bottom:2.5rem;">Archivo Histórico</h2>
+    <p class="archivo-sub" id="archivoSub"></p>
     <div class="archivo-grid" id="archivoGrid"></div>
   </div>
 </div>
@@ -1827,7 +1848,10 @@ window.abrirArchivo = async (tipo) => {
 
   try {
     const rows = await window.piebaDatos.archivo(tipo);
-    if (!rows.length) { grid.innerHTML = '<p style="text-align:center;color:white;grid-column:1/-1;">No hay elementos aún.</p>'; return; }
+    const sub = document.getElementById('archivoSub');
+    const nombres = { blog: ['reflexión', 'reflexiones'], galeria: ['álbum', 'álbumes'], eventos: ['evento', 'eventos'], avisos: ['comunicado', 'comunicados'] }[tipo];
+    if (sub) sub.textContent = rows.length ? `${rows.length} ${rows.length === 1 ? nombres[0] : nombres[1]}` : '';
+    if (!rows.length) { grid.innerHTML = `<p style="text-align:center;color:var(--muted);grid-column:1/-1;padding:2rem 0;">Todavía no hay ${nombres[1]} publicados.</p>`; return; }
 
     if (tipo === 'blog') {
       archivoDataGlobal = rows;
@@ -1854,13 +1878,28 @@ window.abrirArchivo = async (tipo) => {
     } else if (tipo === 'eventos' || tipo === 'avisos') {
       archivoDataGlobal = rows;
       const tipoModal = tipo === 'eventos' ? 'evento' : 'aviso';
-      grid.innerHTML = rows.map((d, i) => `
-        <div style="background:var(--glass);border:1px solid var(--glass-b);padding:1.5rem;border-radius:3px;cursor:pointer;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, '${tipoModal}'), 300)">
-          <h4 style="color:white;font-size:1.1rem;margin-bottom:0.5rem;">${esc(d.titulo)}</h4>
-          <p style="color:var(--gold);font-size:0.8rem;margin-bottom:0.5rem;">${fmt(d.fecha)}</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:0.85rem;">${esc((d.texto || '').substring(0, 100))}${(d.texto || '').length > 100 ? '...' : ''}</p>
-        </div>
-      `).join('');
+      const ahora = new Date();
+      grid.innerHTML = rows.map((d, i) => {
+        const f = d.fecha ? new Date(d.fecha) : null;
+        let tag = '', clase = '';
+        if (tipo === 'eventos') {
+          const pasado = f && f < ahora;
+          tag = pasado ? 'Realizado' : 'Próximo'; clase = pasado ? 'pasado' : '';
+        } else {
+          const t = (d.tipo || 'normal').toLowerCase();
+          tag = t === 'urgente' ? 'Urgente' : t === 'info' ? 'Información' : 'Comunicado'; clase = t === 'urgente' ? 'urgente' : '';
+        }
+        const fechaTxt = f ? fmt(d.fecha) + (tipo === 'eventos' ? ' · ' + f.toLocaleTimeString('es-PY', { hour: '2-digit', minute: '2-digit' }) : '') : '';
+        const texto = window.stripHtml(d.texto || '');
+        return `
+        <div class="archivo-item" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, '${tipoModal}'), 300)">
+          ${d.imagen ? `<div class="archivo-item-img"><img src="${esc(d.imagen)}" alt="" loading="lazy"></div>` : ''}
+          <div class="archivo-item-body">
+            <span class="archivo-item-tag ${clase}">${tag}</span><span class="archivo-item-fecha">${esc(fechaTxt)}</span>
+            <h4 class="archivo-item-titulo">${esc(d.titulo)}</h4>
+            ${texto ? `<p class="archivo-item-texto">${esc(texto)}</p>` : ''}
+          </div>
+        </div>`; }).join('');
     }
   } catch(e) {
     console.error(e);
