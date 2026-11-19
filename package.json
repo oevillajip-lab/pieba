@@ -1,9 +1,5 @@
 {
-  "name": "pieba-admin",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "firebase": "^12.14.0",
-    "firebase-admin": "^12.0.0"
-  }
+  "name": "pieba-web",
+  "version": "2.0.0",
+  "private": true
 }

@@ -1,0 +1,10 @@
+{
+  "name": "pieba-migracion-firestore",
+  "private": true,
+  "type": "module",
+  "description": "Script de una sola vez para copiar los datos de Firestore a Supabase",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0",
+    "firebase-admin": "^12.0.0"
+  }
+}

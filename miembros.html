@@ -271,24 +271,12 @@ body.day .hero { background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(184
 
 <!-- FIREBASE -->
 <script type="module">
-import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, query, orderBy, where }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { supabase, ok } from './js/supabase.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
-  authDomain: "pieba-database.firebaseapp.com",
-  projectId: "pieba-database",
-  storageBucket: "pieba-database.firebasestorage.app",
-  messagingSenderId: "54248882255",
-  appId: "1:54248882255:web:b635bace1d3d723515aa3a"
-};
-
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const esc = (v) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
 function photoOrPh(foto, size) {
-  if (foto) return `<img class="${size === 'lg' ? 'pastor-photo' : 'member-photo'}" src="${foto}" loading="lazy" alt="Foto">`;
+  if (foto) return `<img class="${size === 'lg' ? 'pastor-photo' : 'member-photo'}" src="${esc(foto)}" loading="lazy" alt="Foto">`;
   const s = size === 'lg' ? 52 : 28;
   return `<div class="${size === 'lg' ? 'pastor-photo-ph' : 'member-photo-ph'}">
     <svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="rgba(255,255,255,.5)">
@@ -299,13 +287,12 @@ function photoOrPh(foto, size) {
 
 async function loadMiembros() {
   try {
-    const snap = await getDocs(query(collection(db, 'miembros'), orderBy('orden', 'asc')));
-    const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const todos = ok(await supabase.from('miembros').select('*').order('orden', { ascending: true }));
 
     document.getElementById('loadingWrap').style.display = 'none';
 
-    const pastor  = todos.find(m => m.isPastor);
-    const members = todos.filter(m => !m.isPastor);
+    const pastor  = todos.find(m => m.es_pastor);
+    const members = todos.filter(m => !m.es_pastor);
 
     if (!pastor && !members.length) {
       document.getElementById('emptyMsg').style.display = 'block';
@@ -323,13 +310,13 @@ async function loadMiembros() {
             <span class="pastor-badge">Pastor</span>
           </div>
           <div class="pastor-info">
-            <div class="pastor-rol">${pastor.rol || 'Pastor Principal'}</div>
-            <div class="pastor-name">${pastor.nombre}</div>
+            <div class="pastor-rol">${esc(pastor.rol || 'Pastor Principal')}</div>
+            <div class="pastor-name">${esc(pastor.nombre)}</div>
             <div class="pastor-year">${pastor.anio ? 'Desde ' + pastor.anio : ''}</div>
             ${pastor.frase ? `
               <div class="pastor-frase">
-                "${pastor.frase}"
-                ${pastor.referencia ? `<div class="pastor-ref">— ${pastor.referencia}</div>` : ''}
+                "${esc(pastor.frase)}"
+                ${pastor.referencia ? `<div class="pastor-ref">— ${esc(pastor.referencia)}</div>` : ''}
               </div>` : ''}
           </div>
         </div>`;
@@ -342,13 +329,13 @@ async function loadMiembros() {
       document.getElementById('membersGrid').innerHTML = members.map(m => `
         <div class="member-card">
           ${photoOrPh(m.foto, 'sm')}
-          <div class="member-rol">${m.rol || ''}</div>
-          <div class="member-name">${m.nombre}</div>
+          <div class="member-rol">${esc(m.rol || '')}</div>
+          <div class="member-name">${esc(m.nombre)}</div>
           <div class="member-year">${m.anio ? 'Bautizado/a ' + m.anio : ''}</div>
           ${m.frase ? `
             <div class="member-frase">
-              "${m.frase}"
-              ${m.referencia ? `<div class="member-ref">— ${m.referencia}</div>` : ''}
+              "${esc(m.frase)}"
+              ${m.referencia ? `<div class="member-ref">— ${esc(m.referencia)}</div>` : ''}
             </div>` : ''}
         </div>`).join('');
     }

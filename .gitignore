@@ -1,0 +1,7 @@
+node_modules/
+# Claves y exportaciones de la migración: nunca subir al repo
+scripts/migracion/*.json
+!scripts/migracion/package.json
+!scripts/migracion/package-lock.json
+*.secret
+.env*
