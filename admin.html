@@ -275,6 +275,56 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .campo-destacado { animation: destacar 1.6s ease; }
 @keyframes destacar { 0%, 100% { box-shadow: none; } 25% { box-shadow: 0 0 0 2px var(--gold); } }
 
+
+/* ── MODO EDICIÓN ── */
+.cfg-actions { display: flex; gap: .6rem; flex-shrink: 0; align-items: center; }
+.btn-edit { display: inline-flex; align-items: center; gap: .5rem; background: transparent; color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: .65rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; transition: .2s; white-space: nowrap; }
+.btn-edit:hover { background: var(--gold); color: var(--navy-deep); }
+.cfg-actions .btn-secondary { padding: .65rem 1.1rem; }
+.cfg-actions .btn-save { padding: .65rem 1.25rem; }
+.cfg-estado { display: flex; align-items: center; gap: .5rem; font-size: .74rem; color: var(--muted); margin: -1.1rem 0 1.6rem; }
+.cfg-estado svg { flex-shrink: 0; opacity: .7; }
+.cfg-estado.editando { color: var(--gold); }
+.content-section.bloqueado .form-field label { color: rgba(201,169,110,.5); }
+.content-section.bloqueado .form-field input:disabled, .content-section.bloqueado .form-field textarea:disabled, .content-section.bloqueado .form-field select:disabled { opacity: .5; cursor: not-allowed; background: rgba(255,255,255,.015); border-color: rgba(255,255,255,.06); resize: none; }
+.content-section.bloqueado .verse-gen { opacity: .45; pointer-events: none; filter: saturate(.6); }
+.content-section.editando .form-field input, .content-section.editando .form-field textarea, .content-section.editando .form-field select { border-color: rgba(201,169,110,.28); background: rgba(255,255,255,.055); }
+
+.cambios-pill { display: none; align-items: center; gap: .4rem; margin-right: auto; font-size: .68rem; letter-spacing: .06em; color: var(--gold); }
+.cambios-pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,110,.2); animation: latido 1.8s ease-in-out infinite; }
+.cambios-pill.show { display: inline-flex; }
+@keyframes latido { 50% { box-shadow: 0 0 0 6px rgba(201,169,110,0); } }
+
+.aviso-cambios { position: fixed; left: 50%; bottom: 1.5rem; z-index: 450; transform: translate(-50%, 160%); opacity: 0; transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s; display: flex; align-items: center; gap: 1rem; background: #1a1650; border: 1px solid var(--gold-dim); border-left: 3px solid var(--gold); border-radius: 8px; padding: .8rem .9rem .8rem 1.1rem; box-shadow: 0 18px 50px rgba(0,0,0,.45); max-width: calc(100vw - 2rem); pointer-events: none; }
+.aviso-cambios.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.aviso-cambios-ico { width: 32px; height: 32px; border-radius: 50%; background: var(--gold-dim); color: var(--gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.aviso-cambios-txt { display: flex; flex-direction: column; gap: .1rem; font-size: .8rem; min-width: 0; }
+.aviso-cambios-txt strong { font-weight: 600; color: var(--white); }
+.aviso-cambios-txt span { font-size: .7rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aviso-cambios-btns { display: flex; gap: .5rem; flex-shrink: 0; }
+body.con-aviso .toast { bottom: 6.5rem; }
+
+.dlg-overlay { position: fixed; inset: 0; z-index: 700; background: rgba(7,5,30,.88); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+.dlg-overlay.open { display: flex; animation: stepIn .2s ease; }
+.dlg-box { background: var(--navy-mid); border: 1px solid var(--glass-b); border-top: 2px solid var(--gold); border-radius: 8px; padding: 2rem 1.75rem 1.6rem; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,.5); }
+.dlg-icon { width: 46px; height: 46px; border-radius: 50%; margin: 0 auto 1rem; background: var(--gold-dim); color: var(--gold); display: flex; align-items: center; justify-content: center; }
+.dlg-box h3 { font-family: 'Cinzel', serif; font-size: 1.05rem; margin-bottom: .6rem; }
+.dlg-box p { font-size: .82rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.5rem; }
+.dlg-btns { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
+.btn-dlg-descartar { background: transparent; border: 1px solid rgba(224,85,85,.45); color: #ff9090; border-radius: 4px; padding: .65rem 1.1rem; font-family: 'Raleway', sans-serif; font-size: .72rem; cursor: pointer; transition: .2s; }
+.btn-dlg-descartar:hover { background: rgba(224,85,85,.12); }
+
+@media (max-width: 700px) {
+  .cfg-actions { width: 100%; }
+  .cfg-actions > button { flex: 1; justify-content: center; }
+  .aviso-cambios { left: .75rem; right: .75rem; transform: translateY(160%); max-width: none; flex-wrap: wrap; }
+  .aviso-cambios.show { transform: none; }
+  .aviso-cambios-btns { width: 100%; }
+  .aviso-cambios-btns > button { flex: 1; }
+  body.con-aviso .toast { bottom: 9.5rem; }
+  .dlg-btns > button { flex: 1 1 100%; }
+}
+
 /* ── DASHBOARD ── */
 .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; }
 .dash-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 6px; padding: 1.25rem 1.4rem; cursor: pointer; transition: .2s; }
@@ -535,7 +585,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
     <div class="content-section" id="sec-cfg-inicio">
       <div class="page-header">
         <div><div class="page-label">Configuración</div><h1 class="page-title">Página de Inicio</h1></div>
-        <button class="btn-add" onclick="saveWebConfig('inicio')">Guardar cambios</button>
+        <div class="cfg-actions" data-seccion="inicio"></div>
       </div>
       <div style="max-width: 600px;">
         <div class="form-field">
@@ -579,7 +629,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
     <div class="content-section" id="sec-cfg-nosotros">
       <div class="page-header">
         <div><div class="page-label">Configuración</div><h1 class="page-title">Nosotros</h1></div>
-        <button class="btn-add" onclick="saveWebConfig('nosotros')">Guardar cambios</button>
+        <div class="cfg-actions" data-seccion="nosotros"></div>
       </div>
       <div style="max-width: 600px;">
         <div class="form-field">
@@ -599,7 +649,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
     <div class="content-section" id="sec-cfg-comunidad">
       <div class="page-header">
         <div><div class="page-label">Configuración</div><h1 class="page-title">Comunidad (Cultos)</h1></div>
-        <button class="btn-add" onclick="saveWebConfig('comunidad')">Guardar cambios</button>
+        <div class="cfg-actions" data-seccion="comunidad"></div>
       </div>
       <div style="max-width: 800px; display: grid; gap: 2rem;">
         <div style="background:var(--glass); border:1px solid var(--glass-b); padding:1.5rem; border-radius:6px;">
@@ -635,7 +685,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
     <div class="content-section" id="sec-cfg-contacto">
       <div class="page-header">
         <div><div class="page-label">Configuración</div><h1 class="page-title">Contacto & Redes</h1></div>
-        <button class="btn-add" onclick="saveWebConfig('contacto')">Guardar cambios</button>
+        <div class="cfg-actions" data-seccion="contacto"></div>
       </div>
       <div style="max-width: 600px;">
         <div class="form-field"><label>Dirección</label><input type="text" id="cfg-con-dir"></div>
@@ -651,7 +701,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
     <div class="content-section" id="sec-cfg-ofrendas">
       <div class="page-header">
         <div><div class="page-label">Configuración</div><h1 class="page-title">Ofrendas y Diezmos</h1></div>
-        <button class="btn-add" onclick="saveWebConfig('ofrendas')">Guardar cambios</button>
+        <div class="cfg-actions" data-seccion="ofrendas"></div>
       </div>
       <div style="max-width: 600px;">
         <div class="form-field"><label>Versículo</label><textarea id="cfg-ofr-versiculo" rows="3"></textarea></div>
@@ -798,7 +848,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
         <button class="img-clear-btn" id="avisoImgClear" onclick="clearImage('aviso')">Quitar imagen</button>
         <input type="hidden" id="avisoImagen">
       </div>
-      <div class="form-actions">
+      <div class="form-actions"><span class="cambios-pill">Cambios sin guardar</span>
         <button class="btn-secondary" onclick="closeModal('modalAviso')">Cancelar</button>
         <button class="btn-save" onclick="saveAviso()">Guardar</button>
       </div>
@@ -843,7 +893,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
         <button class="img-clear-btn" id="eventoImgClear" onclick="clearImage('evento')">Quitar imagen</button>
         <input type="hidden" id="eventoImagen">
       </div>
-      <div class="form-actions">
+      <div class="form-actions"><span class="cambios-pill">Cambios sin guardar</span>
         <button class="btn-secondary" onclick="closeModal('modalEvento')">Cancelar</button>
         <button class="btn-save" onclick="saveEvento()">Guardar</button>
       </div>
@@ -887,7 +937,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
         </div>
         <p style="font-size:.68rem;color:var(--muted);margin-top:.5rem;">Podés agregar más fotos luego editando el álbum.</p>
       </div>
-      <div class="form-actions">
+      <div class="form-actions"><span class="cambios-pill">Cambios sin guardar</span>
         <button class="btn-secondary" onclick="closeModal('modalAlbum')">Cancelar</button>
         <button class="btn-save" onclick="saveAlbum()">Guardar álbum</button>
       </div>
@@ -937,7 +987,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
         <label>Fecha de publicación</label>
         <input type="date" id="blogFecha">
       </div>
-      <div class="form-actions">
+      <div class="form-actions"><span class="cambios-pill">Cambios sin guardar</span>
         <button class="btn-secondary" onclick="closeModal('modalBlog')">Cancelar</button>
         <button class="btn-save" onclick="saveBlog()">Publicar</button>
       </div>
@@ -998,7 +1048,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
           Es el pastor principal (aparece destacado arriba)
         </label>
       </div>
-      <div class="form-actions">
+      <div class="form-actions"><span class="cambios-pill">Cambios sin guardar</span>
         <button class="btn-secondary" onclick="closeModal('modalMiembro')">Cancelar</button>
         <button class="btn-save" onclick="saveMiembro()">Guardar</button>
       </div>
@@ -1015,6 +1065,30 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
       <button class="btn-cancel" onclick="closeConfirm()">Cancelar</button>
       <button class="btn-confirm-del" onclick="confirmDelete()">Eliminar</button>
     </div>
+  </div>
+</div>
+
+<!-- Diálogo: cambios sin guardar -->
+<div class="dlg-overlay" id="dlgCambios" role="dialog" aria-modal="true" aria-labelledby="dlgTitulo">
+  <div class="dlg-box">
+    <div class="dlg-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+    <h3 id="dlgTitulo">Tenés cambios sin guardar</h3>
+    <p id="dlgTexto">Si salís ahora, se pierden los cambios que hiciste.</p>
+    <div class="dlg-btns">
+      <button type="button" class="btn-secondary" data-r="seguir">Seguir editando</button>
+      <button type="button" class="btn-dlg-descartar" data-r="descartar">Descartar</button>
+      <button type="button" class="btn-save" data-r="guardar">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Aviso: recordar guardar -->
+<div class="aviso-cambios" id="avisoCambios" role="status" aria-live="polite">
+  <div class="aviso-cambios-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+  <div class="aviso-cambios-txt"><strong>Tenés cambios sin guardar</strong><span id="avisoCambiosDonde"></span></div>
+  <div class="aviso-cambios-btns">
+    <button type="button" class="btn-secondary" onclick="cancelarSeccion()">Descartar</button>
+    <button type="button" class="btn-save" onclick="guardarSeccion()">Guardar cambios</button>
   </div>
 </div>
 
@@ -1285,8 +1359,16 @@ window.showSection = (id) => {
   document.querySelectorAll('.nav-item').forEach(n => { if (n.getAttribute('onclick')?.includes(`'${id}'`)) n.classList.add('active'); });
   closeSidebar();
 };
-window.closeModal = (id) => { $(id).classList.remove('open'); };
-window.openModal  = (id) => { $(id).classList.add('open'); };
+window.openModal  = (id) => { $(id).classList.add('open'); fotoModal[id] = leerModal(id); actualizarPillModal(id); };
+window.closeModal = async (id, forzar = false) => {
+  if (!forzar && modalSucio(id)) {
+    const r = await preguntarCambios('Si cerrás esta ventana, se pierden los cambios que hiciste.');
+    if (r === 'seguir') return;
+    if (r === 'guardar') { GUARDAR_MODAL[id]?.(); return; }
+  }
+  $(id).classList.remove('open');
+  delete fotoModal[id];
+};
 
 /* ════════════════════════════════
    CLOUDINARY
@@ -1310,6 +1392,7 @@ function setImagen(ctx, url) {
   const prev = $(`${ctx}ImgPreview`), clr = $(`${ctx}ImgClear`);
   if (url) { prev.src = url; prev.classList.add('show'); clr.classList.add('show'); }
   else { prev.removeAttribute('src'); prev.classList.remove('show'); clr.classList.remove('show'); }
+  const ov = prev.closest('.modal-overlay'); if (ov) actualizarPillModal(ov.id);
 }
 
 window.uploadImage = async (ctx) => {
@@ -1370,6 +1453,7 @@ function renderAlbumPhotosGrid() {
       <img src="${escapeHtml(url)}" loading="lazy">
       <button class="photo-remove" onclick="removeAlbumPhoto(${i})">✕</button>
     </div>`).join('') + `<div class="photo-add-btn" onclick="uploadAlbumPhoto()">+</div>`;
+  actualizarPillModal('modalAlbum');
 }
 window.removeAlbumPhoto = (i) => { albumPhotos.splice(i, 1); renderAlbumPhotosGrid(); };
 
@@ -1476,7 +1560,7 @@ window.saveAviso = () => {
       fecha: aISO($('avisoFecha').value || todayISO()),
       imagen: $('avisoImagen').value || null
     });
-    closeModal('modalAviso');
+    closeModal('modalAviso', true);
     await loadAvisos();
     toast('Comunicado guardado ✓');
   });
@@ -1548,7 +1632,7 @@ window.saveEvento = () => {
       fecha: aISO($('eventoFecha').value || todayISO(), $('eventoHora').value || '00:00'),
       imagen: $('eventoImagen').value || null
     });
-    closeModal('modalEvento');
+    closeModal('modalEvento', true);
     await loadEventos();
     toast('Evento guardado ✓');
   });
@@ -1612,7 +1696,7 @@ window.saveAlbum = () => {
       portada: $('albumPortada').value || albumPhotos[0] || null,
       fotos: [...albumPhotos]
     });
-    closeModal('modalAlbum');
+    closeModal('modalAlbum', true);
     await loadGaleria();
     toast('Álbum guardado ✓');
   });
@@ -1684,7 +1768,7 @@ window.saveBlog = () => {
       imagen: $('blogImagen').value || null,
       fecha: aISO($('blogFecha').value || todayISO())
     });
-    closeModal('modalBlog');
+    closeModal('modalBlog', true);
     await loadBlog();
     toast('Artículo publicado ✓');
   });
@@ -1721,6 +1805,7 @@ function crearEditorBlog() {
       }
     }
   });
+  blogQuill.on('text-change', () => actualizarPillModal('modalBlog'));
   // Traducir los textos de ayuda de la barra
   const titulos = {
     'ql-bold': 'Negrita', 'ql-italic': 'Cursiva', 'ql-underline': 'Subrayado', 'ql-strike': 'Tachado',
@@ -1816,6 +1901,7 @@ window.usarVersiculo = () => {
   $('cfg-ini-versiculo').value = versiculoSugerido.texto;
   $('cfg-ini-referencia').value = versiculoSugerido.referencia;
   ['cfg-ini-versiculo', 'cfg-ini-referencia'].forEach(id => { const el = $(id); el.classList.remove('campo-destacado'); void el.offsetWidth; el.classList.add('campo-destacado'); });
+  actualizarAvisoCfg();
   toast('Versículo listo. Tocá "Guardar cambios" para publicarlo.');
 };
 pintarChipsVersiculo();
@@ -1886,7 +1972,7 @@ window.saveMiembro = () => {
       foto: $('miembroImagen').value || null,
       es_pastor: $('miembroIsPastor').checked
     });
-    closeModal('modalMiembro');
+    closeModal('modalMiembro', true);
     await loadMiembros();
     toast('Miembro guardado ✓');
   });
@@ -1998,50 +2084,165 @@ window.loadWebConfig = async () => {
   }
 };
 
-window.saveWebConfig = async (seccion) => {
-  const btn = window.event?.target?.closest('button') || document.querySelector(`#sec-cfg-${seccion} .btn-add`);
-  const oldText = btn.textContent;
-  btn.textContent = 'Guardando...';
-  btn.disabled = true;
-
-  try {
-    let valor = {};
-    if (seccion === 'comunidad') {
-      for (let i = 1; i <= 3; i++) {
-        valor['c' + i] = {};
-        for (const campo of COM_CAMPOS) valor['c' + i][campo] = $(`cfg-com-c${i}-${campo}`).value;
-      }
-    } else {
-      for (const [clave, inputId] of Object.entries(CFG_CAMPOS[seccion])) valor[clave] = $(inputId).value;
+async function guardarWebConfig(seccion) {
+  let valor = {};
+  if (seccion === 'comunidad') {
+    for (let i = 1; i <= 3; i++) {
+      valor['c' + i] = {};
+      for (const campo of COM_CAMPOS) valor['c' + i][campo] = $(`cfg-com-c${i}-${campo}`).value;
     }
+  } else {
+    for (const [clave, inputId] of Object.entries(CFG_CAMPOS[seccion])) valor[clave] = $(inputId).value;
+  }
+  ok(await supabase.from('web_config').update({ [seccion]: valor }).eq('id', 1));
+}
 
-    ok(await supabase.from('web_config').update({ [seccion]: valor }).eq('id', 1));
+/* ════════════════════════════════
+   MODO EDICIÓN Y CAMBIOS SIN GUARDAR
+════════════════════════════════ */
+const CFG_NOMBRES = { inicio: 'Página de Inicio', nosotros: 'Nosotros', comunidad: 'Comunidad', contacto: 'Contacto', ofrendas: 'Ofrendas' };
+const ICON_LOCK = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
+const ICON_PEN = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>`;
+let cfgEditando = null, cfgFoto = null, guardandoCfg = false;
 
-    btn.textContent = '¡Guardado!';
-    btn.style.background = 'var(--gold)';
-    btn.style.color = 'var(--navy-deep)';
-    setTimeout(() => {
-      btn.textContent = oldText;
-      btn.style.background = '';
-      btn.style.color = '';
-      btn.disabled = false;
-    }, 2500);
-  } catch (error) {
-    console.error(error);
-    toast('Error al guardar la configuración: ' + mensajeError(error), 'error');
-    btn.textContent = oldText;
-    btn.disabled = false;
+const camposSeccion = (sec) => [...$(`sec-cfg-${sec}`).querySelectorAll('.form-field input, .form-field textarea, .form-field select')];
+const leerSeccion = (sec) => Object.fromEntries(camposSeccion(sec).map(el => [el.id, el.type === 'checkbox' ? el.checked : el.value]));
+const cfgSucio = () => !!cfgEditando && JSON.stringify(leerSeccion(cfgEditando)) !== JSON.stringify(cfgFoto);
+
+function pintarSeccion(sec) {
+  const editando = cfgEditando === sec;
+  const secEl = $(`sec-cfg-${sec}`);
+  secEl.classList.toggle('bloqueado', !editando);
+  secEl.classList.toggle('editando', editando);
+  camposSeccion(sec).forEach(el => el.disabled = !editando);
+  const acc = secEl.querySelector('.cfg-actions');
+  acc.innerHTML = editando
+    ? `<button type="button" class="btn-secondary" onclick="cancelarSeccion()">Cancelar</button>
+       <button type="button" class="btn-save" onclick="guardarSeccion()">${guardandoCfg ? 'Guardando…' : 'Guardar cambios'}</button>`
+    : `<button type="button" class="btn-edit" onclick="editarSeccion('${sec}')">${ICON_PEN} Editar</button>`;
+  let est = secEl.querySelector('.cfg-estado');
+  if (!est) { est = document.createElement('p'); est.className = 'cfg-estado'; secEl.querySelector('.page-header').after(est); }
+  est.classList.toggle('editando', editando);
+  est.innerHTML = editando
+    ? `${ICON_PEN}<span>Editando. Recordá tocar <strong>Guardar cambios</strong> al terminar.</span>`
+    : `${ICON_LOCK}<span>Solo lectura. Tocá <strong>Editar</strong> para hacer cambios.</span>`;
+}
+function actualizarAvisoCfg() {
+  const sucio = cfgSucio();
+  $('avisoCambios').classList.toggle('show', sucio);
+  document.body.classList.toggle('con-aviso', sucio);
+  if (sucio) $('avisoCambiosDonde').textContent = `en ${CFG_NOMBRES[cfgEditando]}`;
+}
+window.editarSeccion = async (sec) => {
+  if (cfgEditando && cfgEditando !== sec && !(await puedeSalir())) return;
+  cfgEditando = sec;
+  cfgFoto = leerSeccion(sec);
+  pintarSeccion(sec);
+  actualizarAvisoCfg();
+  camposSeccion(sec)[0]?.focus();
+};
+window.cancelarSeccion = () => {
+  const sec = cfgEditando; if (!sec) return;
+  for (const [id, v] of Object.entries(cfgFoto || {})) { const el = $(id); if (!el) continue; if (el.type === 'checkbox') el.checked = v; else el.value = v; }
+  cfgEditando = null; cfgFoto = null;
+  pintarSeccion(sec);
+  actualizarAvisoCfg();
+};
+window.guardarSeccion = async () => {
+  const sec = cfgEditando; if (!sec || guardandoCfg) return false;
+  guardandoCfg = true; pintarSeccion(sec);
+  document.querySelectorAll('#avisoCambios .btn-save').forEach(b => { b.disabled = true; b.textContent = 'Guardando…'; });
+  try {
+    await guardarWebConfig(sec);
+    cfgEditando = null; cfgFoto = null;
+    toast(`Cambios guardados en ${CFG_NOMBRES[sec]} ✓`);
+    return true;
+  } catch (e) {
+    console.error(e);
+    toast('Error al guardar: ' + mensajeError(e), 'error');
+    return false;
+  } finally {
+    guardandoCfg = false;
+    pintarSeccion(sec);
+    document.querySelectorAll('#avisoCambios .btn-save').forEach(b => { b.disabled = false; b.textContent = 'Guardar cambios'; });
+    actualizarAvisoCfg();
   }
 };
+window.saveWebConfig = () => guardarSeccion();
+
+// Antes de cambiar de sección o cerrar sesión
+async function puedeSalir() {
+  if (!cfgEditando) return true;
+  if (!cfgSucio()) { cancelarSeccion(); return true; }
+  const r = await preguntarCambios(`Hiciste cambios en ${CFG_NOMBRES[cfgEditando]} que todavía no guardaste.`);
+  if (r === 'seguir') return false;
+  if (r === 'descartar') { cancelarSeccion(); return true; }
+  return await guardarSeccion();
+}
+const _showSection = window.showSection;
+window.showSection = async (id) => {
+  if (cfgEditando && id !== `cfg-${cfgEditando}` && !(await puedeSalir())) { closeSidebar(); return; }
+  _showSection(id);
+};
+const _doLogout = window.doLogout;
+window.doLogout = async () => { if (await puedeSalir()) _doLogout(); };
+
+// Ventanas (comunicados, eventos, álbumes, blog, miembros)
+const fotoModal = {};
+const GUARDAR_MODAL = { modalAviso: () => saveAviso(), modalEvento: () => saveEvento(), modalAlbum: () => saveAlbum(), modalBlog: () => saveBlog(), modalMiembro: () => saveMiembro() };
+function leerModal(id) {
+  const m = $(id); if (!m) return '';
+  const vals = [...m.querySelectorAll('input, textarea, select')].filter(el => el.id).map(el => [el.id, el.type === 'checkbox' ? el.checked : el.value]);
+  if (id === 'modalBlog') vals.push(['contenido', getContenidoBlog()]);
+  if (id === 'modalAlbum') vals.push(['fotos', JSON.stringify(albumPhotos)]);
+  return JSON.stringify(vals);
+}
+function modalSucio(id) { return id in fotoModal && $(id)?.classList.contains('open') && leerModal(id) !== fotoModal[id]; }
+function actualizarPillModal(id) {
+  const pill = $(id)?.querySelector('.cambios-pill');
+  if (pill) pill.classList.toggle('show', modalSucio(id));
+}
+
+// Detectar cambios mientras se escribe
+document.addEventListener('input', onCambioCampo, true);
+document.addEventListener('change', onCambioCampo, true);
+function onCambioCampo(e) {
+  const ov = e.target.closest?.('.modal-overlay');
+  if (ov) { actualizarPillModal(ov.id); return; }
+  if (cfgEditando && e.target.closest?.(`#sec-cfg-${cfgEditando}`)) actualizarAvisoCfg();
+}
+
+// Diálogo con el diseño del panel
+let resolverDlg = null;
+function preguntarCambios(texto) {
+  $('dlgTexto').textContent = texto;
+  $('dlgCambios').classList.add('open');
+  setTimeout(() => $('dlgCambios').querySelector('.btn-save').focus(), 50);
+  return new Promise(res => { resolverDlg = res; });
+}
+function cerrarDlg(r) { $('dlgCambios').classList.remove('open'); const f = resolverDlg; resolverDlg = null; f?.(r); }
+$('dlgCambios').querySelectorAll('[data-r]').forEach(b => b.addEventListener('click', () => cerrarDlg(b.dataset.r)));
+$('dlgCambios').addEventListener('click', e => { if (e.target.id === 'dlgCambios') cerrarDlg('seguir'); });
+
+// Aviso del navegador si se cierra la pestaña con cambios
+window.addEventListener('beforeunload', e => {
+  const modalConCambios = [...document.querySelectorAll('.modal-overlay.open')].some(m => modalSucio(m.id));
+  if (cfgSucio() || modalConCambios) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// Todo arranca en modo lectura
+Object.keys(CFG_NOMBRES).forEach(pintarSeccion);
 
 /* close modal on overlay click */
 document.querySelectorAll('.modal-overlay').forEach(o => {
-  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+  o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.open').forEach(o => o.classList.remove('open'));
-    closeConfirm();
+    if ($('dlgCambios').classList.contains('open')) { cerrarDlg('seguir'); return; }
+    if ($('confirmOverlay').classList.contains('open')) { closeConfirm(); return; }
+    const abierto = document.querySelector('.modal-overlay.open');
+    if (abierto) closeModal(abierto.id);
   }
 });
 </script>
