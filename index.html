@@ -1560,10 +1560,17 @@ Promise.allSettled([cargarComunidad(), cargarGaleria(), cargarBlog()]).then(() =
   
   .bv-body{font-size:1.05rem;color:#2c2836;line-height:1.7;margin-bottom:2rem;font-family:'Raleway',sans-serif;}
   .bv-body.ql-editor { padding: 0; overflow-y: visible; white-space: pre-wrap; }
-  .bv-body.ql-editor, .bv-body.ql-editor * { font-family: 'Raleway', sans-serif !important; font-size: 1.05rem !important; color:#2c2836 !important; line-height: 1.7 !important; }
-  .bv-body.ql-editor p, .bv-body.ql-editor blockquote, .bv-body.ql-editor h1, .bv-body.ql-editor h2, .bv-body.ql-editor h3 { margin-top: 0 !important; margin-bottom: 0.85rem !important; }
+  /* Lector del blog: respeta el formato del editor (negrita, color, tamaño, alineación, títulos) */
+  .bv-body.ql-editor { font-family: 'Raleway', sans-serif; font-size: 1.05rem; color: #2c2836; line-height: 1.7; }
+  .bv-body.ql-editor p, .bv-body.ql-editor li, .bv-body.ql-editor blockquote { font-family: 'Raleway', sans-serif; line-height: 1.7; }
+  .bv-body.ql-editor p, .bv-body.ql-editor blockquote, .bv-body.ql-editor h1, .bv-body.ql-editor h2, .bv-body.ql-editor h3, .bv-body.ql-editor ol, .bv-body.ql-editor ul { margin-top: 0 !important; margin-bottom: 0.85rem !important; }
+  .bv-body.ql-editor h1, .bv-body.ql-editor h2, .bv-body.ql-editor h3 { font-family: 'Cinzel', serif; color: #130e3a; line-height: 1.3; font-weight: 600; }
+  .bv-body.ql-editor h1 { font-size: 1.8rem; } .bv-body.ql-editor h2 { font-size: 1.45rem; } .bv-body.ql-editor h3 { font-size: 1.2rem; }
+  .bv-body.ql-editor a { color: #a8823f; text-decoration: underline; }
+  .bv-body.ql-editor .ql-video { width: 100%; aspect-ratio: 16/9; height: auto; border: 0; border-radius: 4px; margin: 1.25rem 0; }
+  .bv-body.ql-editor ol, .bv-body.ql-editor ul { padding-left: 1.5em; }
   .bv-body.ql-editor p:empty, .bv-body.ql-editor p > br:only-child { display: none !important; }
-  .bv-body.ql-editor blockquote { border-left: 3px solid rgba(201,169,110,0.8); padding-left: 1rem; margin-left: 0; font-style: italic; }
+  .bv-body.ql-editor blockquote { border-left: 3px solid rgba(201,169,110,0.8); padding-left: 1rem; margin-left: 0; font-style: italic; color: #4a4560; }
   
   .bv-body img{max-width:100%;border-radius:4px;margin:1.5rem 0;}
   .bv-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(15,11,50,0.1);padding-top:1.5rem;flex-wrap:wrap;gap:.85rem;}

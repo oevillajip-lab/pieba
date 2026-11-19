@@ -201,6 +201,55 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .item-tag.pendiente { background: var(--gold-dim); color: var(--gold); }
 @media (max-width: 700px) { .user-add-row { flex-direction: column; align-items: stretch; } }
 
+
+/* ── EDITOR DEL BLOG (igual al lector de la web) ── */
+#modalBlog .modal { max-width: 880px; }
+.editor-wrap { border: 1px solid rgba(201,169,110,.35); border-radius: 4px; overflow: hidden; background: #fcfaf5; }
+.editor-wrap .ql-toolbar.ql-snow { border: none; border-bottom: 1px solid rgba(15,11,50,.1); background: #f3eee3; padding: .55rem .6rem; font-family: 'Raleway', sans-serif; }
+.editor-wrap .ql-toolbar.ql-snow .ql-formats { margin-right: 10px; }
+.editor-wrap .ql-snow .ql-stroke { stroke: #3b3650; }
+.editor-wrap .ql-snow .ql-fill, .editor-wrap .ql-snow .ql-stroke.ql-fill { fill: #3b3650; }
+.editor-wrap .ql-snow .ql-picker { color: #3b3650; }
+.editor-wrap .ql-snow.ql-toolbar button:hover .ql-stroke, .editor-wrap .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.editor-wrap .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke, .editor-wrap .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke { stroke: #a8823f; }
+.editor-wrap .ql-snow.ql-toolbar button:hover .ql-fill, .editor-wrap .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: #a8823f; }
+.editor-wrap .ql-snow.ql-toolbar button:hover, .editor-wrap .ql-snow.ql-toolbar button.ql-active,
+.editor-wrap .ql-snow.ql-toolbar .ql-picker-label:hover, .editor-wrap .ql-snow.ql-toolbar .ql-picker-label.ql-active,
+.editor-wrap .ql-snow.ql-toolbar .ql-picker-item:hover, .editor-wrap .ql-snow.ql-toolbar .ql-picker-item.ql-selected { color: #a8823f; }
+.editor-wrap .ql-snow .ql-picker-options { background: #fcfaf5; border-color: rgba(15,11,50,.15) !important; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+.editor-wrap .ql-container.ql-snow { border: none; height: 440px; font-family: 'Raleway', sans-serif; }
+.editor-wrap .ql-editor { font-size: 1.05rem; line-height: 1.7; color: #2c2836; padding: 1.5rem 1.75rem; }
+.editor-wrap .ql-editor p, .editor-wrap .ql-editor blockquote, .editor-wrap .ql-editor h1, .editor-wrap .ql-editor h2, .editor-wrap .ql-editor h3 { margin-bottom: .85rem; }
+.editor-wrap .ql-editor h1, .editor-wrap .ql-editor h2, .editor-wrap .ql-editor h3 { font-family: 'Cinzel', serif; color: #130e3a; line-height: 1.3; }
+.editor-wrap .ql-editor h1 { font-size: 1.8rem; } .editor-wrap .ql-editor h2 { font-size: 1.45rem; } .editor-wrap .ql-editor h3 { font-size: 1.2rem; }
+.editor-wrap .ql-editor blockquote { border-left: 3px solid rgba(201,169,110,.8); padding-left: 1rem; font-style: italic; color: #4a4560; }
+.editor-wrap .ql-editor img { max-width: 100%; border-radius: 4px; }
+.editor-wrap .ql-editor a { color: #a8823f; }
+.editor-wrap .ql-editor.ql-blank::before { color: rgba(44,40,54,.4); font-style: normal; left: 1.75rem; }
+.editor-wrap .ql-snow .ql-tooltip { background: #15123d; color: #fff; border: 1px solid var(--gold-dim); border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,.35); z-index: 10; }
+.editor-wrap .ql-snow .ql-tooltip input[type=text] { background: rgba(255,255,255,.06); color: #fff; border: 1px solid var(--glass-b); border-radius: 3px; }
+.editor-wrap .ql-snow .ql-tooltip a { color: var(--gold) !important; }
+/* Menús de la barra en español */
+.editor-wrap .ql-snow .ql-picker.ql-header { width: 112px; }
+.editor-wrap .ql-snow .ql-picker.ql-size { width: 96px; }
+.editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-label::before, .editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-item::before { content: 'Párrafo'; }
+.editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before, .editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before { content: 'Título 1'; }
+.editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before, .editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before { content: 'Título 2'; }
+.editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before, .editor-wrap .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before { content: 'Título 3'; }
+.editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-label::before, .editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-item::before { content: 'Normal'; }
+.editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="small"]::before, .editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="small"]::before { content: 'Pequeño'; }
+.editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="large"]::before, .editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="large"]::before { content: 'Grande'; }
+.editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="huge"]::before, .editor-wrap .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="huge"]::before { content: 'Muy grande'; }
+.editor-wrap .ql-snow .ql-tooltip::before { content: 'Abrir enlace:'; }
+.editor-wrap .ql-snow .ql-tooltip[data-mode=link]::before { content: 'Enlace:'; }
+.editor-wrap .ql-snow .ql-tooltip[data-mode=video]::before { content: 'Video de YouTube:'; }
+.editor-wrap .ql-snow .ql-tooltip a.ql-action::after { content: 'Editar'; }
+.editor-wrap .ql-snow .ql-tooltip a.ql-remove::before { content: 'Quitar'; }
+.editor-wrap .ql-snow .ql-tooltip.ql-editing a.ql-action::after { content: 'Guardar'; }
+.editor-help { font-size: .68rem; color: var(--muted); margin-top: .5rem; line-height: 1.6; }
+.editor-subiendo { opacity: .55; pointer-events: none; }
+@media (max-width: 700px) { .editor-wrap .ql-container.ql-snow { height: 360px; } .editor-wrap .ql-editor { padding: 1rem 1.1rem; } }
+
 /* ── DASHBOARD ── */
 .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; }
 .dash-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 6px; padding: 1.25rem 1.4rem; cursor: pointer; transition: .2s; }
@@ -264,6 +313,8 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
   .item-card { flex-wrap: nowrap; }
 }
 </style>
+<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
 </head>
 <body>
 
@@ -824,8 +875,9 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
         </div>
       </div>
       <div class="form-field">
-        <label>Extracto / Resumen</label>
-        <textarea id="blogExtracto" rows="3" placeholder="Resumen breve que aparece en la previsualización…"></textarea>
+        <label>Contenido del artículo</label>
+        <div class="editor-wrap"><div id="blogEditor"></div></div>
+        <p class="editor-help">Se ve igual que en la web. Los primeros renglones se usan como resumen en la página principal. Para agregar una imagen dentro del texto, usá el botón de imagen de la barra.</p>
       </div>
       <div class="form-field">
         <label>Imagen de portada</label>
@@ -1557,7 +1609,7 @@ window.openBlogModal = () => {
   $('blogTitulo').value = '';
   $('blogCategoria').value = '';
   $('blogAutor').value = '';
-  $('blogExtracto').value = '';
+  setContenidoBlog('');
   $('blogFecha').value = todayISO();
   setImagen('blog', '');
   $('modalBlogTitle').textContent = 'Nuevo artículo';
@@ -1569,7 +1621,7 @@ window.editBlog = (id) => {
   $('blogTitulo').value = b.titulo || '';
   $('blogCategoria').value = b.categoria || '';
   $('blogAutor').value = b.autor || '';
-  $('blogExtracto').value = b.extracto || '';
+  setContenidoBlog(b.extracto || '');
   $('blogFecha').value = fechaInput(b.fecha);
   setImagen('blog', b.imagen);
   $('modalBlogTitle').textContent = 'Editar artículo';
@@ -1583,7 +1635,7 @@ window.saveBlog = () => {
       titulo,
       categoria: $('blogCategoria').value.trim() || 'Reflexión',
       autor: $('blogAutor').value.trim() || 'PIEBA',
-      extracto: $('blogExtracto').value.trim(),
+      extracto: getContenidoBlog(),
       imagen: $('blogImagen').value || null,
       fecha: aISO($('blogFecha').value || todayISO())
     });
@@ -1597,6 +1649,84 @@ window.deleteBlog = async (id) => {
   await loadBlog();
   toast('Artículo eliminado');
 };
+
+
+/* ════════════════════════════════
+   EDITOR DEL BLOG (Quill)
+════════════════════════════════ */
+let blogQuill = null;
+function crearEditorBlog() {
+  if (blogQuill || typeof Quill === 'undefined') return blogQuill;
+  blogQuill = new Quill('#blogEditor', {
+    theme: 'snow',
+    placeholder: 'Escribí el artículo aquí…',
+    modules: {
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, false] }, { size: ['small', false, 'large', 'huge'] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ color: ['#2c2836', '#130e3a', '#a8823f', '#c9a96e', '#b03a3a', '#2e7d5b', '#1f5fa8', '#6b4fa0', '#7a7a7a', '#ffffff'] },
+           { background: ['#fff3c4', '#f6e7c8', '#e3f0ff', '#e6f4ea', '#fde2e2', '#ede4fa'] }],
+          [{ align: [] }],
+          [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+          ['blockquote', 'link', 'image', 'video'],
+          ['clean']
+        ],
+        handlers: { image: insertarImagenBlog }
+      }
+    }
+  });
+  // Traducir los textos de ayuda de la barra
+  const titulos = {
+    'ql-bold': 'Negrita', 'ql-italic': 'Cursiva', 'ql-underline': 'Subrayado', 'ql-strike': 'Tachado',
+    'ql-blockquote': 'Cita', 'ql-link': 'Enlace', 'ql-image': 'Imagen', 'ql-video': 'Video (YouTube)', 'ql-clean': 'Quitar formato',
+    'ql-color': 'Color de texto', 'ql-background': 'Resaltar', 'ql-align': 'Alineación', 'ql-header': 'Título', 'ql-size': 'Tamaño'
+  };
+  document.querySelectorAll('#modalBlog .ql-toolbar button, #modalBlog .ql-toolbar .ql-picker').forEach(el => {
+    const cls = [...el.classList].find(c => titulos[c]);
+    if (cls) el.title = titulos[cls];
+    if (el.classList.contains('ql-list')) el.title = el.value === 'ordered' ? 'Lista numerada' : 'Lista con viñetas';
+    if (el.classList.contains('ql-indent')) el.title = el.value === '+1' ? 'Aumentar sangría' : 'Reducir sangría';
+  });
+  return blogQuill;
+}
+function setContenidoBlog(html) {
+  const q = crearEditorBlog();
+  if (!q) return;
+  q.setContents([]);
+  if (html) q.clipboard.dangerouslyPasteHTML(0, html);
+  q.history.clear();
+  setTimeout(() => q.root.scrollTop = 0, 0);
+}
+function getContenidoBlog() {
+  const q = crearEditorBlog();
+  if (!q) return '';
+  const vacio = q.getText().trim() === '' && !q.root.querySelector('img, iframe');
+  return vacio ? '' : q.root.innerHTML;
+}
+async function insertarImagenBlog() {
+  if (typeof cloudinary === 'undefined') { toast('Cloudinary no cargó, recarga la página', 'error'); return; }
+  const q = blogQuill;
+  const rango = q.getSelection(true) || { index: q.getLength() };
+  try {
+    const signed = await getCloudinarySignedConfig('pieba/blog');
+    cloudinary.openUploadWidget({
+      cloudName: signed.cloudName, apiKey: signed.apiKey,
+      uploadSignature: signed.signature, uploadSignatureTimestamp: signed.timestamp,
+      folder: signed.folder, sources: ['local', 'camera', 'url'], multiple: false,
+      resourceType: 'image', language: 'es',
+      text: { es: { or: 'o', menu: { files: 'Archivos locales', camera: 'Cámara', url: 'Enlace web' } } }
+    }, (err, result) => {
+      if (!err && result?.event === 'success') {
+        q.insertEmbed(rango.index, 'image', result.info.secure_url, 'user');
+        q.setSelection(rango.index + 1, 0, 'silent');
+      }
+    });
+  } catch (e) {
+    toast('Error al preparar la subida segura', 'error');
+    console.error(e);
+  }
+}
 
 /* ════════════════════════════════
    MIEMBROS
