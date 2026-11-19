@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<meta name="supported-color-schemes" content="dark light">
+<title>Recuperar tu contraseña</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; padding:0; }
+  @media only screen and (max-width:520px) {
+    .card { width:100% !important; }
+    .pad  { padding-left:26px !important; padding-right:26px !important; }
+    .code { font-size:30px !important; letter-spacing:7px !important; padding:16px 18px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#07051e;">
+  <!-- Texto de vista previa (se ve en la bandeja de entrada, no en el correo) -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#07051e;">Tu código para crear una nueva contraseña del panel de PIEBA</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#07051e" style="background-color:#07051e;background-image:radial-gradient(ellipse 80% 60% at 50% 30%,#1c1760 0%,#07051e 100%);">
+    <tr>
+      <td align="center" style="padding:40px 14px;">
+
+        <table role="presentation" class="card" width="480" cellpadding="0" cellspacing="0" border="0" bgcolor="#15123d" style="width:480px;max-width:480px;background-color:#15123d;border:1px solid #2a2659;border-radius:10px;">
+          <!-- Línea dorada superior -->
+          <tr><td height="3" bgcolor="#c9a96e" style="height:3px;line-height:3px;font-size:0;background-color:#c9a96e;border-radius:10px 10px 0 0;">&nbsp;</td></tr>
+
+          <!-- Logo -->
+          <tr>
+            <td align="center" class="pad" style="padding:36px 40px 0;">
+              <img src="https://www.primeradeasuncion.org.py/favicon.png" width="72" height="72" alt="PIEBA" style="display:block;width:72px;height:72px;border:0;border-radius:50%;outline:none;text-decoration:none;box-shadow:0 0 0 1px #c9a96e;">
+            </td>
+          </tr>
+          <tr>
+            <td align="center" class="pad" style="padding:16px 40px 0;font-family:'Cinzel',Georgia,'Times New Roman',serif;font-size:22px;font-weight:700;letter-spacing:5px;color:#ffffff;">PIEBA</td>
+          </tr>
+          <tr>
+            <td align="center" class="pad" style="padding:6px 40px 0;font-family:'Raleway',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:#c9a96e;">Panel de Administración</td>
+          </tr>
+
+          <!-- Separador -->
+          <tr><td align="center" style="padding:26px 0 0;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="36" height="1" bgcolor="#4a3f2e" style="width:36px;height:1px;line-height:1px;font-size:0;background-color:#4a3f2e;">&nbsp;</td></tr></table></td></tr>
+
+          <!-- Título y texto -->
+          <tr>
+            <td align="center" class="pad" style="padding:26px 40px 0;font-family:'Cinzel',Georgia,'Times New Roman',serif;font-size:19px;font-weight:600;line-height:1.35;color:#ffffff;">Recuperar tu contraseña</td>
+          </tr>
+          <tr>
+            <td align="center" class="pad" style="padding:12px 40px 0;font-family:'Raleway',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.7;color:#b9b6cc;">Recibimos un pedido para crear una nueva contraseña.<br>Ingresá este código en la pantalla de acceso para continuar:</td>
+          </tr>
+
+          <!-- Código -->
+          <tr>
+            <td align="center" class="pad" style="padding:26px 40px 0;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="code" align="center" bgcolor="#221d3e" style="padding:18px 26px;background-color:#221d3e;border:1px solid #6b5a3e;border-radius:6px;font-family:'Cinzel',Georgia,'Times New Roman',serif;font-size:34px;font-weight:700;letter-spacing:10px;color:#c9a96e;">{{ .Token }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" class="pad" style="padding:14px 40px 0;font-family:'Raleway',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#8d89a6;">
+              Código para <span style="color:#d8d5e6;">{{ .Email }}</span><br>Vence en 10 minutos y se puede usar una sola vez.
+            </td>
+          </tr>
+
+          <!-- Aviso -->
+          <tr>
+            <td class="pad" style="padding:28px 40px 36px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td bgcolor="#1b1747" style="padding:14px 16px;background-color:#1b1747;border-left:2px solid #c9a96e;border-radius:3px;font-family:'Raleway',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.65;color:#a7a3bd;">
+                    <strong style="color:#c9a96e;">¿No lo pediste vos?</strong> Ignorá este correo. Tu contraseña actual sigue funcionando y nadie puede cambiarla sin este código.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Pie -->
+        <table role="presentation" class="card" width="480" cellpadding="0" cellspacing="0" border="0" style="width:480px;max-width:480px;">
+          <tr>
+            <td align="center" style="padding:22px 20px 0;font-family:'Raleway',Helvetica,Arial,sans-serif;font-size:11px;line-height:1.7;letter-spacing:.5px;color:#6f6b8c;">
+              Primera Iglesia Evangélica Bautista de Asunción<br>
+              <a href="https://www.primeradeasuncion.org.py" style="color:#c9a96e;text-decoration:none;">primeradeasuncion.org.py</a>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:10px 20px 0;font-family:'Raleway',Helvetica,Arial,sans-serif;font-size:10px;color:#4f4b6c;">Este es un correo automático, por favor no lo respondas.</td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

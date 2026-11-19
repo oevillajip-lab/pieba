@@ -1,13 +1,24 @@
 import crypto from 'crypto';
-import admin from 'firebase-admin';
 
-// Inicializar Firebase Admin solo una vez
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(
-      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
-    )
+// Datos públicos del proyecto Supabase (se pueden sobreescribir con variables de entorno)
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ywftajhexpnofsoupfht.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_toCu6NDhiY3cGz5eBbHTvA_5qUgpH2J';
+
+// Verifica que el token sea una sesión válida de Supabase y que el
+// correo esté en la lista de usuarios permitidos (función es_admin).
+async function esAdmin(token) {
+  const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` };
+
+  const userRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers });
+  if (!userRes.ok) return false;
+
+  const rpcRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/es_admin`, {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: '{}'
   });
+  if (!rpcRes.ok) return false;
+  return (await rpcRes.json()) === true;
 }
 
 export default async function handler(req, res) {
@@ -15,24 +26,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verificar token de Firebase
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.replace('Bearer ', '');
-
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
   if (!token) {
     return res.status(401).json({ error: 'No autorizado' });
   }
 
   try {
-    await admin.auth().verifyIdToken(token);
+    if (!(await esAdmin(token))) {
+      return res.status(403).json({ error: 'Sesión inválida o sin permiso' });
+    }
   } catch (e) {
-    return res.status(403).json({ error: 'Token inválido' });
+    return res.status(502).json({ error: 'No se pudo verificar la sesión' });
   }
 
   // Firmar para Cloudinary
   try {
     const body = req.body || {};
-    const folder = body.folder || 'pieba/galeria';
+    const pedida = String(body.folder || 'pieba/galeria');
+    // Solo se permiten carpetas dentro de "pieba/"
+    const folder = /^pieba(\/[\w-]+)*$/.test(pedida) ? pedida : 'pieba/galeria';
     const timestamp = Math.floor(Date.now() / 1000);
     const paramsToSign = { folder, source: 'uw', timestamp };
     const sortedParams = Object.keys(paramsToSign)

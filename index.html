@@ -1016,7 +1016,7 @@
             Una vez confirmada la transacción, comuníquese con nosotros al
             <strong style="color:var(--white);">+595 982-949-322</strong>
             o a nuestro correo
-            <strong style="color:var(--white);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5dcdbd3daf5c5dcd0d7d49bdac7d29bc5cc">info@primeradeasuncion.org.py</a></strong>
+            <strong style="color:var(--white);"><a href="mailto:info@primeradeasuncion.org.py" class="js-con-email">info@primeradeasuncion.org.py</a></strong>
             para emitirle el comprobante correspondiente.
           </p>
         </div>
@@ -1032,7 +1032,7 @@
 
 </div><!-- /scroll-wrap -->
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 /* ── CANVAS STARS — reducidas y menos invasivas ── */
 const canvas = document.getElementById('starCanvas');
 const ctx = canvas.getContext('2d');
@@ -1328,31 +1328,18 @@ window.tipoArticuloActual = 'blog';
 </script>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { supabase, ok } from './js/supabase.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
-  authDomain: "pieba-database.firebaseapp.com",
-  projectId: "pieba-database",
-  storageBucket: "pieba-database.firebasestorage.app",
-  messagingSenderId: "54248882255",
-  appId: "1:54248882255:web:b635bace1d3d723515aa3a",
-  measurementId: "G-5CXYM9XQ1X"
-};
-
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
-
-const formatDate = (d) => d.toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
-const formatMonthYear = (d) => d.toLocaleDateString('es-PY',{month:'long',year:'numeric'});
+const formatDate = (d) => new Date(d).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
+const formatMonthYear = (d) => new Date(d).toLocaleDateString('es-PY',{month:'long',year:'numeric'});
+window.formatDatePieba = formatDate;
 
 const icons = {
   urgente: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#ff7070"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zm-1 5v5h2v-5h-2zm0 6v2h2v-2h-2z"/></svg>`,
   info: `<svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`,
   normal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`
 };
-
+const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
 window.avisosDataGlobal=[]; window.eventosDataGlobal=[]; window.blogDataGlobal=[];
 
@@ -1361,29 +1348,44 @@ function stripHtml(html) {
   tmp.innerHTML = (html || '').replace(/<\/(p|div|h[1-6]|li)>/gi, ' </$1>').replace(/<br[^>]*>/gi, ' ');
   return (tmp.textContent || tmp.innerText || "").replace(/\s+/g, ' ').trim();
 }
+window.stripHtml = stripHtml;
+
+/* ─── Acceso a datos (usado también por el archivo histórico y los links compartidos) ─── */
+const TABLAS = { aviso: 'avisos', evento: 'eventos', blog: 'blog', galeria: 'galeria' };
+window.piebaDatos = {
+  async archivo(tipo) {
+    if (tipo === 'eventos') return ok(await supabase.from('eventos').select('*').order('fecha', { ascending: false }).limit(60));
+    return ok(await supabase.from(tipo).select('*').order('fecha', { ascending: false }).limit(60));
+  },
+  async porId(tipo, id) {
+    const tabla = TABLAS[tipo]; if (!tabla || !id) return null;
+    return ok(await supabase.from(tabla).select('*').eq('id', id).maybeSingle());
+  }
+};
+// Álbum en el formato que usa el visor
+window.albumParaVisor = (row) => ({ id: row.id, nombre: row.nombre, fecha: formatMonthYear(row.fecha || Date.now()), fotos: row.fotos || [] });
 
 async function cargarWebConfig() {
   try {
-    const snap = await getDoc(doc(db, 'avisos', 'webconfig'));
-    if (!snap.exists()) return;
-    const d = snap.data();
+    const d = ok(await supabase.from('web_config').select('*').eq('id', 1).maybeSingle());
+    if (!d) return;
     if (d.inicio) {
       if (d.inicio.titulo) { const el = document.getElementById('web-ini-titulo'); if (el) el.textContent = d.inicio.titulo; }
       if (d.inicio.subtitulo) { const el = document.getElementById('web-ini-subtitulo'); if (el) el.textContent = d.inicio.subtitulo; }
-      if (d.inicio.versiculo && d.inicio.referencia) { const el = document.getElementById('web-ini-versiculo'); if (el) el.innerHTML = '&ldquo;'+d.inicio.versiculo+'&rdquo;<br><cite>&mdash; '+d.inicio.referencia+'</cite>'; }
+      if (d.inicio.versiculo && d.inicio.referencia) { const el = document.getElementById('web-ini-versiculo'); if (el) el.innerHTML = '&ldquo;'+esc(d.inicio.versiculo)+'&rdquo;<br><cite>&mdash; '+esc(d.inicio.referencia)+'</cite>'; }
     }
     if (d.nosotros) {
-      if (d.nosotros.texto) { const el = document.getElementById('web-nos-texto'); if (el) el.innerHTML = d.nosotros.texto.replace(/\n/g, '<br>'); }
+      if (d.nosotros.texto) { const el = document.getElementById('web-nos-texto'); if (el) el.innerHTML = esc(d.nosotros.texto).replace(/\n/g, '<br>'); }
       const setVal = (id, val) => {
         const el = document.getElementById(id);
         if (!el || !val) return;
         let parts = [];
-        if (val.includes('\u2014')) parts = val.split('\u2014');
-        else if (val.includes('\u2013')) parts = val.split('\u2013');
+        if (val.includes('—')) parts = val.split('—');
+        else if (val.includes('–')) parts = val.split('–');
         else parts = val.split('-');
         const title = parts[0] ? parts[0].trim() : '';
         const desc = parts.slice(1).join('-').trim();
-        el.innerHTML = desc ? '<strong>'+title+'</strong> &mdash; '+desc : val;
+        el.innerHTML = desc ? '<strong>'+esc(title)+'</strong> &mdash; '+esc(desc) : esc(val);
       };
       setVal('web-nos-v1', d.nosotros.v1);
       setVal('web-nos-v2', d.nosotros.v2);
@@ -1391,26 +1393,31 @@ async function cargarWebConfig() {
       setVal('web-nos-v4', d.nosotros.v4);
     }
     if (d.comunidad) {
-      const c = d.comunidad;
-      if (c.c1) { if (document.getElementById('web-com-c1-dia')) document.getElementById('web-com-c1-dia').textContent = c.c1.dia; if (document.getElementById('web-com-c1-hora')) document.getElementById('web-com-c1-hora').textContent = c.c1.hora; if (document.getElementById('web-com-c1-nombre')) document.getElementById('web-com-c1-nombre').textContent = c.c1.nombre; if (document.getElementById('web-com-c1-desc')) document.getElementById('web-com-c1-desc').textContent = c.c1.desc; }
-      if (c.c2) { if (document.getElementById('web-com-c2-dia')) document.getElementById('web-com-c2-dia').textContent = c.c2.dia; if (document.getElementById('web-com-c2-hora')) document.getElementById('web-com-c2-hora').textContent = c.c2.hora; if (document.getElementById('web-com-c2-nombre')) document.getElementById('web-com-c2-nombre').textContent = c.c2.nombre; if (document.getElementById('web-com-c2-desc')) document.getElementById('web-com-c2-desc').textContent = c.c2.desc; }
-      if (c.c3) { if (document.getElementById('web-com-c3-dia')) document.getElementById('web-com-c3-dia').textContent = c.c3.dia; if (document.getElementById('web-com-c3-hora')) document.getElementById('web-com-c3-hora').textContent = c.c3.hora; if (document.getElementById('web-com-c3-nombre')) document.getElementById('web-com-c3-nombre').textContent = c.c3.nombre; if (document.getElementById('web-com-c3-desc')) document.getElementById('web-com-c3-desc').textContent = c.c3.desc; }
+      for (let i = 1; i <= 3; i++) {
+        const c = d.comunidad['c' + i]; if (!c) continue;
+        for (const campo of ['dia', 'hora', 'nombre', 'desc']) {
+          const el = document.getElementById(`web-com-c${i}-${campo}`);
+          if (el && c[campo] != null) el.textContent = c[campo];
+        }
+      }
     }
     if (d.contacto) {
-      if (d.contacto.dir && document.getElementById('web-con-dir')) document.getElementById('web-con-dir').textContent = d.contacto.dir;
-      if (d.contacto.tel && document.getElementById('web-con-tel')) document.getElementById('web-con-tel').textContent = d.contacto.tel;
-      if (d.contacto.email && document.getElementById('web-con-email')) { document.getElementById('web-con-email').textContent = d.contacto.email; document.getElementById('web-con-email').href = "mailto:" + d.contacto.email; }
-      if (d.contacto.fb && document.getElementById('web-con-fb')) document.getElementById('web-con-fb').href = d.contacto.fb;
-      if (d.contacto.ig && document.getElementById('web-con-ig')) document.getElementById('web-con-ig').href = d.contacto.ig;
-      if (d.contacto.yt && document.getElementById('web-con-yt')) document.getElementById('web-con-yt').href = d.contacto.yt;
-      if (d.contacto.wa && document.getElementById('web-con-wa')) document.getElementById('web-con-wa').href = "https://wa.me/" + d.contacto.wa.replace(/\+/g, '').replace(/ /g, '');
+      const $ = (id) => document.getElementById(id);
+      if (d.contacto.dir && $('web-con-dir')) $('web-con-dir').textContent = d.contacto.dir;
+      if (d.contacto.tel && $('web-con-tel')) $('web-con-tel').textContent = d.contacto.tel;
+      if (d.contacto.email) {
+        document.querySelectorAll('#web-con-email, .js-con-email').forEach(el => { el.textContent = d.contacto.email; el.href = 'mailto:' + d.contacto.email; });
+      }
+      if (d.contacto.fb && $('web-con-fb')) $('web-con-fb').href = d.contacto.fb;
+      if (d.contacto.ig && $('web-con-ig')) $('web-con-ig').href = d.contacto.ig;
+      if (d.contacto.yt && $('web-con-yt')) $('web-con-yt').href = d.contacto.yt;
+      if (d.contacto.wa && $('web-con-wa')) $('web-con-wa').href = "https://wa.me/" + d.contacto.wa.replace(/\D/g, '');
     }
     if (d.ofrendas) {
-      if (d.ofrendas.versiculo && document.getElementById('web-ofr-versiculo')) document.getElementById('web-ofr-versiculo').textContent = d.ofrendas.versiculo;
-      if (d.ofrendas.banco && document.getElementById('web-ofr-banco')) document.getElementById('web-ofr-banco').textContent = d.ofrendas.banco;
-      if (d.ofrendas.cuenta && document.getElementById('web-ofr-cuenta')) document.getElementById('web-ofr-cuenta').textContent = d.ofrendas.cuenta;
-      if (d.ofrendas.titular && document.getElementById('web-ofr-titular')) document.getElementById('web-ofr-titular').textContent = d.ofrendas.titular;
-      if (d.ofrendas.ruc && document.getElementById('web-ofr-ruc')) document.getElementById('web-ofr-ruc').textContent = d.ofrendas.ruc;
+      for (const campo of ['versiculo', 'banco', 'cuenta', 'titular', 'ruc']) {
+        const el = document.getElementById('web-ofr-' + campo);
+        if (el && d.ofrendas[campo]) el.textContent = d.ofrendas[campo];
+      }
     }
   } catch(e) { console.error('Error al cargar config web:', e); }
 }
@@ -1420,50 +1427,45 @@ async function cargarComunidad() {
   const contEventos=document.getElementById('contenedorEventos');
   if(!contAvisos||!contEventos) return;
   try {
-    const qAvisos=query(collection(db,"avisos"),orderBy("fecha","desc"), limit(5));
-    const snapAvisos=await getDocs(qAvisos);
+    const avisos = ok(await supabase.from('avisos').select('*').order('fecha', { ascending: false }).limit(5));
     let htmlAvisos='';
-    if(snapAvisos.empty) {
+    if(!avisos.length) {
       htmlAvisos=`<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:.85rem;padding:1rem;">No hay comunicados.</div>`;
     } else {
-      window.avisosDataGlobal=[]; let i=0;
-      snapAvisos.forEach(doc=>{
-        const d=doc.data(); window.avisosDataGlobal.push(d);
+      window.avisosDataGlobal = avisos;
+      avisos.forEach((d, i)=>{
         const tipo=(d.tipo||'normal').toLowerCase();
-        htmlAvisos+=`<div class="aviso-card ${tipo} reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.avisosDataGlobal,${i},'aviso')">
-          ${d.imagen?`<div class="aviso-img"><img src="${d.imagen}" loading="lazy"></div>`:''}
+        htmlAvisos+=`<div class="aviso-card ${esc(tipo)} reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.avisosDataGlobal,${i},'aviso')">
+          ${d.imagen?`<div class="aviso-img"><img src="${esc(d.imagen)}" loading="lazy"></div>`:''}
           <div class="aviso-header-row">
-            <div class="aviso-ico ${tipo}">${icons[tipo]||icons.normal}</div>
+            <div class="aviso-ico ${esc(tipo)}">${icons[tipo]||icons.normal}</div>
             <div class="aviso-body">
-              <span class="aviso-tag ${tipo}">${tipo.toUpperCase()}</span>
-              <p class="aviso-titulo">${d.titulo||''}</p>
-              <p class="aviso-texto">${d.texto||''}</p>
-              <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha.toDate())}</span>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','comunidad'):''}</div>
+              <span class="aviso-tag ${esc(tipo)}">${esc(tipo.toUpperCase())}</span>
+              <p class="aviso-titulo">${esc(d.titulo)}</p>
+              <p class="aviso-texto">${esc(d.texto)}</p>
+              <div class="aviso-footer"><span class="aviso-fecha">${formatDate(d.fecha)}</span>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','comunidad'):''}</div>
             </div>
-          </div></div>`; i++;
+          </div></div>`;
       });
       htmlAvisos+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('avisos')">VER ARCHIVO DE COMUNICADOS</button></div>`;
     }
     contAvisos.innerHTML=htmlAvisos;
 
-    const qEventos=query(collection(db,"eventos"),orderBy("fecha","asc"));
-    const snapEventos=await getDocs(qEventos);
     const hoy=new Date(); hoy.setHours(0,0,0,0);
-    let fut=[];
-    snapEventos.forEach(doc=>{if(doc.data().fecha.toDate()>=hoy) fut.push(doc.data());});
+    const fut = ok(await supabase.from('eventos').select('*').gte('fecha', hoy.toISOString()).order('fecha', { ascending: true }));
     if(fut.length===0){
       contEventos.innerHTML=`<div class="eventos-empty"><p class="eventos-empty-title">Sin eventos próximos</p></div>`;
     } else {
       window.eventosDataGlobal=fut;
       contEventos.innerHTML=fut.slice(0,5).map((e,index)=>{
-        const fe=e.fecha.toDate();
+        const fe=new Date(e.fecha);
         return `<div class="evento-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.eventosDataGlobal,${index},'evento')">
-          ${e.imagen?`<div class="evento-img"><img src="${e.imagen}" loading="lazy"></div>`:''}
+          ${e.imagen?`<div class="evento-img"><img src="${esc(e.imagen)}" loading="lazy"></div>`:''}
           <div class="evento-date-bar">
             <div class="evento-dia">${fe.getDate()}</div>
             <div class="evento-mes-hora"><span class="evento-mes">${fe.toLocaleDateString('es-PY',{month:'long'})}</span><span class="evento-hora">${fe.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}</span></div>
           </div>
-          <div class="evento-body"><p class="evento-titulo">${e.titulo||''}</p><p class="evento-desc">${e.texto||''}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo,'','comunidad'):''}</div>
+          <div class="evento-body"><p class="evento-titulo">${esc(e.titulo)}</p><p class="evento-desc">${esc(e.texto)}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(e.titulo,'','comunidad'):''}</div>
         </div>`;
       }).join('');
       contEventos.innerHTML+=`<div style="text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('eventos')">VER ARCHIVO DE EVENTOS</button></div>`;
@@ -1476,63 +1478,57 @@ async function cargarGaleria() {
   const contGaleria=document.getElementById('albumGrid');
   if(!contGaleria) return;
   try {
-    const qGaleria=query(collection(db,"galeria"),orderBy("fecha","desc"), limit(5));
-    const snapGaleria=await getDocs(qGaleria);
-    if(snapGaleria.empty){contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--muted);"><p>Aún no hay álbumes publicados.</p></div>`;return;}
-    let htmlGaleria=''; window.albumsData=[]; let index=0;
-    snapGaleria.forEach(doc=>{
-      const data=doc.data();
-      const fechaJs=data.fecha?data.fecha.toDate():new Date();
+    const albumes = ok(await supabase.from('galeria').select('*').order('fecha', { ascending: false }).limit(5));
+    if(!albumes.length){contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--muted);"><p>Aún no hay álbumes publicados.</p></div>`;return;}
+    let htmlGaleria='';
+    window.albumsData = albumes.map(window.albumParaVisor);
+    albumes.forEach((data, index)=>{
       const fotos=data.fotos||[];
-      window.albumsData.push({id:index,nombre:data.nombre,fecha:formatMonthYear(fechaJs),fotos:fotos});
       const portadaUrl=data.portada||(fotos.length>0?fotos[0]:null);
-      const coverHtml=portadaUrl?`<img src="${portadaUrl}" class="album-cover-img" alt="${data.nombre}" loading="lazy">`:`<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);width:100%;height:100%;"></div>`;
-      htmlGaleria+=`<div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">${coverHtml}<div class="album-overlay"><p class="album-name">${data.nombre||'Sin Título'}</p><p class="album-date">${formatMonthYear(fechaJs)}</p></div><span class="album-count">${fotos.length} fotos</span></div>`;
-      index++;
+      const coverHtml=portadaUrl?`<img src="${esc(portadaUrl)}" class="album-cover-img" alt="${esc(data.nombre)}" loading="lazy">`:`<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);width:100%;height:100%;"></div>`;
+      htmlGaleria+=`<div class="album-card reveal visible" onclick="window.abrirAlbum(${index})">${coverHtml}<div class="album-overlay"><p class="album-name">${esc(data.nombre||'Sin Título')}</p><p class="album-date">${formatMonthYear(data.fecha)}</p></div><span class="album-count">${fotos.length} fotos</span></div>`;
     });
     htmlGaleria+=`<div style="grid-column:1/-1;text-align:center;margin-top:2rem;"><button class="btn-gold" onclick="window.abrirArchivo('galeria')">VER BIBLIOTECA DE FOTOS</button></div>`;
     contGaleria.innerHTML=htmlGaleria;
   } catch(err){ console.error('Error Galería:',err); contGaleria.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:#ff7070;"><p>Error al cargar la galería.</p></div>`; }
 }
 
-cargarComunidad();
-cargarGaleria();
-cargarWebConfig();
-
 async function cargarBlog() {
   const cont=document.getElementById('contenedorBlog'); if(!cont) return;
   try {
-    const q=query(collection(db,"blog"),orderBy("fecha","desc"), limit(5));
-    const snap=await getDocs(q);
-    if(snap.empty){cont.innerHTML="<p style='grid-column:1/-1;opacity:0.5;'>Próximamente nuevas reflexiones...</p>";return;}
-    window.blogDataGlobal=[];
-    snap.forEach(d=>window.blogDataGlobal.push(d.data()));
-    const docs=window.blogDataGlobal;
+    const docs = ok(await supabase.from('blog').select('*').order('fecha', { ascending: false }).limit(5));
+    if(!docs.length){cont.innerHTML="<p style='grid-column:1/-1;opacity:0.5;'>Próximamente nuevas reflexiones...</p>";return;}
+    window.blogDataGlobal = docs;
     if(docs.length===1){cont.style.display="block";cont.style.maxWidth="560px";cont.style.margin="2rem auto 0";}
     else{cont.style.display="grid";cont.style.maxWidth="1000px";cont.style.margin="2rem 0 0";}
     let html="";
     if(docs.length===1){
       const d=docs[0];
       html=`<div class="blog-card reveal visible" style="width:100%;cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
-        <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
-        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><h3 class="blog-titulo" style="font-size:1.35rem;margin-bottom:.85rem;">${d.titulo}</h3><p class="blog-excerpt">${stripHtml(d.extracto).substring(0, 180)}...</p>
-        <div class="blog-meta" style="justify-content:space-between;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>`;
+        <div class="blog-cover">${d.imagen?`<img src="${esc(d.imagen)}">`:`<div class="blog-cover-ph"></div>`}</div>
+        <div class="blog-card-body"><p class="blog-cat">${esc(d.categoria||'Reflexión')}</p><h3 class="blog-titulo" style="font-size:1.35rem;margin-bottom:.85rem;">${esc(d.titulo)}</h3><p class="blog-excerpt">${esc(stripHtml(d.extracto).substring(0, 180))}...</p>
+        <div class="blog-meta" style="justify-content:space-between;"><div><span>${esc(d.autor||'PIEBA')}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha)}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>`;
     } else {
       const d=docs[0];
       html+=`<div class="blog-card reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,0,'blog')">
-        <div class="blog-cover">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
-        <div class="blog-card-body"><p class="blog-cat">${d.categoria||'Reflexión'}</p><p class="blog-titulo">${d.titulo}</p><p class="blog-excerpt">${stripHtml(d.extracto).substring(0, 180)}...</p>
-        <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${d.autor||'PIEBA'}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha.toDate())}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>
+        <div class="blog-cover">${d.imagen?`<img src="${esc(d.imagen)}">`:`<div class="blog-cover-ph"></div>`}</div>
+        <div class="blog-card-body"><p class="blog-cat">${esc(d.categoria||'Reflexión')}</p><p class="blog-titulo">${esc(d.titulo)}</p><p class="blog-excerpt">${esc(stripHtml(d.extracto).substring(0, 180))}...</p>
+        <div class="blog-meta" style="justify-content:space-between;margin-top:.85rem;"><div><span>${esc(d.autor||'PIEBA')}</span><span class="blog-meta-dot" style="display:inline-block;margin:0 .3rem;"></span><span>${formatDate(d.fecha)}</span></div>${window.generarBotonesCompartir?window.generarBotonesCompartir(d.titulo,'','blog'):''}</div></div></div>
         <div class="blog-side">${docs.slice(1).map((art,i)=>`
           <div class="blog-card-sm reveal visible" style="cursor:pointer;" onclick="window.abrirArticuloModal(window.blogDataGlobal,${i+1},'blog')">
-            <div class="blog-thumb-sm">${art.imagen?`<img src="${art.imagen}">`:`<div class="blog-thumb-ph"></div>`}</div>
-            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${art.categoria||'Comunidad'}</p><p class="blog-sm-titulo">${art.titulo}</p><p class="blog-sm-meta">${art.autor||'PIEBA'} • ${formatDate(art.fecha.toDate())}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo,'','blog'):''}</div>
+            <div class="blog-thumb-sm">${art.imagen?`<img src="${esc(art.imagen)}">`:`<div class="blog-thumb-ph"></div>`}</div>
+            <div class="blog-sm-body"><p class="blog-cat" style="font-size:.56rem;">${esc(art.categoria||'Comunidad')}</p><p class="blog-sm-titulo">${esc(art.titulo)}</p><p class="blog-sm-meta">${esc(art.autor||'PIEBA')} • ${formatDate(art.fecha)}</p>${window.generarBotonesCompartir?window.generarBotonesCompartir(art.titulo,'','blog'):''}</div>
           </div>`).join('')}</div>`;
     }
     cont.innerHTML=html;
   } catch(e){ console.error(e); }
 }
-cargarBlog();
+
+cargarWebConfig();
+Promise.allSettled([cargarComunidad(), cargarGaleria(), cargarBlog()]).then(() => {
+  window.piebaDatosListos = true;
+  window.dispatchEvent(new Event('pieba:datos-listos'));
+});
 </script>
 
 <style>
@@ -1603,24 +1599,6 @@ cargarBlog();
     <div class="bv-body ql-editor" id="bvText"></div>
     <div class="bv-footer">
       <div id="bvShare"></div>
-</style>
-
-<div class="photo-viewer" id="photoViewer">
-  <button class="pv-close" onclick="cerrarFoto()">✕</button>
-  <button class="pv-nav prev" onclick="moverFoto(-1)">❮</button>
-  <img id="pvImage" src="" alt="Foto PIEBA">
-  <button class="pv-nav next" onclick="moverFoto(1)">❯</button>
-  <div class="pv-footer" id="pvShareContainer"></div>
-</div>
-
-<div class="blog-viewer" id="blogViewer">
-  <div class="bv-content">
-    <button class="bv-close" onclick="cerrarBlogModal()">✕</button>
-    <div class="bv-header"><h2 id="bvTitle">Título</h2><p id="bvMeta">Autor - Fecha</p></div>
-    <img id="bvImage" src="" alt="Portada" style="width:100%;border-radius:3px;margin-bottom:1.25rem;display:none;">
-    <div class="bv-body ql-editor" id="bvText"></div>
-    <div class="bv-footer">
-      <div id="bvShare"></div>
       <div class="bv-controls">
         <button onclick="moverBlog(-1)">❮ Anterior</button>
         <button onclick="moverBlog(1)">Siguiente ❯</button>
@@ -1640,11 +1618,14 @@ cargarBlog();
 
 <script>
 /* === GESTOR DE ESTADO CON DEEP LINKS (URL cambia para compartir) === */
+/* Los links usan el ID real del contenido (?modal=blog&id=<uuid>), así no
+   cambian cuando se publica algo nuevo. Los links viejos con números
+   (posición en la lista) siguen funcionando como antes. */
 
 /* ─── Helpers de URL ─── */
 function getModalParams() {
   const p = new URLSearchParams(location.search);
-  return { modal: p.get('modal'), id: p.get('id') ? parseInt(p.get('id')) : null, album: p.get('album') ? parseInt(p.get('album')) : null };
+  return { modal: p.get('modal'), id: p.get('id'), album: p.get('album'), foto: p.get('foto') !== null ? parseInt(p.get('foto')) : null };
 }
 
 function setModalUrl(params) {
@@ -1666,15 +1647,10 @@ function clearModalUrl() {
   history.pushState({}, '', url.toString());
 }
 
-/* ─── Abrir artículo (blog / aviso / evento) con URL única ─── */
-window.abrirArticuloModal = (datos, index, tipo) => {
-  window.listaArticulosGlobal = datos; window.indiceArticuloActual = index; window.tipoArticuloActual = tipo;
-  const d = datos[index]; if (!d) return;
-
-  setModalUrl({ modal: tipo, id: index });
-
-  document.getElementById('bvTitle').textContent = d.titulo;
-  const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
+/* ─── Mostrar un artículo en el lector ─── */
+function pintarArticulo(d, tipo) {
+  document.getElementById('bvTitle').textContent = d.titulo || '';
+  const fechaStr = d.fecha ? new Date(d.fecha).toLocaleDateString('es-PY') : '';
   let meta = '';
   if (tipo === 'blog') meta = `${d.autor||'PIEBA'} - ${fechaStr}`;
   else if (tipo === 'evento') meta = `Evento - ${fechaStr}`;
@@ -1682,17 +1658,32 @@ window.abrirArticuloModal = (datos, index, tipo) => {
   document.getElementById('bvMeta').textContent = meta;
   const imgEl = document.getElementById('bvImage');
   if (d.imagen) { imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+  // Contenido escrito desde el panel (puede traer formato HTML)
   document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
   const seccionModal = tipo === 'blog' ? 'blog' : 'comunidad';
   document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo, '', seccionModal);
+}
+
+/* ─── Abrir artículo (blog / aviso / evento) con URL única ─── */
+window.abrirArticuloModal = (datos, index, tipo) => {
+  window.listaArticulosGlobal = datos; window.indiceArticuloActual = index; window.tipoArticuloActual = tipo;
+  const d = datos[index]; if (!d) return;
+
+  setModalUrl({ modal: tipo, id: d.id ?? index });
+  pintarArticulo(d, tipo);
   document.getElementById('blogViewer').classList.add('open');
   document.body.style.overflow = 'hidden';
 };
 
-/* ─── Álbum ─── */
-window.abrirAlbum = (albumIndex) => {
-  const album = window.albumsData[albumIndex]; if (!album) return;
-  setModalUrl({ modal: 'galeria', album: albumIndex });
+/* ─── Álbum ───
+   abrirAlbum(indice)            → álbum de la página principal
+   abrirAlbum(lista, indice)     → álbum de otra lista (ej. archivo) */
+window.abrirAlbum = (a, b) => {
+  const lista = Array.isArray(a) ? a : window.albumsData;
+  const albumIndex = Array.isArray(a) ? b : a;
+  const album = lista[albumIndex]; if (!album) return;
+  window.albumActual = album;
+  setModalUrl({ modal: 'galeria', album: album.id ?? albumIndex, foto: null });
 
   document.getElementById('lbTitle').textContent = album.nombre;
   document.getElementById('lbDate').innerHTML = album.fecha + (window.generarBotonesCompartir ? window.generarBotonesCompartir('Álbum: ' + album.nombre, '', 'galeria') : '');
@@ -1700,7 +1691,9 @@ window.abrirAlbum = (albumIndex) => {
   window.fotosActuales = album.fotos;
 
   if (album.fotos.length === 0) { grid.innerHTML = `<div class="lightbox-empty"><p>Este álbum aún no tiene fotos.</p></div>`; }
-  else { album.fotos.forEach((url, i) => { grid.innerHTML += `<div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})"><img src="${url}" loading="lazy" alt="Foto de ${album.nombre}"></div>`; }); }
+  else {
+    grid.innerHTML = album.fotos.map((url, i) => `<div class="lightbox-photo" onclick="window.abrirFotoGrande(${i})"><img src="${url}" loading="lazy" alt="Foto del álbum"></div>`).join('');
+  }
 
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1719,7 +1712,7 @@ window.abrirFotoGrande = (index) => {
 
 /* ─── Cierres ─── */
 window.closeLightbox = () => { clearModalUrl(); document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; };
-window.cerrarFoto = () => { const p = getModalParams(); setModalUrl({ modal:'galeria', album: p.album }); document.getElementById('photoViewer').classList.remove('open'); };
+window.cerrarFoto = () => { const p = getModalParams(); setModalUrl({ modal:'galeria', album: p.album, foto: null }); document.getElementById('photoViewer').classList.remove('open'); };
 window.cerrarBlogModal = () => { clearModalUrl(); document.getElementById('blogViewer').classList.remove('open'); document.body.style.overflow = ''; };
 
 /* ─── Navegar entre artículos (actualiza URL) ─── */
@@ -1735,25 +1728,15 @@ window.moverFoto = (dir) => {
 };
 
 window.moverBlog = (dir) => {
+  const lista = window.listaArticulosGlobal || [];
+  if (!lista.length) return;
   let nuevoIndex = window.indiceArticuloActual + dir;
-  if (nuevoIndex < 0) nuevoIndex = window.listaArticulosGlobal.length - 1;
-  if (nuevoIndex >= window.listaArticulosGlobal.length) nuevoIndex = 0;
-  const d = window.listaArticulosGlobal[nuevoIndex]; if (!d) return;
+  if (nuevoIndex < 0) nuevoIndex = lista.length - 1;
+  if (nuevoIndex >= lista.length) nuevoIndex = 0;
+  const d = lista[nuevoIndex]; if (!d) return;
   window.indiceArticuloActual = nuevoIndex;
-  setModalUrl({ modal: window.tipoArticuloActual, id: nuevoIndex });
-
-  document.getElementById('bvTitle').textContent = d.titulo;
-  const fechaStr = d.fecha && d.fecha.toDate ? d.fecha.toDate().toLocaleDateString('es-PY') : '';
-  let meta = '';
-  if (window.tipoArticuloActual === 'blog') meta = `${d.autor||'PIEBA'} - ${fechaStr}`;
-  else if (window.tipoArticuloActual === 'evento') meta = `Evento - ${fechaStr}`;
-  else meta = `Comunicado - ${fechaStr}`;
-  document.getElementById('bvMeta').textContent = meta;
-  const imgEl = document.getElementById('bvImage');
-  if (d.imagen) { imgEl.src = d.imagen; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
-  document.getElementById('bvText').innerHTML = d.contenido || d.texto || d.extracto || 'Sin información detallada.';
-  const seccionModal = window.tipoArticuloActual === 'blog' ? 'blog' : 'comunidad';
-  document.getElementById('bvShare').innerHTML = window.generarBotonesCompartir(d.titulo, '', seccionModal);
+  setModalUrl({ modal: window.tipoArticuloActual, id: d.id ?? nuevoIndex });
+  pintarArticulo(d, window.tipoArticuloActual);
 };
 
 /* ─── Botón Atrás del navegador ─── */
@@ -1781,9 +1764,11 @@ document.addEventListener('keydown', e => {
     const photo = document.getElementById('photoViewer');
     const blog  = document.getElementById('blogViewer');
     const light = document.getElementById('lightbox');
+    const arch  = document.getElementById('archivoModal');
     if (photo && photo.classList.contains('open')) window.cerrarFoto();
     else if (blog && blog.classList.contains('open')) window.cerrarBlogModal();
     else if (light && light.classList.contains('open')) window.closeLightbox();
+    else if (arch && arch.classList.contains('open')) window.cerrarArchivoModal();
   }
   if (e.key === 'ArrowRight') {
     if (document.getElementById('photoViewer').classList.contains('open')) window.moverFoto(1);
@@ -1794,91 +1779,99 @@ document.addEventListener('keydown', e => {
     else if (document.getElementById('blogViewer').classList.contains('open')) window.moverBlog(-1);
   }
 });
-/* ─── DEEP LINKS: restaurar modal al cargar desde URL compartida ─── */
-function intentarRestaurarModal(intentos) {
-  intentos = intentos || 0;
-  if (intentos > 15) return; // máximo 12 segundos de intentos
-  var p = new URLSearchParams(location.search);
-  var modal = p.get('modal');
-  var id = p.get('id') !== null ? parseInt(p.get('id')) : null;
-  var album = p.get('album') !== null ? parseInt(p.get('album')) : null;
-  var foto = p.get('foto') !== null ? parseInt(p.get('foto')) : null;
-  if (!modal) return;
 
-  if (modal === 'blog' && id !== null && window.blogDataGlobal && window.blogDataGlobal.length > id) {
-    window.abrirArticuloModal(window.blogDataGlobal, id, 'blog');
-  } else if (modal === 'aviso' && id !== null && window.avisosDataGlobal && window.avisosDataGlobal.length > id) {
-    window.abrirArticuloModal(window.avisosDataGlobal, id, 'aviso');
-  } else if (modal === 'evento' && id !== null && window.eventosDataGlobal && window.eventosDataGlobal.length > id) {
-    window.abrirArticuloModal(window.eventosDataGlobal, id, 'evento');
-  } else if (modal === 'galeria' && album !== null && window.albumsData && window.albumsData.length > album) {
-    window.abrirAlbum(album);
-    if (foto !== null) setTimeout(function(){ window.abrirFotoGrande(foto); }, 150);
-  } else {
-    setTimeout(function(){ intentarRestaurarModal(intentos + 1); }, 800);
-  }
+/* ─── DEEP LINKS: restaurar modal al cargar desde URL compartida ─── */
+const LISTAS_POR_TIPO = { blog: 'blogDataGlobal', aviso: 'avisosDataGlobal', evento: 'eventosDataGlobal' };
+const esIndiceViejo = (v) => v !== null && /^\d+$/.test(v);
+
+async function restaurarModalDesdeUrl() {
+  const p = getModalParams();
+  if (!p.modal) return;
+  try {
+    if (LISTAS_POR_TIPO[p.modal] && p.id !== null) {
+      const lista = window[LISTAS_POR_TIPO[p.modal]] || [];
+      let idx = esIndiceViejo(p.id) ? parseInt(p.id) : lista.findIndex(x => x.id === p.id);
+      if (idx >= 0 && lista[idx]) { window.abrirArticuloModal(lista, idx, p.modal); return; }
+      // No está entre los últimos publicados: buscarlo en la base
+      const d = !esIndiceViejo(p.id) && await window.piebaDatos.porId(p.modal, p.id);
+      if (d) window.abrirArticuloModal([d], 0, p.modal);
+    } else if (p.modal === 'galeria' && p.album !== null) {
+      let lista = window.albumsData || [];
+      let idx = esIndiceViejo(p.album) ? parseInt(p.album) : lista.findIndex(x => x.id === p.album);
+      if (idx < 0 && !esIndiceViejo(p.album)) {
+        const row = await window.piebaDatos.porId('galeria', p.album);
+        if (row) { lista = [window.albumParaVisor(row)]; idx = 0; }
+      }
+      if (idx >= 0 && lista[idx]) {
+        const foto = p.foto;
+        window.abrirAlbum(lista, idx);
+        if (foto !== null && !isNaN(foto)) setTimeout(function(){ window.abrirFotoGrande(foto); }, 150);
+      }
+    }
+  } catch (e) { console.error('No se pudo abrir el link compartido:', e); }
 }
-// ARCHIVO HISTORICO
+if (window.piebaDatosListos) restaurarModalDesdeUrl();
+else window.addEventListener('pieba:datos-listos', restaurarModalDesdeUrl, { once: true });
+
+/* ─── ARCHIVO HISTÓRICO ─── */
 let archivoDataGlobal = [];
-let archivoTipoGlobal = '';
 window.abrirArchivo = async (tipo) => {
-  archivoTipoGlobal = tipo;
   const titulos = { 'blog': 'Archivo de Reflexiones', 'galeria': 'Archivo de Galerías', 'eventos': 'Agenda de Eventos', 'avisos': 'Archivo de Comunicados' };
+  const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const fmt = (f) => f ? window.formatDatePieba(f) : '';
   document.getElementById('archivoTitulo').textContent = titulos[tipo];
-  document.getElementById('archivoGrid').innerHTML = '<p style="text-align:center;color:white;width:100%;grid-column:1/-1;">Cargando historial...</p>';
+  const grid = document.getElementById('archivoGrid');
+  grid.innerHTML = '<p style="text-align:center;color:white;width:100%;grid-column:1/-1;">Cargando historial...</p>';
   document.getElementById('archivoModal').classList.add('open');
   document.body.style.overflow = 'hidden';
-  
+
   try {
-    let coll = tipo;
-    let ord = (tipo === 'eventos') ? orderBy('fechaInicio','desc') : orderBy('fecha','desc');
-    const q = query(collection(db, coll), ord, limit(60));
-    const snap = await getDocs(q);
-    archivoDataGlobal = snap.docs.map(d => ({id: d.id, ...d.data()}));
-    
-    const grid = document.getElementById('archivoGrid');
-    if(!archivoDataGlobal.length) { grid.innerHTML = '<p style="text-align:center;color:white;grid-column:1/-1;">No hay elementos aún.</p>'; return; }
-    
-    if(tipo === 'blog') {
-      grid.innerHTML = archivoDataGlobal.map((d, i) => `
-        <div class="blog-card" style="align-self:stretch;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, 'blog'), 300)">
-          <div class="blog-cover" style="aspect-ratio:16/9;">${d.imagen?`<img src="${d.imagen}">`:`<div class="blog-cover-ph"></div>`}</div>
+    const rows = await window.piebaDatos.archivo(tipo);
+    if (!rows.length) { grid.innerHTML = '<p style="text-align:center;color:white;grid-column:1/-1;">No hay elementos aún.</p>'; return; }
+
+    if (tipo === 'blog') {
+      archivoDataGlobal = rows;
+      grid.innerHTML = rows.map((d, i) => `
+        <div class="blog-card" style="align-self:stretch;cursor:pointer;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, 'blog'), 300)">
+          <div class="blog-cover" style="aspect-ratio:16/9;">${d.imagen?`<img src="${esc(d.imagen)}">`:`<div class="blog-cover-ph"></div>`}</div>
           <div class="blog-card-body" style="padding:1rem;">
-            <p class="blog-cat">${d.categoria||'Reflexión'}</p>
-            <p class="blog-titulo" style="font-size:1.1rem;margin-bottom:0.5rem;">${d.titulo}</p>
-            <p class="blog-excerpt" style="font-size:0.8rem;">${stripHtml(d.extracto).substring(0, 100)}...</p>
+            <p class="blog-cat">${esc(d.categoria||'Reflexión')}</p>
+            <p class="blog-titulo" style="font-size:1.1rem;margin-bottom:0.5rem;">${esc(d.titulo)}</p>
+            <p class="blog-excerpt" style="font-size:0.8rem;">${esc(window.stripHtml(d.extracto).substring(0, 100))}...</p>
           </div>
         </div>
       `).join('');
     } else if (tipo === 'galeria') {
-      grid.innerHTML = archivoDataGlobal.map((d, i) => `
+      archivoDataGlobal = rows.map(window.albumParaVisor);
+      grid.innerHTML = rows.map((d, i) => {
+        const portada = d.portada || (d.fotos || [])[0];
+        return `
         <div class="album-card" style="align-self:stretch;aspect-ratio:1;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirAlbum(archivoDataGlobal, ${i}), 300)">
-          <div class="album-cover">${d.portada?`<img src="${d.portada}">`:`<div class="album-cover-ph"></div>`}</div>
-          <div class="album-body" style="padding:1rem;text-align:center;">
-            <h3 style="color:var(--gold);font-family:'Cinzel',serif;font-size:1.1rem;">${d.titulo}</h3>
-            <p style="color:rgba(255,255,255,0.6);font-size:0.8rem;margin-top:0.3rem;">${formatDate(d.fecha.toDate())}</p>
-          </div>
-        </div>
-      `).join('');
+          ${portada ? `<img src="${esc(portada)}" class="album-cover-img" alt="${esc(d.nombre)}" loading="lazy">` : `<div class="album-cover-ph" style="background:linear-gradient(135deg,#1c1760 0%,#0f0b32 100%);width:100%;height:100%;"></div>`}
+          <div class="album-overlay"><p class="album-name">${esc(d.nombre || 'Sin Título')}</p><p class="album-date">${fmt(d.fecha)}</p></div>
+          <span class="album-count">${(d.fotos || []).length} fotos</span>
+        </div>`; }).join('');
     } else if (tipo === 'eventos' || tipo === 'avisos') {
-      grid.innerHTML = archivoDataGlobal.map((d, i) => `
-        <div style="background:var(--glass);border:1px solid var(--glass-b);padding:1.5rem;border-radius:3px;cursor:pointer;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, '${tipo=== 'eventos'?'evento':'blog'}'), 300)">
-          <h4 style="color:white;font-size:1.1rem;margin-bottom:0.5rem;">${d.titulo}</h4>
-          <p style="color:var(--gold);font-size:0.8rem;margin-bottom:0.5rem;">${d.fechaInicio ? formatDate(d.fechaInicio.toDate()) : formatDate(d.fecha.toDate())}</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:0.85rem;">${stripHtml(d.descripcion || d.extracto || '').substring(0, 100)}...</p>
+      archivoDataGlobal = rows;
+      const tipoModal = tipo === 'eventos' ? 'evento' : 'aviso';
+      grid.innerHTML = rows.map((d, i) => `
+        <div style="background:var(--glass);border:1px solid var(--glass-b);padding:1.5rem;border-radius:3px;cursor:pointer;" onclick="cerrarArchivoModal(); setTimeout(()=>window.abrirArticuloModal(archivoDataGlobal, ${i}, '${tipoModal}'), 300)">
+          <h4 style="color:white;font-size:1.1rem;margin-bottom:0.5rem;">${esc(d.titulo)}</h4>
+          <p style="color:var(--gold);font-size:0.8rem;margin-bottom:0.5rem;">${fmt(d.fecha)}</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:0.85rem;">${esc((d.texto || '').substring(0, 100))}${(d.texto || '').length > 100 ? '...' : ''}</p>
         </div>
       `).join('');
     }
-  } catch(e) { console.error(e); }
+  } catch(e) {
+    console.error(e);
+    grid.innerHTML = '<p style="text-align:center;color:#ff7070;grid-column:1/-1;">No se pudo cargar el historial.</p>';
+  }
 };
 
 window.cerrarArchivoModal = () => {
   document.getElementById('archivoModal').classList.remove('open');
   document.body.style.overflow = '';
 };
-
-setTimeout(function(){ intentarRestaurarModal(0); }, 1400);
-
 </script>
 </body>
 </html>

@@ -51,7 +51,20 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .field input:focus { border-color: rgba(201,169,110,.5); }
 .btn-primary { width: 100%; background: var(--gold); color: var(--navy-deep); border: none; border-radius: 4px; padding: .85rem; font-family: 'Raleway', sans-serif; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .15em; cursor: pointer; transition: opacity .2s; margin-top: .5rem; }
 .btn-primary:hover { opacity: .88; }
-.login-error { background: rgba(224,85,85,.12); border: 1px solid rgba(224,85,85,.3); border-radius: 4px; padding: .75rem 1rem; font-size: .8rem; color: #ff9090; margin-top: 1rem; display: none; }
+.btn-primary:disabled { opacity: .5; cursor: default; }
+.login-error { background: rgba(224,85,85,.12); border: 1px solid rgba(224,85,85,.3); border-radius: 4px; padding: .75rem 1rem; font-size: .8rem; color: #ff9090; margin-top: 1rem; display: none; line-height: 1.5; }
+.login-info { background: rgba(201,169,110,.08); border: 1px solid var(--gold-dim); border-radius: 4px; padding: .75rem 1rem; font-size: .8rem; color: var(--gold); margin-top: 1rem; display: none; line-height: 1.5; }
+.login-step { display: none; }
+.login-step.active { display: block; animation: stepIn .25s ease; }
+@keyframes stepIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.login-email-chip { display: flex; align-items: center; justify-content: space-between; gap: .75rem; background: rgba(255,255,255,.04); border: 1px solid var(--glass-b); border-radius: 4px; padding: .6rem .9rem; margin-bottom: 1.2rem; font-size: .82rem; color: var(--white); }
+.login-email-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.login-help { font-size: .8rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.2rem; }
+.link-btn { background: none; border: none; color: var(--gold); font-family: 'Raleway', sans-serif; font-size: .72rem; letter-spacing: .06em; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+.link-btn:hover { opacity: .8; }
+.link-btn:disabled { color: var(--muted); cursor: default; text-decoration: none; }
+.login-alt { display: block; margin: 1.1rem auto 0; }
+.field input.code-input { font-family: 'Cinzel', serif; font-size: 1.5rem; letter-spacing: .45em; text-align: center; padding: .7rem .5rem; }
 
 /* ════════════════════════════════
    APP LAYOUT
@@ -181,6 +194,13 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .btn-cancel { background: transparent; border: 1px solid var(--glass-b); border-radius: 4px; color: var(--muted); padding: .6rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .75rem; cursor: pointer; }
 .btn-confirm-del { background: var(--danger); border: none; border-radius: 4px; color: white; padding: .6rem 1.25rem; font-family: 'Raleway', sans-serif; font-size: .75rem; font-weight: 600; cursor: pointer; }
 
+/* ── USUARIOS ── */
+.user-add-row { display: flex; align-items: flex-end; gap: .75rem; margin: 1.5rem 0 2rem; flex-wrap: wrap; }
+.user-avatar-lg { width: 44px; height: 44px; border-radius: 50%; background: var(--gold-dim); color: var(--gold); display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 700; flex-shrink: 0; }
+.item-tag.activo    { background: rgba(76,175,114,.12); color: #7ddfaa; }
+.item-tag.pendiente { background: var(--gold-dim); color: var(--gold); }
+@media (max-width: 700px) { .user-add-row { flex-direction: column; align-items: stretch; } }
+
 /* ── DASHBOARD ── */
 .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; }
 .dash-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 6px; padding: 1.25rem 1.4rem; cursor: pointer; transition: .2s; }
@@ -255,15 +275,54 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
       <span class="login-logo-text">PIEBA</span>
     </div>
     <p class="login-subtitle">Panel de Administración</p>
-    <div class="field">
-      <label>Correo electrónico</label>
-      <input type="email" id="loginEmail" placeholder="admin@pieba.org" autocomplete="email">
-    </div>
-    <div class="field">
-      <label>Contraseña</label>
-      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+
+    <!-- Paso 1: correo -->
+    <form class="login-step active" id="stepEmail" onsubmit="event.preventDefault(); authContinuar();">
+      <div class="field">
+        <label for="loginEmail">Correo electrónico</label>
+        <input type="email" id="loginEmail" placeholder="tu@correo.com" autocomplete="email" required>
+      </div>
+      <button type="submit" class="btn-primary">Continuar</button>
+    </form>
+
+    <!-- Paso 2: contraseña (usuarios activos) -->
+    <form class="login-step" id="stepPassword" onsubmit="event.preventDefault(); authIngresar();">
+      <div class="login-email-chip"><span class="js-email"></span><button type="button" class="link-btn" onclick="authVolver()">Cambiar</button></div>
+      <div class="field">
+        <label for="loginPass">Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-primary">Ingresar</button>
+      <button type="button" class="link-btn login-alt" onclick="authOlvide()">Olvidé mi contraseña</button>
+    </form>
+
+    <!-- Paso 3: código por correo -->
+    <form class="login-step" id="stepCodigo" onsubmit="event.preventDefault(); authVerificarCodigo();">
+      <div class="login-email-chip"><span class="js-email"></span><button type="button" class="link-btn" onclick="authVolver()">Cambiar</button></div>
+      <p class="login-help" id="codigoAyuda">Te enviamos un código de verificación a tu correo. Revisá también la carpeta de spam.</p>
+      <div class="field">
+        <label for="loginCodigo">Código</label>
+        <input type="text" id="loginCodigo" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••" required>
+      </div>
+      <button type="submit" class="btn-primary">Verificar código</button>
+      <button type="button" class="link-btn login-alt" id="btnReenviar" onclick="authReenviar()">Reenviar código</button>
+    </form>
+
+    <!-- Paso 4: crear contraseña -->
+    <form class="login-step" id="stepNuevaPass" onsubmit="event.preventDefault(); authGuardarPassword();">
+      <p class="login-help">Creá tu contraseña. La vas a usar para ingresar de ahora en adelante.</p>
+      <div class="field">
+        <label for="newPass">Nueva contraseña</label>
+        <input type="password" id="newPass" placeholder="Mínimo 8 caracteres" autocomplete="new-password" minlength="8" required>
+      </div>
+      <div class="field">
+        <label for="newPass2">Repetir contraseña</label>
+        <input type="password" id="newPass2" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
+      </div>
+      <button type="submit" class="btn-primary">Guardar e ingresar</button>
+    </form>
+
+    <div class="login-info" id="loginInfo"></div>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
@@ -348,6 +407,11 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
       <div class="nav-item" onclick="showSection('miembros')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         Miembros
+      </div>
+      <div class="nav-section-label" style="margin-top:1.5rem;">Acceso</div>
+      <div class="nav-item" onclick="showSection('usuarios')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        Usuarios
       </div>
     </nav>
     <div class="sidebar-footer">
@@ -570,6 +634,25 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
       </div>
       <div class="items-list" id="list-miembros">
         <div class="empty-state"><p>Cargando miembros…</p></div>
+      </div>
+    </div>
+
+    <!-- USUARIOS -->
+    <div class="content-section" id="sec-usuarios">
+      <div class="page-header">
+        <div><div class="page-label">Acceso</div><h1 class="page-title">Usuarios del panel</h1></div>
+      </div>
+      <p class="login-help" style="max-width:640px;">Solo los correos de esta lista pueden ingresar al panel. La primera vez, cada persona escribe su correo en la pantalla de acceso, recibe un código y crea su propia contraseña. Todos tienen los mismos permisos.</p>
+      <form class="user-add-row" onsubmit="event.preventDefault(); agregarUsuario();">
+        <div class="form-field" style="flex:2;margin:0;"><label for="nuevoUsuarioEmail">Correo</label><input type="email" id="nuevoUsuarioEmail" placeholder="persona@correo.com" required></div>
+        <div class="form-field" style="flex:1.4;margin:0;"><label for="nuevoUsuarioNombre">Nombre (opcional)</label><input type="text" id="nuevoUsuarioNombre" placeholder="Nombre"></div>
+        <button type="submit" class="btn-add" id="btnAgregarUsuario">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Agregar
+        </button>
+      </form>
+      <div class="items-list" id="list-usuarios">
+        <div class="empty-state"><p>Cargando usuarios…</p></div>
       </div>
     </div>
 
@@ -830,8 +913,8 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 <!-- Confirm delete -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
-    <h3>¿Eliminar este elemento?</h3>
-    <p>Esta acción no se puede deshacer. El registro será eliminado permanentemente de la base de datos.</p>
+    <h3 id="confirmTitulo">¿Eliminar este elemento?</h3>
+    <p id="confirmTexto">Esta acción no se puede deshacer. El registro será eliminado permanentemente de la base de datos.</p>
     <div class="confirm-btns">
       <button class="btn-cancel" onclick="closeConfirm()">Cancelar</button>
       <button class="btn-confirm-del" onclick="confirmDelete()">Eliminar</button>
@@ -845,118 +928,297 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 <!-- ══════════════ SCRIPTS ══════════════ -->
 <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc, doc, query, orderBy, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { supabase, ok } from './js/supabase.js';
 
-/* ─── CONFIG (mismo que index.html) ─── */
-const firebaseConfig = {
-  apiKey: "AIzaSyCpIGxANKKw3sj28W2g1vV9R7423munMFw",
-  authDomain: "pieba-database.firebaseapp.com",
-  projectId: "pieba-database",
-  storageBucket: "pieba-database.firebasestorage.app",
-  messagingSenderId: "54248882255",
-  appId: "1:54248882255:web:b635bace1d3d723515aa3a"
-};
+/* ════════════════════════════════
+   UTILS
+════════════════════════════════ */
+const $ = (id) => document.getElementById(id);
 
-/* ─── INIT ─── */
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-/* ─── AUTH ─── */
-onAuthStateChanged(auth, user => {
-  if (user) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'block';
-    document.getElementById('userEmail').textContent = user.email;
-    document.getElementById('userAvatar').textContent = user.email[0].toUpperCase();
-    loadAll();
-  } else {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appScreen').style.display = 'none';
-  }
-});
-
-window.doLogin = async () => {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass  = document.getElementById('loginPass').value;
-  const errEl = document.getElementById('loginError');
-  errEl.style.display = 'none';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e) {
-    errEl.style.display = 'block';
-    errEl.textContent = e.code === 'auth/invalid-credential' ? 'Correo o contraseña incorrectos.' : 'Error: ' + e.message;
-  }
-};
-document.getElementById('loginPass')?.addEventListener('keydown', e => { if(e.key === 'Enter') window.doLogin(); });
-window.doLogout = () => signOut(auth);
-
-/* ─── UTILS ─── */
 function toast(msg, type = 'success') {
-  const t = document.getElementById('toast');
+  const t = $('toast');
   t.textContent = msg; t.className = `toast ${type} show`;
   setTimeout(() => t.classList.remove('show'), 3200);
 }
-function formatDate(ts) {
-  if (!ts) return '—';
-  const d = ts.toDate ? ts.toDate() : new Date(ts);
-  return d.toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
+function escapeHtml(str = '') {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
-function todayISO() { return new Date().toISOString().slice(0,10); }
-  function escapeHtml(str = '') {
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
+const pad = (n) => String(n).padStart(2, '0');
+// Fecha local en formato YYYY-MM-DD (para <input type="date">)
+function fechaInput(valor) {
+  const d = valor ? new Date(valor) : new Date();
+  if (isNaN(d)) return fechaInput();
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
-async function getCloudinarySignedConfig(folder = 'pieba/galeria') {
-  const user = auth.currentUser;
-  if (!user) throw new Error('No hay sesión activa');
+function horaInput(valor) {
+  const d = new Date(valor);
+  return isNaN(d) ? '10:00' : `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function formatDate(valor) {
+  if (!valor) return '—';
+  const d = new Date(valor);
+  return isNaN(d) ? '—' : d.toLocaleDateString('es-PY', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+const todayISO = () => fechaInput();
+// "2026-11-19" + "12:00" → ISO con la zona horaria del navegador
+const aISO = (fecha, hora = '12:00') => new Date(`${fecha}T${hora}:00`).toISOString();
 
-  const token = await user.getIdToken(true);
-
-  const res = await fetch('/api/cloudinary-sign', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify({ folder })
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data?.error || 'No se pudo obtener la firma de Cloudinary');
-  }
-
-  return data;
+function mensajeError(e) {
+  const m = (e && (e.message || e.error_description)) || String(e);
+  if (/row-level security|permission denied|42501/i.test(m)) return 'No tenés permiso para hacer esto.';
+  if (/Failed to fetch|NetworkError/i.test(m)) return 'Sin conexión. Revisá tu internet e intentá de nuevo.';
+  return m;
 }
 
-window.showSection = (id) => {
-  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(`sec-${id}`)?.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => { if(n.getAttribute('onclick')?.includes(id)) n.classList.add('active'); });
-  closeSidebar();
+/* ── Acceso a datos ── */
+const listar  = async (tabla, orden, asc) => ok(await supabase.from(tabla).select('*').order(orden, { ascending: asc }));
+const guardar = async (tabla, id, data) => ok(id
+  ? await supabase.from(tabla).update(data).eq('id', id)
+  : await supabase.from(tabla).insert(data));
+const borrar  = async (tabla, id) => ok(await supabase.from(tabla).delete().eq('id', id));
+
+/* ════════════════════════════════
+   ACCESO (login con código + contraseña)
+════════════════════════════════ */
+let authEmail = '';
+let modoRecuperar = false;   // true mientras el usuario está cambiando su contraseña olvidada
+let appIniciada = false;
+let reenvioTimer = null;
+
+function mostrarPaso(id) {
+  document.querySelectorAll('.login-step').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  document.querySelectorAll('.js-email').forEach(el => el.textContent = authEmail);
+  const foco = $(id).querySelector('input');
+  if (foco) setTimeout(() => foco.focus(), 60);
+}
+function loginError(msg) {
+  $('loginInfo').style.display = 'none';
+  const el = $('loginError');
+  el.textContent = msg || ''; el.style.display = msg ? 'block' : 'none';
+}
+function loginInfo(msg) {
+  $('loginError').style.display = 'none';
+  const el = $('loginInfo');
+  el.textContent = msg || ''; el.style.display = msg ? 'block' : 'none';
+}
+function limpiarMensajes() { loginError(''); loginInfo(''); }
+
+async function conBoton(form, texto, fn) {
+  const btn = form.querySelector('button[type="submit"]');
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = texto;
+  try { await fn(); }
+  finally { btn.disabled = false; btn.textContent = original; }
+}
+
+function traducirAuthError(e) {
+  const m = (e && e.message) || '';
+  const espera = m.match(/after (\d+) seconds?/i);
+  if (espera) return `Por seguridad, esperá ${espera[1]} segundos antes de pedir otro código.`;
+  if (/rate limit|too many/i.test(m)) return 'Se hicieron demasiados intentos. Esperá unos minutos y volvé a probar.';
+  if (/invalid login credentials/i.test(m)) return 'La contraseña no es correcta.';
+  if (/expired|invalid/i.test(m) && /token|otp/i.test(m)) return 'El código es incorrecto o ya venció. Pedí uno nuevo.';
+  if (/same.*password|different from the old/i.test(m)) return 'La nueva contraseña tiene que ser distinta a la anterior.';
+  if (/password should be|weak/i.test(m)) return 'La contraseña es muy débil. Usá al menos 8 caracteres, combinando letras y números.';
+  if (/no tiene acceso|signups not allowed|user not found/i.test(m)) return 'Este correo no tiene acceso al panel.';
+  return mensajeError(e);
+}
+
+function iniciarCuentaRegresiva(segundos = 60) {
+  const btn = $('btnReenviar');
+  clearInterval(reenvioTimer);
+  let s = segundos;
+  btn.disabled = true; btn.textContent = `Reenviar código (${s})`;
+  reenvioTimer = setInterval(() => {
+    s--;
+    if (s <= 0) { clearInterval(reenvioTimer); btn.disabled = false; btn.textContent = 'Reenviar código'; }
+    else btn.textContent = `Reenviar código (${s})`;
+  }, 1000);
+}
+
+async function enviarCodigo() {
+  ok(await supabase.auth.signInWithOtp({
+    email: authEmail,
+    options: { shouldCreateUser: !modoRecuperar }
+  }));
+  $('loginCodigo').value = '';
+  mostrarPaso('stepCodigo');
+  $('codigoAyuda').textContent = modoRecuperar
+    ? 'Te enviamos un código para crear una nueva contraseña. Revisá también la carpeta de spam.'
+    : 'Es tu primer ingreso: te enviamos un código para verificar tu correo. Revisá también la carpeta de spam.';
+  iniciarCuentaRegresiva();
+}
+
+window.authContinuar = () => conBoton($('stepEmail'), 'Verificando…', async () => {
+  limpiarMensajes();
+  authEmail = $('loginEmail').value.trim().toLowerCase();
+  if (!authEmail) return;
+  try {
+    const estado = ok(await supabase.rpc('estado_acceso', { p_email: authEmail }));
+    if (estado === 'no_permitido') {
+      loginError('Este correo no tiene acceso al panel. Pedile a un administrador que te agregue.');
+    } else if (estado === 'activo') {
+      modoRecuperar = false;
+      $('loginPass').value = '';
+      mostrarPaso('stepPassword');
+    } else {
+      modoRecuperar = false;
+      await enviarCodigo();
+    }
+  } catch (e) { loginError(traducirAuthError(e)); }
+});
+
+window.authIngresar = () => conBoton($('stepPassword'), 'Ingresando…', async () => {
+  limpiarMensajes();
+  try {
+    ok(await supabase.auth.signInWithPassword({ email: authEmail, password: $('loginPass').value }));
+  } catch (e) { loginError(traducirAuthError(e)); }
+});
+
+window.authOlvide = async () => {
+  limpiarMensajes();
+  modoRecuperar = true;
+  try { await enviarCodigo(); }
+  catch (e) { modoRecuperar = false; loginError(traducirAuthError(e)); }
 };
-window.closeModal = (id) => { document.getElementById(id).classList.remove('open'); };
-window.openModal  = (id) => { document.getElementById(id).classList.add('open'); };
 
-/* ─── CLOUDINARY UPLOAD ─── */
-window.uploadImage = async (ctx) => {
-  if (typeof cloudinary === 'undefined') {
-    toast('Cloudinary no cargó, recarga la página', 'error');
+window.authReenviar = async () => {
+  limpiarMensajes();
+  try { await enviarCodigo(); loginInfo('Te enviamos un código nuevo.'); }
+  catch (e) { loginError(traducirAuthError(e)); }
+};
+
+window.authVerificarCodigo = () => conBoton($('stepCodigo'), 'Verificando…', async () => {
+  limpiarMensajes();
+  const token = $('loginCodigo').value.replace(/\D/g, '');
+  if (token.length < 6) { loginError('Ingresá el código completo que te llegó por correo.'); return; }
+  try {
+    ok(await supabase.auth.verifyOtp({ email: authEmail, token, type: 'email' }));
+    // La sesión ya está abierta: onAuthStateChange muestra el paso de crear contraseña.
+  } catch (e) { loginError(traducirAuthError(e)); }
+});
+
+window.authGuardarPassword = () => conBoton($('stepNuevaPass'), 'Guardando…', async () => {
+  limpiarMensajes();
+  const p1 = $('newPass').value, p2 = $('newPass2').value;
+  if (p1.length < 8) { loginError('La contraseña debe tener al menos 8 caracteres.'); return; }
+  if (p1 !== p2) { loginError('Las contraseñas no coinciden.'); return; }
+  try {
+    ok(await supabase.auth.updateUser({ password: p1 }));
+    modoRecuperar = false;
+    $('newPass').value = ''; $('newPass2').value = '';
+    const { data: { session } } = await supabase.auth.getSession();
+    await evaluarSesion(session);
+    toast('Contraseña guardada ✓');
+  } catch (e) { loginError(traducirAuthError(e)); }
+});
+
+window.authVolver = () => {
+  limpiarMensajes();
+  modoRecuperar = false;
+  clearInterval(reenvioTimer);
+  mostrarPaso('stepEmail');
+};
+
+window.doLogout = async () => {
+  await supabase.auth.signOut();
+};
+
+function mostrarLogin() {
+  appIniciada = false;
+  $('appScreen').style.display = 'none';
+  $('loginScreen').style.display = 'flex';
+}
+
+async function evaluarSesion(session) {
+  if (!session) {
+    mostrarLogin();
+    if (!document.querySelector('.login-step.active')) mostrarPaso('stepEmail');
+    if ($('stepNuevaPass').classList.contains('active')) mostrarPaso('stepEmail');
+    return;
+  }
+  const email = (session.user.email || '').toLowerCase();
+  authEmail = email;
+
+  try {
+    const esAdmin = ok(await supabase.rpc('es_admin'));
+    if (!esAdmin) {
+      await supabase.auth.signOut();
+      mostrarPaso('stepEmail');
+      loginError('Tu correo ya no tiene acceso al panel.');
+      return;
+    }
+    const estado = ok(await supabase.rpc('estado_acceso', { p_email: email }));
+    if (modoRecuperar || estado === 'sin_password') {
+      mostrarLogin();
+      mostrarPaso('stepNuevaPass');
+      return;
+    }
+  } catch (e) {
+    mostrarLogin();
+    loginError(mensajeError(e));
     return;
   }
 
+  // Todo en orden: entrar al panel
+  $('loginScreen').style.display = 'none';
+  $('appScreen').style.display = 'block';
+  $('userEmail').textContent = email;
+  $('userAvatar').textContent = (email[0] || 'A').toUpperCase();
+  if (!appIniciada) { appIniciada = true; loadAll(); }
+}
+
+supabase.auth.onAuthStateChange((evento, session) => {
+  // No llamar a Supabase dentro del callback (puede trabarse): diferirlo.
+  if (['INITIAL_SESSION', 'SIGNED_IN', 'SIGNED_OUT'].includes(evento)) {
+    setTimeout(() => evaluarSesion(session), 0);
+  }
+});
+
+/* ════════════════════════════════
+   NAVEGACIÓN Y MODALES
+════════════════════════════════ */
+window.showSection = (id) => {
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  $(`sec-${id}`)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => { if (n.getAttribute('onclick')?.includes(`'${id}'`)) n.classList.add('active'); });
+  closeSidebar();
+};
+window.closeModal = (id) => { $(id).classList.remove('open'); };
+window.openModal  = (id) => { $(id).classList.add('open'); };
+
+/* ════════════════════════════════
+   CLOUDINARY
+════════════════════════════════ */
+async function getCloudinarySignedConfig(folder = 'pieba/galeria') {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('No hay sesión activa');
+
+  const res = await fetch('/api/cloudinary-sign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+    body: JSON.stringify({ folder })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.error || 'No se pudo obtener la firma de Cloudinary');
+  return data;
+}
+
+function setImagen(ctx, url) {
+  $(ctx === 'album' ? 'albumPortada' : `${ctx}Imagen`).value = url || '';
+  const prev = $(`${ctx}ImgPreview`), clr = $(`${ctx}ImgClear`);
+  if (url) { prev.src = url; prev.classList.add('show'); clr.classList.add('show'); }
+  else { prev.removeAttribute('src'); prev.classList.remove('show'); clr.classList.remove('show'); }
+}
+
+window.uploadImage = async (ctx) => {
+  if (typeof cloudinary === 'undefined') { toast('Cloudinary no cargó, recarga la página', 'error'); return; }
   try {
     const signed = await getCloudinarySignedConfig('pieba/galeria');
-
     cloudinary.openUploadWidget({
       cloudName: signed.cloudName,
       apiKey: signed.apiKey,
@@ -970,42 +1232,21 @@ window.uploadImage = async (ctx) => {
       language: 'es',
       text: { es: { or: 'o', menu: { files: 'Archivos locales', camera: 'Cámara' } } }
     }, (err, result) => {
-      if (!err && result?.event === 'success') {
-        const url = result.info.secure_url;
-        document.getElementById(`${ctx}Imagen`) && (document.getElementById(`${ctx}Imagen`).value = url);
-        document.getElementById(`${ctx === 'album' ? 'albumPortada' : ctx + 'Imagen'}`).value = url;
-        const prev = document.getElementById(`${ctx}ImgPreview`);
-        const clr  = document.getElementById(`${ctx}ImgClear`);
-        if (prev) { prev.src = url; prev.classList.add('show'); }
-        if (clr)  { clr.classList.add('show'); }
-      }
+      if (!err && result?.event === 'success') setImagen(ctx, result.info.secure_url);
     });
   } catch (e) {
     toast('Error al preparar la subida segura', 'error');
     console.error(e);
   }
 };
+window.clearImage = (ctx) => setImagen(ctx, '');
 
-window.clearImage = (ctx) => {
-  const map = ctx === 'album' ? 'albumPortada' : `${ctx}Imagen`;
-  document.getElementById(map).value = '';
-  const prev = document.getElementById(`${ctx}ImgPreview`);
-  const clr  = document.getElementById(`${ctx}ImgClear`);
-  if (prev) { prev.src = ''; prev.classList.remove('show'); }
-  if (clr)  { clr.classList.remove('show'); }
-};
-
-/* ── Album multi-photo upload ── */
+/* ── Álbum: varias fotos ── */
 let albumPhotos = [];
 window.uploadAlbumPhoto = async () => {
-  if (typeof cloudinary === 'undefined') {
-    toast('Cloudinary no cargó, recarga la página', 'error');
-    return;
-  }
-
+  if (typeof cloudinary === 'undefined') { toast('Cloudinary no cargó, recarga la página', 'error'); return; }
   try {
     const signed = await getCloudinarySignedConfig('pieba/galeria');
-
     cloudinary.openUploadWidget({
       cloudName: signed.cloudName,
       apiKey: signed.apiKey,
@@ -1026,114 +1267,125 @@ window.uploadAlbumPhoto = async () => {
     console.error(e);
   }
 };
-  
 function renderAlbumPhotosGrid() {
-  const grid = document.getElementById('albumPhotosGrid');
-  grid.innerHTML = albumPhotos.map((url, i) => `
+  $('albumPhotosGrid').innerHTML = albumPhotos.map((url, i) => `
     <div class="photo-thumb">
-      <img src="${url}" loading="lazy">
+      <img src="${escapeHtml(url)}" loading="lazy">
       <button class="photo-remove" onclick="removeAlbumPhoto(${i})">✕</button>
     </div>`).join('') + `<div class="photo-add-btn" onclick="uploadAlbumPhoto()">+</div>`;
 }
 window.removeAlbumPhoto = (i) => { albumPhotos.splice(i, 1); renderAlbumPhotosGrid(); };
 
-/* ─── DELETE CONFIRM ─── */
+/* ════════════════════════════════
+   CONFIRMAR BORRADO
+════════════════════════════════ */
 let pendingDelete = null;
-window.askDelete = (fn) => { pendingDelete = fn; document.getElementById('confirmOverlay').classList.add('open'); };
-window.closeConfirm = () => { pendingDelete = null; document.getElementById('confirmOverlay').classList.remove('open'); };
-window.confirmDelete = async () => {
-  if (pendingDelete) { await pendingDelete(); }
-  closeConfirm();
+const CONFIRM_DEFAULT = ['¿Eliminar este elemento?', 'Esta acción no se puede deshacer. El registro será eliminado permanentemente de la base de datos.'];
+window.askDelete = (fn, titulo, texto) => {
+  pendingDelete = fn;
+  $('confirmTitulo').textContent = titulo || CONFIRM_DEFAULT[0];
+  $('confirmTexto').textContent = texto || CONFIRM_DEFAULT[1];
+  $('confirmOverlay').classList.add('open');
 };
+window.closeConfirm = () => { pendingDelete = null; $('confirmOverlay').classList.remove('open'); };
+window.confirmDelete = async () => {
+  const fn = pendingDelete;
+  closeConfirm();
+  if (fn) {
+    try { await fn(); } catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
+  }
+};
+
+/* Iconos reutilizados */
+const ICON_EDIT = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>`;
+const ICON_DEL  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`;
+const thumb = (url, phPath, round = false) => url
+  ? `<img class="item-card-thumb" src="${escapeHtml(url)}" loading="lazy"${round ? ' style="border-radius:50%;"' : ''}>`
+  : `<div class="item-card-thumb-ph"><svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.2)"><path d="${phPath}"/></svg></div>`;
+const acciones = (editFn, delFn, id) => `
+  <div class="item-actions">
+    <button class="btn-icon" title="Editar" onclick="${editFn}('${id}')">${ICON_EDIT}</button>
+    <button class="btn-icon danger" title="Eliminar" onclick="askDelete(()=>${delFn}('${id}'))">${ICON_DEL}</button>
+  </div>`;
+const recortar = (txt, n) => { const s = String(txt || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(); return escapeHtml(s.slice(0, n)) + (s.length > n ? '…' : ''); };
+
+async function conGuardado(modalId, textoGuardando, fn) {
+  const btn = document.querySelector(`#${modalId} .btn-save`);
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = textoGuardando;
+  try { await fn(); }
+  catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
+  finally { btn.disabled = false; btn.textContent = original; }
+}
 
 /* ════════════════════════════════
    AVISOS
 ════════════════════════════════ */
 let avisosData = [];
 async function loadAvisos() {
-  const snap = await getDocs(query(collection(db, 'avisos'), orderBy('fecha', 'desc')));
-  avisosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  document.getElementById('countAvisos').textContent = avisosData.length;
+  avisosData = await listar('avisos', 'fecha', false);
+  $('countAvisos').textContent = avisosData.length;
   renderAvisos();
 }
 function renderAvisos() {
-  const cont = document.getElementById('list-avisos');
+  const cont = $('list-avisos');
   if (!avisosData.length) {
     cont.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,255,255,.3)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div><p>No hay comunicados. Crea el primero.</p></div>`;
     return;
   }
   cont.innerHTML = avisosData.map(a => `
     <div class="item-card">
-      ${a.imagen ? `<img class="item-card-thumb" src="${a.imagen}" loading="lazy">` : `<div class="item-card-thumb-ph"><svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.2)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>`}
+      ${thumb(a.imagen, 'M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z')}
       <div class="item-info">
-        <div class="item-title">${a.titulo || '(Sin título)'}</div>
+        <div class="item-title">${escapeHtml(a.titulo || '(Sin título)')}</div>
         <div class="item-meta">
-          <span class="item-tag ${a.tipo || 'normal'}">${(a.tipo || 'normal').toUpperCase()}</span>
+          <span class="item-tag ${escapeHtml(a.tipo || 'normal')}">${escapeHtml((a.tipo || 'normal').toUpperCase())}</span>
           ${formatDate(a.fecha)}
         </div>
-        <div class="item-meta" style="margin-top:.3rem;">${(a.texto || '').slice(0,80)}${a.texto?.length > 80 ? '…' : ''}</div>
+        <div class="item-meta" style="margin-top:.3rem;">${recortar(a.texto, 80)}</div>
       </div>
-      <div class="item-actions">
-        <button class="btn-icon" title="Editar" onclick="editAviso('${a.id}')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-        </button>
-        <button class="btn-icon danger" title="Eliminar" onclick="askDelete(()=>deleteAviso('${a.id}'))">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-        </button>
-      </div>
+      ${acciones('editAviso', 'deleteAviso', a.id)}
     </div>`).join('');
 }
 window.openAvisoModal = () => {
-  document.getElementById('avisoId').value = '';
-  document.getElementById('avisoTitulo').value = '';
-  document.getElementById('avisoTexto').value = '';
-  document.getElementById('avisoTipo').value = 'normal';
-  document.getElementById('avisoFecha').value = todayISO();
-  document.getElementById('avisoImagen').value = '';
-  document.getElementById('avisoImgPreview').classList.remove('show');
-  document.getElementById('avisoImgClear').classList.remove('show');
-  document.getElementById('modalAvisoTitle').textContent = 'Nuevo comunicado';
+  $('avisoId').value = '';
+  $('avisoTitulo').value = '';
+  $('avisoTexto').value = '';
+  $('avisoTipo').value = 'normal';
+  $('avisoFecha').value = todayISO();
+  setImagen('aviso', '');
+  $('modalAvisoTitle').textContent = 'Nuevo comunicado';
   openModal('modalAviso');
 };
 window.editAviso = (id) => {
   const a = avisosData.find(x => x.id === id); if (!a) return;
-  document.getElementById('avisoId').value = id;
-  document.getElementById('avisoTitulo').value = a.titulo || '';
-  document.getElementById('avisoTexto').value = a.texto || '';
-  document.getElementById('avisoTipo').value = a.tipo || 'normal';
-  document.getElementById('avisoFecha').value = a.fecha?.toDate ? a.fecha.toDate().toISOString().slice(0,10) : todayISO();
-  document.getElementById('avisoImagen').value = a.imagen || '';
-  const prev = document.getElementById('avisoImgPreview');
-  const clr  = document.getElementById('avisoImgClear');
-  if (a.imagen) { prev.src = a.imagen; prev.classList.add('show'); clr.classList.add('show'); }
-  else { prev.classList.remove('show'); clr.classList.remove('show'); }
-  document.getElementById('modalAvisoTitle').textContent = 'Editar comunicado';
+  $('avisoId').value = id;
+  $('avisoTitulo').value = a.titulo || '';
+  $('avisoTexto').value = a.texto || '';
+  $('avisoTipo').value = a.tipo || 'normal';
+  $('avisoFecha').value = fechaInput(a.fecha);
+  setImagen('aviso', a.imagen);
+  $('modalAvisoTitle').textContent = 'Editar comunicado';
   openModal('modalAviso');
 };
-window.saveAviso = async () => {
-  const titulo = document.getElementById('avisoTitulo').value.trim();
+window.saveAviso = () => {
+  const titulo = $('avisoTitulo').value.trim();
   if (!titulo) { toast('El título es obligatorio', 'error'); return; }
-  const btn = document.querySelector('#modalAviso .btn-save');
-  btn.disabled = true; btn.textContent = 'Guardando…';
-  try {
-    const data = {
+  return conGuardado('modalAviso', 'Guardando…', async () => {
+    await guardar('avisos', $('avisoId').value, {
       titulo,
-      texto: document.getElementById('avisoTexto').value.trim(),
-      tipo: document.getElementById('avisoTipo').value,
-      fecha: Timestamp.fromDate(new Date(document.getElementById('avisoFecha').value + 'T12:00:00')),
-      imagen: document.getElementById('avisoImagen').value || null
-    };
-    const id = document.getElementById('avisoId').value;
-    if (id) await updateDoc(doc(db,'avisos',id), data);
-    else    await addDoc(collection(db,'avisos'), data);
+      texto: $('avisoTexto').value.trim(),
+      tipo: $('avisoTipo').value,
+      fecha: aISO($('avisoFecha').value || todayISO()),
+      imagen: $('avisoImagen').value || null
+    });
     closeModal('modalAviso');
     await loadAvisos();
     toast('Comunicado guardado ✓');
-  } catch(e) { toast('Error: ' + e.message, 'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+  });
 };
 window.deleteAviso = async (id) => {
-  await deleteDoc(doc(db,'avisos',id));
+  await borrar('avisos', id);
   await loadAvisos();
   toast('Comunicado eliminado');
 };
@@ -1143,91 +1395,69 @@ window.deleteAviso = async (id) => {
 ════════════════════════════════ */
 let eventosData = [];
 async function loadEventos() {
-  const snap = await getDocs(query(collection(db,'eventos'), orderBy('fecha','asc')));
-  eventosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  eventosData = await listar('eventos', 'fecha', true);
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  document.getElementById('countEventos').textContent = eventosData.filter(e => e.fecha?.toDate() >= hoy).length;
+  $('countEventos').textContent = eventosData.filter(e => new Date(e.fecha) >= hoy).length;
   renderEventos();
 }
 function renderEventos() {
-  const cont = document.getElementById('list-eventos');
-  if (!eventosData.length) {
-    cont.innerHTML = `<div class="empty-state"><p>No hay eventos. Crea el primero.</p></div>`; return;
-  }
+  const cont = $('list-eventos');
+  if (!eventosData.length) { cont.innerHTML = `<div class="empty-state"><p>No hay eventos. Crea el primero.</p></div>`; return; }
   cont.innerHTML = eventosData.map(e => {
-    const f = e.fecha?.toDate ? e.fecha.toDate() : new Date();
+    const f = new Date(e.fecha);
     const pasado = f < new Date();
     return `
     <div class="item-card" style="${pasado ? 'opacity:.55' : ''}">
-      ${e.imagen ? `<img class="item-card-thumb" src="${e.imagen}" loading="lazy">` : `<div class="item-card-thumb-ph"><svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.2)"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2z"/></svg></div>`}
+      ${thumb(e.imagen, 'M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2z')}
       <div class="item-info">
-        <div class="item-title">${e.titulo || '(Sin título)'}</div>
+        <div class="item-title">${escapeHtml(e.titulo || '(Sin título)')}</div>
         <div class="item-meta">
           <span class="item-tag evento">${pasado ? 'PASADO' : 'PRÓXIMO'}</span>
           ${formatDate(e.fecha)} — ${f.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}
         </div>
-        <div class="item-meta" style="margin-top:.3rem;">${(e.texto||'').slice(0,80)}${(e.texto||'').length>80?'…':''}</div>
+        <div class="item-meta" style="margin-top:.3rem;">${recortar(e.texto, 80)}</div>
       </div>
-      <div class="item-actions">
-        <button class="btn-icon" onclick="editEvento('${e.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
-        <button class="btn-icon danger" onclick="askDelete(()=>deleteEvento('${e.id}'))"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
-      </div>
+      ${acciones('editEvento', 'deleteEvento', e.id)}
     </div>`; }).join('');
 }
 window.openEventoModal = () => {
-  document.getElementById('eventoId').value = '';
-  document.getElementById('eventoTitulo').value = '';
-  document.getElementById('eventoTexto').value = '';
-  document.getElementById('eventoFecha').value = todayISO();
-  document.getElementById('eventoHora').value = '10:00';
-  document.getElementById('eventoImagen').value = '';
-  document.getElementById('eventoImgPreview').classList.remove('show');
-  document.getElementById('eventoImgClear').classList.remove('show');
-  document.getElementById('modalEventoTitle').textContent = 'Nuevo evento';
+  $('eventoId').value = '';
+  $('eventoTitulo').value = '';
+  $('eventoTexto').value = '';
+  $('eventoFecha').value = todayISO();
+  $('eventoHora').value = '10:00';
+  setImagen('evento', '');
+  $('modalEventoTitle').textContent = 'Nuevo evento';
   openModal('modalEvento');
 };
 window.editEvento = (id) => {
   const e = eventosData.find(x => x.id === id); if (!e) return;
-  const f = e.fecha?.toDate ? e.fecha.toDate() : new Date();
-  document.getElementById('eventoId').value = id;
-  document.getElementById('eventoTitulo').value = e.titulo || '';
-  document.getElementById('eventoTexto').value = e.texto || '';
-  document.getElementById('eventoFecha').value = f.toISOString().slice(0,10);
-  document.getElementById('eventoHora').value = f.toTimeString().slice(0,5);
-  document.getElementById('eventoImagen').value = e.imagen || '';
-  const prev = document.getElementById('eventoImgPreview');
-  const clr  = document.getElementById('eventoImgClear');
-  if (e.imagen) { prev.src = e.imagen; prev.classList.add('show'); clr.classList.add('show'); }
-  else { prev.classList.remove('show'); clr.classList.remove('show'); }
-  document.getElementById('modalEventoTitle').textContent = 'Editar evento';
+  $('eventoId').value = id;
+  $('eventoTitulo').value = e.titulo || '';
+  $('eventoTexto').value = e.texto || '';
+  $('eventoFecha').value = fechaInput(e.fecha);
+  $('eventoHora').value = horaInput(e.fecha);
+  setImagen('evento', e.imagen);
+  $('modalEventoTitle').textContent = 'Editar evento';
   openModal('modalEvento');
 };
-window.saveEvento = async () => {
-  const titulo = document.getElementById('eventoTitulo').value.trim();
+window.saveEvento = () => {
+  const titulo = $('eventoTitulo').value.trim();
   if (!titulo) { toast('El título es obligatorio', 'error'); return; }
-  const btn = document.querySelector('#modalEvento .btn-save');
-  btn.disabled = true; btn.textContent = 'Guardando…';
-  try {
-    const fechaStr = document.getElementById('eventoFecha').value;
-    const horaStr  = document.getElementById('eventoHora').value || '00:00';
-    const fecha = Timestamp.fromDate(new Date(`${fechaStr}T${horaStr}:00`));
-    const data = {
+  return conGuardado('modalEvento', 'Guardando…', async () => {
+    await guardar('eventos', $('eventoId').value, {
       titulo,
-      texto: document.getElementById('eventoTexto').value.trim(),
-      fecha,
-      imagen: document.getElementById('eventoImagen').value || null
-    };
-    const id = document.getElementById('eventoId').value;
-    if (id) await updateDoc(doc(db,'eventos',id), data);
-    else    await addDoc(collection(db,'eventos'), data);
+      texto: $('eventoTexto').value.trim(),
+      fecha: aISO($('eventoFecha').value || todayISO(), $('eventoHora').value || '00:00'),
+      imagen: $('eventoImagen').value || null
+    });
     closeModal('modalEvento');
     await loadEventos();
     toast('Evento guardado ✓');
-  } catch(e) { toast('Error: ' + e.message, 'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+  });
 };
 window.deleteEvento = async (id) => {
-  await deleteDoc(doc(db,'eventos',id));
+  await borrar('eventos', id);
   await loadEventos();
   toast('Evento eliminado');
 };
@@ -1237,79 +1467,61 @@ window.deleteEvento = async (id) => {
 ════════════════════════════════ */
 let galeriaData = [];
 async function loadGaleria() {
-  const snap = await getDocs(query(collection(db,'galeria'), orderBy('fecha','desc')));
-  galeriaData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  document.getElementById('countAlbumes').textContent = galeriaData.length;
+  galeriaData = await listar('galeria', 'fecha', false);
+  $('countAlbumes').textContent = galeriaData.length;
   renderGaleria();
 }
 function renderGaleria() {
-  const cont = document.getElementById('list-galeria');
-  if (!galeriaData.length) {
-    cont.innerHTML = `<div class="empty-state"><p>No hay álbumes. Crea el primero.</p></div>`; return;
-  }
+  const cont = $('list-galeria');
+  if (!galeriaData.length) { cont.innerHTML = `<div class="empty-state"><p>No hay álbumes. Crea el primero.</p></div>`; return; }
   cont.innerHTML = galeriaData.map(g => `
     <div class="item-card">
-      ${g.portada ? `<img class="item-card-thumb" src="${g.portada}" loading="lazy">` : `<div class="item-card-thumb-ph"><svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.2)"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>`}
+      ${thumb(g.portada, 'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z')}
       <div class="item-info">
-        <div class="item-title">${g.nombre || '(Sin nombre)'}</div>
+        <div class="item-title">${escapeHtml(g.nombre || '(Sin nombre)')}</div>
         <div class="item-meta">${formatDate(g.fecha)} — <strong style="color:var(--gold)">${(g.fotos||[]).length} fotos</strong></div>
       </div>
-      <div class="item-actions">
-        <button class="btn-icon" onclick="editAlbum('${g.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
-        <button class="btn-icon danger" onclick="askDelete(()=>deleteAlbum('${g.id}'))"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
-      </div>
+      ${acciones('editAlbum', 'deleteAlbum', g.id)}
     </div>`).join('');
 }
 window.openAlbumModal = () => {
-  document.getElementById('albumId').value = '';
-  document.getElementById('albumNombre').value = '';
-  document.getElementById('albumFecha').value = todayISO();
-  document.getElementById('albumPortada').value = '';
-  document.getElementById('albumImgPreview').classList.remove('show');
-  document.getElementById('albumImgClear').classList.remove('show');
+  $('albumId').value = '';
+  $('albumNombre').value = '';
+  $('albumFecha').value = todayISO();
+  setImagen('album', '');
   albumPhotos = [];
   renderAlbumPhotosGrid();
-  document.getElementById('modalAlbumTitle').textContent = 'Nuevo álbum';
+  $('modalAlbumTitle').textContent = 'Nuevo álbum';
   openModal('modalAlbum');
 };
 window.editAlbum = (id) => {
   const g = galeriaData.find(x => x.id === id); if (!g) return;
-  document.getElementById('albumId').value = id;
-  document.getElementById('albumNombre').value = g.nombre || '';
-  document.getElementById('albumFecha').value = g.fecha?.toDate ? g.fecha.toDate().toISOString().slice(0,10) : todayISO();
-  document.getElementById('albumPortada').value = g.portada || '';
-  const prev = document.getElementById('albumImgPreview');
-  const clr  = document.getElementById('albumImgClear');
-  if (g.portada) { prev.src = g.portada; prev.classList.add('show'); clr.classList.add('show'); }
-  else { prev.classList.remove('show'); clr.classList.remove('show'); }
+  $('albumId').value = id;
+  $('albumNombre').value = g.nombre || '';
+  $('albumFecha').value = fechaInput(g.fecha);
+  setImagen('album', g.portada);
   albumPhotos = [...(g.fotos || [])];
   renderAlbumPhotosGrid();
-  document.getElementById('modalAlbumTitle').textContent = 'Editar álbum';
+  $('modalAlbumTitle').textContent = 'Editar álbum';
   openModal('modalAlbum');
 };
-window.saveAlbum = async () => {
-  const nombre = document.getElementById('albumNombre').value.trim();
+window.saveAlbum = () => {
+  const nombre = $('albumNombre').value.trim();
   if (!nombre) { toast('El nombre del álbum es obligatorio', 'error'); return; }
-  const btn = document.querySelector('#modalAlbum .btn-save');
-  btn.disabled = true; btn.textContent = 'Guardando…';
-  try {
-    const data = {
+  return conGuardado('modalAlbum', 'Guardando…', async () => {
+    await guardar('galeria', $('albumId').value, {
       nombre,
-      fecha: Timestamp.fromDate(new Date(document.getElementById('albumFecha').value + 'T12:00:00')),
-      portada: document.getElementById('albumPortada').value || albumPhotos[0] || null,
+      fecha: aISO($('albumFecha').value || todayISO()),
+      portada: $('albumPortada').value || albumPhotos[0] || null,
       fotos: [...albumPhotos]
-    };
-    const id = document.getElementById('albumId').value;
-    if (id) await updateDoc(doc(db,'galeria',id), data);
-    else    await addDoc(collection(db,'galeria'), data);
+    });
     closeModal('modalAlbum');
     await loadGaleria();
     toast('Álbum guardado ✓');
-  } catch(e) { toast('Error: ' + e.message, 'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Guardar álbum'; }
+  });
 };
 window.deleteAlbum = async (id) => {
-  await deleteDoc(doc(db,'galeria',id));
+  await borrar('galeria', id);
   await loadGaleria();
   toast('Álbum eliminado');
 };
@@ -1319,310 +1531,270 @@ window.deleteAlbum = async (id) => {
 ════════════════════════════════ */
 let blogData = [];
 async function loadBlog() {
-  const snap = await getDocs(query(collection(db,'blog'), orderBy('fecha','desc')));
-  blogData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  document.getElementById('countBlog').textContent = blogData.length;
+  blogData = await listar('blog', 'fecha', false);
+  $('countBlog').textContent = blogData.length;
   renderBlog();
 }
 function renderBlog() {
-  const cont = document.getElementById('list-blog');
-  if (!blogData.length) {
-    cont.innerHTML = `<div class="empty-state"><p>No hay artículos. Crea el primero.</p></div>`; return;
-  }
+  const cont = $('list-blog');
+  if (!blogData.length) { cont.innerHTML = `<div class="empty-state"><p>No hay artículos. Crea el primero.</p></div>`; return; }
   cont.innerHTML = blogData.map(b => `
     <div class="item-card">
-      ${b.imagen ? `<img class="item-card-thumb" src="${b.imagen}" loading="lazy">` : `<div class="item-card-thumb-ph"><svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.2)"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>`}
+      ${thumb(b.imagen, 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z')}
       <div class="item-info">
-        <div class="item-title">${b.titulo || '(Sin título)'}</div>
+        <div class="item-title">${escapeHtml(b.titulo || '(Sin título)')}</div>
         <div class="item-meta">
-          <span class="item-tag blog">${b.categoria || 'Reflexión'}</span>
-          ${b.autor || 'PIEBA'} — ${formatDate(b.fecha)}
+          <span class="item-tag blog">${escapeHtml(b.categoria || 'Reflexión')}</span>
+          ${escapeHtml(b.autor || 'PIEBA')} — ${formatDate(b.fecha)}
         </div>
-        <div class="item-meta" style="margin-top:.3rem;">${(b.extracto||'').slice(0,80)}${(b.extracto||'').length>80?'…':''}</div>
+        <div class="item-meta" style="margin-top:.3rem;">${recortar(b.extracto, 80)}</div>
       </div>
-      <div class="item-actions">
-        <button class="btn-icon" onclick="editBlog('${b.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
-        <button class="btn-icon danger" onclick="askDelete(()=>deleteBlog('${b.id}'))"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
-      </div>
+      ${acciones('editBlog', 'deleteBlog', b.id)}
     </div>`).join('');
 }
 window.openBlogModal = () => {
-  document.getElementById('blogId').value = '';
-  document.getElementById('blogTitulo').value = '';
-  document.getElementById('blogCategoria').value = '';
-  document.getElementById('blogAutor').value = '';
-  document.getElementById('blogExtracto').value = '';
-  document.getElementById('blogImagen').value = '';
-  document.getElementById('blogFecha').value = todayISO();
-  document.getElementById('blogImgPreview').classList.remove('show');
-  document.getElementById('blogImgClear').classList.remove('show');
-  document.getElementById('modalBlogTitle').textContent = 'Nuevo artículo';
+  $('blogId').value = '';
+  $('blogTitulo').value = '';
+  $('blogCategoria').value = '';
+  $('blogAutor').value = '';
+  $('blogExtracto').value = '';
+  $('blogFecha').value = todayISO();
+  setImagen('blog', '');
+  $('modalBlogTitle').textContent = 'Nuevo artículo';
   openModal('modalBlog');
 };
 window.editBlog = (id) => {
   const b = blogData.find(x => x.id === id); if (!b) return;
-  document.getElementById('blogId').value = id;
-  document.getElementById('blogTitulo').value = b.titulo || '';
-  document.getElementById('blogCategoria').value = b.categoria || '';
-  document.getElementById('blogAutor').value = b.autor || '';
-  document.getElementById('blogExtracto').value = b.extracto || '';
-  document.getElementById('blogImagen').value = b.imagen || '';
-  document.getElementById('blogFecha').value = b.fecha?.toDate ? b.fecha.toDate().toISOString().slice(0,10) : todayISO();
-  const prev = document.getElementById('blogImgPreview');
-  const clr  = document.getElementById('blogImgClear');
-  if (b.imagen) { prev.src = b.imagen; prev.classList.add('show'); clr.classList.add('show'); }
-  else { prev.classList.remove('show'); clr.classList.remove('show'); }
-  document.getElementById('modalBlogTitle').textContent = 'Editar artículo';
+  $('blogId').value = id;
+  $('blogTitulo').value = b.titulo || '';
+  $('blogCategoria').value = b.categoria || '';
+  $('blogAutor').value = b.autor || '';
+  $('blogExtracto').value = b.extracto || '';
+  $('blogFecha').value = fechaInput(b.fecha);
+  setImagen('blog', b.imagen);
+  $('modalBlogTitle').textContent = 'Editar artículo';
   openModal('modalBlog');
 };
-window.saveBlog = async () => {
-  const titulo = document.getElementById('blogTitulo').value.trim();
+window.saveBlog = () => {
+  const titulo = $('blogTitulo').value.trim();
   if (!titulo) { toast('El título es obligatorio', 'error'); return; }
-  const btn = document.querySelector('#modalBlog .btn-save');
-  btn.disabled = true; btn.textContent = 'Publicando…';
-  try {
-    const data = {
+  return conGuardado('modalBlog', 'Publicando…', async () => {
+    await guardar('blog', $('blogId').value, {
       titulo,
-      categoria: document.getElementById('blogCategoria').value.trim() || 'Reflexión',
-      autor: document.getElementById('blogAutor').value.trim() || 'PIEBA',
-      extracto: document.getElementById('blogExtracto').value.trim(),
-      imagen: document.getElementById('blogImagen').value || null,
-      fecha: Timestamp.fromDate(new Date(document.getElementById('blogFecha').value + 'T12:00:00'))
-    };
-    const id = document.getElementById('blogId').value;
-    if (id) await updateDoc(doc(db,'blog',id), data);
-    else    await addDoc(collection(db,'blog'), data);
+      categoria: $('blogCategoria').value.trim() || 'Reflexión',
+      autor: $('blogAutor').value.trim() || 'PIEBA',
+      extracto: $('blogExtracto').value.trim(),
+      imagen: $('blogImagen').value || null,
+      fecha: aISO($('blogFecha').value || todayISO())
+    });
     closeModal('modalBlog');
     await loadBlog();
     toast('Artículo publicado ✓');
-  } catch(e) { toast('Error: ' + e.message, 'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Publicar'; }
+  });
 };
 window.deleteBlog = async (id) => {
-  await deleteDoc(doc(db,'blog',id));
+  await borrar('blog', id);
   await loadBlog();
   toast('Artículo eliminado');
 };
-
-async function loadAll() {
-  await Promise.all([loadAvisos(), loadEventos(), loadGaleria(), loadBlog(), loadMiembros(), loadWebConfig()]);
-}
 
 /* ════════════════════════════════
    MIEMBROS
 ════════════════════════════════ */
 let miembrosData = [];
 async function loadMiembros() {
-  const snap = await getDocs(query(collection(db,'miembros'), orderBy('orden','asc')));
-  miembrosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  miembrosData = await listar('miembros', 'orden', true);
   renderMiembros();
 }
 function renderMiembros() {
-  const cont = document.getElementById('list-miembros');
-  if (!miembrosData.length) {
-    cont.innerHTML = `<div class="empty-state"><p>No hay miembros. Agrega el primero.</p></div>`; return;
-  }
+  const cont = $('list-miembros');
+  if (!miembrosData.length) { cont.innerHTML = `<div class="empty-state"><p>No hay miembros. Agrega el primero.</p></div>`; return; }
   cont.innerHTML = miembrosData.map(m => `
     <div class="item-card">
-      ${m.foto
-        ? `<img class="item-card-thumb" src="${m.foto}" loading="lazy" style="border-radius:50%;">`
-        : `<div class="item-card-thumb-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,255,255,.3)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>`}
+      ${thumb(m.foto, 'M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z', true)}
       <div class="item-info">
-        <div class="item-title">${m.nombre || '(Sin nombre)'}</div>
+        <div class="item-title">${escapeHtml(m.nombre || '(Sin nombre)')}</div>
         <div class="item-meta">
-          ${m.isPastor ? `<span class="item-tag info">Pastor</span>` : `<span class="item-tag normal">${m.rol || 'Miembro'}</span>`}
-          ${m.anio ? 'Bautizado/a ' + m.anio : ''}
+          ${m.es_pastor ? `<span class="item-tag info">Pastor</span>` : `<span class="item-tag normal">${escapeHtml(m.rol || 'Miembro')}</span>`}
+          ${m.anio ? 'Bautizado/a ' + escapeHtml(m.anio) : ''}
         </div>
-        ${m.frase ? `<div class="item-meta" style="margin-top:.3rem;font-style:italic;">"${m.frase.slice(0,60)}${m.frase.length>60?'…':''}"</div>` : ''}
+        ${m.frase ? `<div class="item-meta" style="margin-top:.3rem;font-style:italic;">"${recortar(m.frase, 60)}"</div>` : ''}
       </div>
-      <div class="item-actions">
-        <button class="btn-icon" onclick="editMiembro('${m.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
-        <button class="btn-icon danger" onclick="askDelete(()=>deleteMiembro('${m.id}'))"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
-      </div>
+      ${acciones('editMiembro', 'deleteMiembro', m.id)}
     </div>`).join('');
 }
 window.openMiembroModal = () => {
-  document.getElementById('miembroId').value = '';
-  document.getElementById('miembroNombre').value = '';
-  document.getElementById('miembroAnio').value = '';
-  document.getElementById('miembroRol').value = '';
-  document.getElementById('miembroOrden').value = miembrosData.length + 1;
-  document.getElementById('miembroFrase').value = '';
-  document.getElementById('miembroReferencia').value = '';
-  document.getElementById('miembroImagen').value = '';
-  document.getElementById('miembroIsPastor').checked = false;
-  document.getElementById('miembroImgPreview').classList.remove('show');
-  document.getElementById('miembroImgClear').classList.remove('show');
-  document.getElementById('modalMiembroTitle').textContent = 'Nuevo miembro';
+  $('miembroId').value = '';
+  $('miembroNombre').value = '';
+  $('miembroAnio').value = '';
+  $('miembroRol').value = '';
+  $('miembroOrden').value = miembrosData.length + 1;
+  $('miembroFrase').value = '';
+  $('miembroReferencia').value = '';
+  $('miembroIsPastor').checked = false;
+  setImagen('miembro', '');
+  $('modalMiembroTitle').textContent = 'Nuevo miembro';
   openModal('modalMiembro');
 };
 window.editMiembro = (id) => {
   const m = miembrosData.find(x => x.id === id); if (!m) return;
-  document.getElementById('miembroId').value = id;
-  document.getElementById('miembroNombre').value = m.nombre || '';
-  document.getElementById('miembroAnio').value = m.anio || '';
-  document.getElementById('miembroRol').value = m.rol || '';
-  document.getElementById('miembroOrden').value = m.orden ?? 99;
-  document.getElementById('miembroFrase').value = m.frase || '';
-  document.getElementById('miembroReferencia').value = m.referencia || '';
-  document.getElementById('miembroImagen').value = m.foto || '';
-  document.getElementById('miembroIsPastor').checked = !!m.isPastor;
-  const prev = document.getElementById('miembroImgPreview');
-  const clr  = document.getElementById('miembroImgClear');
-  if (m.foto) { prev.src = m.foto; prev.classList.add('show'); clr.classList.add('show'); }
-  else { prev.classList.remove('show'); clr.classList.remove('show'); }
-  document.getElementById('modalMiembroTitle').textContent = 'Editar miembro';
+  $('miembroId').value = id;
+  $('miembroNombre').value = m.nombre || '';
+  $('miembroAnio').value = m.anio || '';
+  $('miembroRol').value = m.rol || '';
+  $('miembroOrden').value = m.orden ?? 99;
+  $('miembroFrase').value = m.frase || '';
+  $('miembroReferencia').value = m.referencia || '';
+  $('miembroIsPastor').checked = !!m.es_pastor;
+  setImagen('miembro', m.foto);
+  $('modalMiembroTitle').textContent = 'Editar miembro';
   openModal('modalMiembro');
 };
-window.saveMiembro = async () => {
-  const nombre = document.getElementById('miembroNombre').value.trim();
+window.saveMiembro = () => {
+  const nombre = $('miembroNombre').value.trim();
   if (!nombre) { toast('El nombre es obligatorio', 'error'); return; }
-  const btn = document.querySelector('#modalMiembro .btn-save');
-  btn.disabled = true; btn.textContent = 'Guardando…';
-  try {
-    const data = {
+  return conGuardado('modalMiembro', 'Guardando…', async () => {
+    await guardar('miembros', $('miembroId').value, {
       nombre,
-      anio: parseInt(document.getElementById('miembroAnio').value) || null,
-      rol: document.getElementById('miembroRol').value.trim() || null,
-      orden: parseInt(document.getElementById('miembroOrden').value) || 99,
-      frase: document.getElementById('miembroFrase').value.trim() || null,
-      referencia: document.getElementById('miembroReferencia').value.trim() || null,
-      foto: document.getElementById('miembroImagen').value || null,
-      isPastor: document.getElementById('miembroIsPastor').checked
-    };
-    const id = document.getElementById('miembroId').value;
-    if (id) await updateDoc(doc(db,'miembros',id), data);
-    else    await addDoc(collection(db,'miembros'), data);
+      anio: parseInt($('miembroAnio').value) || null,
+      rol: $('miembroRol').value.trim() || null,
+      orden: parseInt($('miembroOrden').value) || 99,
+      frase: $('miembroFrase').value.trim() || null,
+      referencia: $('miembroReferencia').value.trim() || null,
+      foto: $('miembroImagen').value || null,
+      es_pastor: $('miembroIsPastor').checked
+    });
     closeModal('modalMiembro');
     await loadMiembros();
     toast('Miembro guardado ✓');
-  } catch(e) { toast('Error: ' + e.message, 'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+  });
 };
 window.deleteMiembro = async (id) => {
-  await deleteDoc(doc(db,'miembros',id));
+  await borrar('miembros', id);
   await loadMiembros();
   toast('Miembro eliminado');
 };
 
+/* ════════════════════════════════
+   USUARIOS DEL PANEL
+════════════════════════════════ */
+let usuariosData = [];
+async function loadUsuarios() {
+  usuariosData = ok(await supabase.rpc('listar_usuarios'));
+  renderUsuarios();
+}
+function renderUsuarios() {
+  const cont = $('list-usuarios');
+  if (!usuariosData.length) { cont.innerHTML = `<div class="empty-state"><p>No hay usuarios.</p></div>`; return; }
+  cont.innerHTML = usuariosData.map(u => {
+    const yo = u.email === authEmail;
+    return `
+    <div class="item-card" style="align-items:center;">
+      <div class="user-avatar-lg">${escapeHtml((u.nombre || u.email)[0].toUpperCase())}</div>
+      <div class="item-info">
+        <div class="item-title" style="font-family:'Raleway',sans-serif;">${escapeHtml(u.nombre || u.email)}${yo ? ' <span style="color:var(--muted);font-size:.72rem;">(vos)</span>' : ''}</div>
+        <div class="item-meta">
+          ${u.activo ? '<span class="item-tag activo">Activo</span>' : '<span class="item-tag pendiente">Pendiente</span>'}
+          ${u.nombre ? escapeHtml(u.email) + ' · ' : ''}${u.activo
+            ? (u.ultimo_ingreso ? 'Último ingreso: ' + formatDate(u.ultimo_ingreso) : 'Nunca ingresó')
+            : 'Todavía no creó su contraseña'}
+        </div>
+      </div>
+      ${yo ? '' : `<div class="item-actions"><button class="btn-icon danger" title="Quitar acceso" onclick="quitarUsuario('${escapeHtml(u.email)}')">${ICON_DEL}</button></div>`}
+    </div>`; }).join('');
+}
+window.agregarUsuario = async () => {
+  const email = $('nuevoUsuarioEmail').value.trim().toLowerCase();
+  const nombre = $('nuevoUsuarioNombre').value.trim() || null;
+  if (!email) return;
+  const btn = $('btnAgregarUsuario');
+  btn.disabled = true;
+  try {
+    ok(await supabase.from('usuarios_permitidos').insert({ email, nombre }));
+    $('nuevoUsuarioEmail').value = ''; $('nuevoUsuarioNombre').value = '';
+    await loadUsuarios();
+    toast('Usuario agregado ✓ Ya puede ingresar con su correo.');
+  } catch (e) {
+    toast(/duplicate|23505/i.test(e.message) ? 'Ese correo ya está en la lista.' : 'Error: ' + mensajeError(e), 'error');
+  } finally { btn.disabled = false; }
+};
+window.quitarUsuario = (email) => askDelete(async () => {
+  ok(await supabase.from('usuarios_permitidos').delete().eq('email', email));
+  await loadUsuarios();
+  toast('Acceso quitado');
+}, '¿Quitar acceso?', `${email} ya no podrá ingresar al panel. Su cuenta se elimina; si lo volvés a agregar, tendrá que crear una contraseña nueva.`);
+
+/* ════════════════════════════════
+   CARGA INICIAL
+════════════════════════════════ */
+async function loadAll() {
+  const tareas = [loadAvisos, loadEventos, loadGaleria, loadBlog, loadMiembros, loadUsuarios, loadWebConfig];
+  const resultados = await Promise.allSettled(tareas.map(fn => fn()));
+  const fallas = resultados.filter(r => r.status === 'rejected');
+  if (fallas.length) {
+    console.error(fallas.map(f => f.reason));
+    toast('Error al cargar algunos datos: ' + mensajeError(fallas[0].reason), 'error');
+  }
+}
+
 /* ── MOBILE SIDEBAR ── */
 window.toggleSidebar = function() {
   const sb = document.querySelector('.sidebar');
-  const ov = document.getElementById('sidebarOverlay');
+  const ov = $('sidebarOverlay');
   const isOpen = sb.classList.contains('open');
-  if (isOpen) { sb.classList.remove('open'); ov.classList.remove('open'); }
-  else { sb.classList.add('open'); ov.classList.add('open'); }
+  sb.classList.toggle('open', !isOpen); ov.classList.toggle('open', !isOpen);
 };
 window.closeSidebar = function() {
-  const sb = document.querySelector('.sidebar');
-  const ov = document.getElementById('sidebarOverlay');
-  if (sb) sb.classList.remove('open');
-  if (ov) ov.classList.remove('open');
+  document.querySelector('.sidebar')?.classList.remove('open');
+  $('sidebarOverlay')?.classList.remove('open');
 };
 
-
 /* ══════════════════════════════════════════
-   CONFIGURACION WEB (Inicio, Nosotros, etc)
+   CONFIGURACIÓN WEB (Inicio, Nosotros, etc)
 ══════════════════════════════════════════ */
+const CFG_CAMPOS = {
+  inicio:    { titulo: 'cfg-ini-titulo', subtitulo: 'cfg-ini-subtitulo', versiculo: 'cfg-ini-versiculo', referencia: 'cfg-ini-referencia' },
+  nosotros:  { texto: 'cfg-nos-texto', v1: 'cfg-nos-v1', v2: 'cfg-nos-v2', v3: 'cfg-nos-v3', v4: 'cfg-nos-v4' },
+  contacto:  { dir: 'cfg-con-dir', tel: 'cfg-con-tel', email: 'cfg-con-email', fb: 'cfg-con-fb', ig: 'cfg-con-ig', yt: 'cfg-con-yt', wa: 'cfg-con-wa' },
+  ofrendas:  { versiculo: 'cfg-ofr-versiculo', banco: 'cfg-ofr-banco', cuenta: 'cfg-ofr-cuenta', titular: 'cfg-ofr-titular', ruc: 'cfg-ofr-ruc' }
+};
+const COM_CAMPOS = ['dia', 'hora', 'nombre', 'desc'];
+
 window.loadWebConfig = async () => {
-  try {
-    const docSnap = await getDoc(doc(db, "avisos", "webconfig"));
-    if (docSnap.exists()) {
-      const d = docSnap.data();
-      if(d.inicio) {
-        if(d.inicio.titulo) document.getElementById('cfg-ini-titulo').value = d.inicio.titulo;
-        if(d.inicio.subtitulo) document.getElementById('cfg-ini-subtitulo').value = d.inicio.subtitulo;
-        if(d.inicio.versiculo) document.getElementById('cfg-ini-versiculo').value = d.inicio.versiculo;
-        if(d.inicio.referencia) document.getElementById('cfg-ini-referencia').value = d.inicio.referencia;
-      }
-      if(d.nosotros) {
-        if(d.nosotros.texto) document.getElementById('cfg-nos-texto').value = d.nosotros.texto;
-        if(d.nosotros.v1) document.getElementById('cfg-nos-v1').value = d.nosotros.v1;
-        if(d.nosotros.v2) document.getElementById('cfg-nos-v2').value = d.nosotros.v2;
-        if(d.nosotros.v3) document.getElementById('cfg-nos-v3').value = d.nosotros.v3;
-        if(d.nosotros.v4) document.getElementById('cfg-nos-v4').value = d.nosotros.v4;
-      }
-      if(d.comunidad) {
-        for(let i=1; i<=3; i++) {
-          if(d.comunidad['c'+i]) {
-            if(d.comunidad['c'+i].dia) document.getElementById('cfg-com-c'+i+'-dia').value = d.comunidad['c'+i].dia;
-            if(d.comunidad['c'+i].hora) document.getElementById('cfg-com-c'+i+'-hora').value = d.comunidad['c'+i].hora;
-            if(d.comunidad['c'+i].nombre) document.getElementById('cfg-com-c'+i+'-nombre').value = d.comunidad['c'+i].nombre;
-            if(d.comunidad['c'+i].desc) document.getElementById('cfg-com-c'+i+'-desc').value = d.comunidad['c'+i].desc;
-          }
-        }
-      }
-      if(d.contacto) {
-        if(d.contacto.dir) document.getElementById('cfg-con-dir').value = d.contacto.dir;
-        if(d.contacto.tel) document.getElementById('cfg-con-tel').value = d.contacto.tel;
-        if(d.contacto.email) document.getElementById('cfg-con-email').value = d.contacto.email;
-        if(d.contacto.fb) document.getElementById('cfg-con-fb').value = d.contacto.fb;
-        if(d.contacto.ig) document.getElementById('cfg-con-ig').value = d.contacto.ig;
-        if(d.contacto.yt) document.getElementById('cfg-con-yt').value = d.contacto.yt;
-        if(d.contacto.wa) document.getElementById('cfg-con-wa').value = d.contacto.wa;
-      }
-      if(d.ofrendas) {
-        if(d.ofrendas.versiculo) document.getElementById('cfg-ofr-versiculo').value = d.ofrendas.versiculo;
-        if(d.ofrendas.banco) document.getElementById('cfg-ofr-banco').value = d.ofrendas.banco;
-        if(d.ofrendas.cuenta) document.getElementById('cfg-ofr-cuenta').value = d.ofrendas.cuenta;
-        if(d.ofrendas.titular) document.getElementById('cfg-ofr-titular').value = d.ofrendas.titular;
-        if(d.ofrendas.ruc) document.getElementById('cfg-ofr-ruc').value = d.ofrendas.ruc;
-      }
+  const d = ok(await supabase.from('web_config').select('*').eq('id', 1).maybeSingle());
+  if (!d) return;
+  for (const [seccion, campos] of Object.entries(CFG_CAMPOS)) {
+    for (const [clave, inputId] of Object.entries(campos)) {
+      if (d[seccion]?.[clave] && $(inputId)) $(inputId).value = d[seccion][clave];
     }
-  } catch(e) { console.error('Error loadWebConfig:', e); }
+  }
+  for (let i = 1; i <= 3; i++) {
+    for (const campo of COM_CAMPOS) {
+      const val = d.comunidad?.['c' + i]?.[campo];
+      if (val && $(`cfg-com-c${i}-${campo}`)) $(`cfg-com-c${i}-${campo}`).value = val;
+    }
+  }
 };
 
 window.saveWebConfig = async (seccion) => {
-  const btn = event.target;
+  const btn = window.event?.target?.closest('button') || document.querySelector(`#sec-cfg-${seccion} .btn-add`);
   const oldText = btn.textContent;
   btn.textContent = 'Guardando...';
   btn.disabled = true;
 
   try {
-    let payload = {};
-    if (seccion === 'inicio') {
-      payload = { inicio: {
-        titulo: document.getElementById('cfg-ini-titulo').value,
-        subtitulo: document.getElementById('cfg-ini-subtitulo').value,
-        versiculo: document.getElementById('cfg-ini-versiculo').value,
-        referencia: document.getElementById('cfg-ini-referencia').value
-      }};
-    } else if (seccion === 'nosotros') {
-      payload = { nosotros: {
-        texto: document.getElementById('cfg-nos-texto').value,
-        v1: document.getElementById('cfg-nos-v1').value,
-        v2: document.getElementById('cfg-nos-v2').value,
-        v3: document.getElementById('cfg-nos-v3').value,
-        v4: document.getElementById('cfg-nos-v4').value
-      }};
-    } else if (seccion === 'comunidad') {
-      payload = { comunidad: {
-        c1: { dia: document.getElementById('cfg-com-c1-dia').value, hora: document.getElementById('cfg-com-c1-hora').value, nombre: document.getElementById('cfg-com-c1-nombre').value, desc: document.getElementById('cfg-com-c1-desc').value },
-        c2: { dia: document.getElementById('cfg-com-c2-dia').value, hora: document.getElementById('cfg-com-c2-hora').value, nombre: document.getElementById('cfg-com-c2-nombre').value, desc: document.getElementById('cfg-com-c2-desc').value },
-        c3: { dia: document.getElementById('cfg-com-c3-dia').value, hora: document.getElementById('cfg-com-c3-hora').value, nombre: document.getElementById('cfg-com-c3-nombre').value, desc: document.getElementById('cfg-com-c3-desc').value }
-      }};
-    } else if (seccion === 'contacto') {
-      payload = { contacto: {
-        dir: document.getElementById('cfg-con-dir').value,
-        tel: document.getElementById('cfg-con-tel').value,
-        email: document.getElementById('cfg-con-email').value,
-        fb: document.getElementById('cfg-con-fb').value,
-        ig: document.getElementById('cfg-con-ig').value,
-        yt: document.getElementById('cfg-con-yt').value,
-        wa: document.getElementById('cfg-con-wa').value
-      }};
-    } else if (seccion === 'ofrendas') {
-      payload = { ofrendas: {
-        versiculo: document.getElementById('cfg-ofr-versiculo').value,
-        banco: document.getElementById('cfg-ofr-banco').value,
-        cuenta: document.getElementById('cfg-ofr-cuenta').value,
-        titular: document.getElementById('cfg-ofr-titular').value,
-        ruc: document.getElementById('cfg-ofr-ruc').value
-      }};
+    let valor = {};
+    if (seccion === 'comunidad') {
+      for (let i = 1; i <= 3; i++) {
+        valor['c' + i] = {};
+        for (const campo of COM_CAMPOS) valor['c' + i][campo] = $(`cfg-com-c${i}-${campo}`).value;
+      }
+    } else {
+      for (const [clave, inputId] of Object.entries(CFG_CAMPOS[seccion])) valor[clave] = $(inputId).value;
     }
 
-    await setDoc(doc(db, "avisos", "webconfig"), payload, { merge: true });
-    
+    ok(await supabase.from('web_config').update({ [seccion]: valor }).eq('id', 1));
+
     btn.textContent = '¡Guardado!';
     btn.style.background = 'var(--gold)';
     btn.style.color = 'var(--navy-deep)';
@@ -1634,14 +1806,13 @@ window.saveWebConfig = async (seccion) => {
     }, 2500);
   } catch (error) {
     console.error(error);
-    alert("Error al guardar la configuración.");
+    toast('Error al guardar la configuración: ' + mensajeError(error), 'error');
     btn.textContent = oldText;
     btn.disabled = false;
   }
 };
 
 /* close modal on overlay click */
-
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
 });
