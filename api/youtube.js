@@ -25,7 +25,8 @@ export default async function handler(req, res) {
   url.searchParams.set('key', key);
 
   try {
-    const r = await fetch(url);
+    // La clave está restringida a la web: el servidor se presenta como la web
+    const r = await fetch(url, { headers: { Referer: 'https://www.primeradeasuncion.org.py/' } });
     const body = await r.text();
     // Cache en el borde de Vercel: ahorra cuota de YouTube
     res.setHeader('Cache-Control', endpoint === 'search' ? 's-maxage=60, stale-while-revalidate=60' : 's-maxage=600, stale-while-revalidate=600');
