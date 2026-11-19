@@ -1170,9 +1170,8 @@ if (location.hash) {
 
 <script>
 /* ─── YOUTUBE ─── */
-const YT_API_KEY    = 'AIzaSyAgz1KXOuS4q-uxNKL9GJdRQJ4P1jGrDG4';
+// La clave de YouTube vive en el servidor (api/youtube.js), no en la página.
 const YT_CHANNEL_ID = 'UCcijrVl3zWSXSuzP3nQI32A';
-const YT_BASE       = 'https://www.googleapis.com/youtube/v3';
 
 const vtState = { cultosDetectados: [], _ytLoaded: false };
 const $id = id => document.getElementById(id);
@@ -1203,8 +1202,9 @@ function scoreCulto(video) {
 }
 
 async function ytFetch(path, params={}) {
-  const url = new URL(`${YT_BASE}/${path}`);
-  Object.entries({...params, key: YT_API_KEY}).forEach(([k,v]) => { if(v) url.searchParams.set(k,v); });
+  const url = new URL('/api/youtube', location.origin);
+  url.searchParams.set('endpoint', path);
+  Object.entries(params).forEach(([k,v]) => { if(v) url.searchParams.set(k,v); });
   const res = await fetch(url);
   return res.json();
 }
