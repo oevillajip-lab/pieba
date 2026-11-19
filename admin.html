@@ -250,6 +250,31 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .editor-subiendo { opacity: .55; pointer-events: none; }
 @media (max-width: 700px) { .editor-wrap .ql-container.ql-snow { height: 360px; } .editor-wrap .ql-editor { padding: 1rem 1.1rem; } }
 
+
+/* ── INSPIRACIÓN BÍBLICA ── */
+.verse-gen { position: relative; margin: .25rem 0 1.6rem; padding: 1.3rem 1.4rem 1rem; border: 1px solid var(--gold-dim); border-radius: 6px; background: linear-gradient(135deg, rgba(201,169,110,.10), rgba(201,169,110,.02) 60%), var(--glass); overflow: hidden; }
+.verse-gen::before { content: '“'; position: absolute; right: .9rem; top: -1.6rem; font-family: 'Cinzel', serif; font-size: 7rem; color: rgba(201,169,110,.08); pointer-events: none; }
+.verse-gen-head { display: flex; align-items: center; gap: .85rem; margin-bottom: 1rem; }
+.verse-gen-icon { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(201,169,110,.45); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; }
+.verse-gen-title { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 600; color: var(--gold); }
+.verse-gen-sub { font-size: .74rem; color: var(--muted); margin-top: .15rem; }
+.verse-chips { display: flex; flex-wrap: wrap; gap: .45rem; }
+.verse-chip { background: transparent; border: 1px solid var(--glass-b); color: var(--muted); border-radius: 999px; padding: .4rem .85rem; font-family: 'Raleway', sans-serif; font-size: .72rem; letter-spacing: .04em; cursor: pointer; transition: .2s; }
+.verse-chip:hover { border-color: rgba(201,169,110,.5); color: var(--white); }
+.verse-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,.08); }
+.verse-chip.sorpresa { background: var(--gold); border-color: var(--gold); color: var(--navy-deep); font-weight: 700; }
+.verse-chip.sorpresa:hover { opacity: .88; color: var(--navy-deep); }
+.verse-chip:disabled { opacity: .5; cursor: default; }
+.verse-preview { margin-top: 1.1rem; padding: 1.1rem 1.2rem; border-left: 2px solid var(--gold); background: rgba(7,5,30,.45); border-radius: 0 4px 4px 0; animation: versoIn .35s ease; }
+.verse-preview.cargando .verse-preview-text, .verse-preview.cargando .verse-preview-ref { opacity: .35; }
+@keyframes versoIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.verse-preview-text { font-family: 'Cinzel', serif; font-size: 1rem; line-height: 1.6; color: var(--white); transition: opacity .2s; }
+.verse-preview-ref { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: .55rem; transition: opacity .2s; }
+.verse-preview-actions { display: flex; gap: .6rem; margin-top: 1rem; flex-wrap: wrap; }
+.verse-gen-foot { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-top: .9rem; text-align: right; }
+.campo-destacado { animation: destacar 1.6s ease; }
+@keyframes destacar { 0%, 100% { box-shadow: none; } 25% { box-shadow: 0 0 0 2px var(--gold); } }
+
 /* ── DASHBOARD ── */
 .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; }
 .dash-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 6px; padding: 1.25rem 1.4rem; cursor: pointer; transition: .2s; }
@@ -520,6 +545,25 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
         <div class="form-field">
           <label>Subtítulo</label>
           <input type="text" id="cfg-ini-subtitulo" value="">
+        </div>
+        <div class="verse-gen" id="verseGen">
+          <div class="verse-gen-head">
+            <div class="verse-gen-icon">✦</div>
+            <div>
+              <div class="verse-gen-title">Inspiración bíblica</div>
+              <div class="verse-gen-sub">Elegí un tema y te sugerimos un versículo para la portada.</div>
+            </div>
+          </div>
+          <div class="verse-chips" id="verseChips"></div>
+          <div class="verse-preview" id="versePreview" hidden>
+            <p class="verse-preview-text" id="versePreviewText"></p>
+            <p class="verse-preview-ref" id="versePreviewRef"></p>
+            <div class="verse-preview-actions">
+              <button type="button" class="btn-save" onclick="usarVersiculo()">Usar este versículo</button>
+              <button type="button" class="btn-secondary" id="btnOtroVersiculo" onclick="otroVersiculo()">↻ Otro</button>
+            </div>
+          </div>
+          <div class="verse-gen-foot">Reina-Valera 1909 · bible-api.com</div>
         </div>
         <div class="form-field">
           <label>Versículo (hero)</label>
@@ -981,6 +1025,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 <script type="module">
 import { supabase, ok } from './js/supabase.js';
+import { TEMAS, sugerirVersiculo } from './js/versiculos.js';
 
 /* ════════════════════════════════
    UTILS
@@ -1727,6 +1772,53 @@ async function insertarImagenBlog() {
     console.error(e);
   }
 }
+
+
+/* ════════════════════════════════
+   INSPIRACIÓN BÍBLICA (Página de Inicio)
+════════════════════════════════ */
+let temaVersiculo = null, versiculoSugerido = null, buscandoVersiculo = false;
+function pintarChipsVersiculo() {
+  const chips = [`<button type="button" class="verse-chip sorpresa" data-tema="">✨ Sorprendeme</button>`]
+    .concat(Object.keys(TEMAS).map(t => `<button type="button" class="verse-chip" data-tema="${escapeHtml(t)}">${escapeHtml(t)}</button>`));
+  $('verseChips').innerHTML = chips.join('');
+  $('verseChips').querySelectorAll('.verse-chip').forEach(b => b.addEventListener('click', () => buscarVersiculo(b.dataset.tema || null)));
+}
+async function buscarVersiculo(tema) {
+  if (buscandoVersiculo) return;
+  buscandoVersiculo = true; temaVersiculo = tema;
+  document.querySelectorAll('#verseChips .verse-chip').forEach(b => {
+    b.classList.toggle('active', !b.classList.contains('sorpresa') && (b.dataset.tema || null) === tema);
+    b.disabled = true;
+  });
+  const prev = $('versePreview');
+  prev.hidden = false; prev.classList.add('cargando');
+  if (!versiculoSugerido) { $('versePreviewText').textContent = 'Buscando un versículo…'; $('versePreviewRef').textContent = ''; }
+  $('btnOtroVersiculo').disabled = true;
+  try {
+    versiculoSugerido = await sugerirVersiculo(tema);
+    $('versePreviewText').textContent = `“${versiculoSugerido.texto}”`;
+    $('versePreviewRef').textContent = versiculoSugerido.referencia + (tema ? ` · ${tema}` : '');
+  } catch (e) {
+    console.error(e);
+    toast(e.message || 'No se pudo obtener el versículo', 'error');
+    if (!versiculoSugerido) prev.hidden = true;
+  } finally {
+    prev.classList.remove('cargando');
+    document.querySelectorAll('#verseChips .verse-chip').forEach(b => b.disabled = false);
+    $('btnOtroVersiculo').disabled = false;
+    buscandoVersiculo = false;
+  }
+}
+window.otroVersiculo = () => buscarVersiculo(temaVersiculo);
+window.usarVersiculo = () => {
+  if (!versiculoSugerido) return;
+  $('cfg-ini-versiculo').value = versiculoSugerido.texto;
+  $('cfg-ini-referencia').value = versiculoSugerido.referencia;
+  ['cfg-ini-versiculo', 'cfg-ini-referencia'].forEach(id => { const el = $(id); el.classList.remove('campo-destacado'); void el.offsetWidth; el.classList.add('campo-destacado'); });
+  toast('Versículo listo. Tocá "Guardar cambios" para publicarlo.');
+};
+pintarChipsVersiculo();
 
 /* ════════════════════════════════
    MIEMBROS
