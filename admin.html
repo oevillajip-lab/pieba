@@ -387,6 +387,16 @@ body.con-aviso .toast { bottom: 6.5rem; }
   .dash-grid { grid-template-columns: 1fr; }
   .item-card { flex-wrap: nowrap; }
 }
+
+/* PIEBA Mail */
+.pm-sub { font-family: 'Cinzel', serif; font-size: .95rem; color: var(--gold); letter-spacing: .06em; margin: .4rem 0 .6rem; font-weight: 600; }
+.pm-check { display: flex !important; align-items: center; gap: .55rem; font-size: .85rem !important; text-transform: none !important; letter-spacing: 0 !important; color: var(--white) !important; margin: .35rem 0 !important; cursor: pointer; }
+.pm-check input { width: auto !important; accent-color: var(--gold); }
+.pm-checks { max-height: 210px; overflow: auto; border: 1px solid rgba(255,255,255,.1); border-radius: 4px; padding: .4rem .8rem; }
+.pm-estado { font-size: .7rem; letter-spacing: .08em; padding: .15rem .5rem; border-radius: 3px; border: 1px solid currentColor; }
+.pm-estado.programado { color: #e0b05c; } .pm-estado.enviado { color: #6fcf97; } .pm-estado.inactivo { color: rgba(255,255,255,.4); }
+.pm-switch { display:flex; align-items:center; gap:.45rem; font-size:.75rem; color: var(--muted); cursor:pointer; }
+.pm-switch input { accent-color: var(--gold); }
 </style>
 <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
@@ -538,6 +548,17 @@ body.con-aviso .toast { bottom: 6.5rem; }
       <div class="nav-item" onclick="showSection('usuarios')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
         Usuarios
+      </div>
+      <div id="navPiebaMail" style="display:none;">
+        <div class="nav-section-label" style="margin-top:1.5rem;">PIEBA Mail</div>
+        <div class="nav-item" onclick="showSection('pm-comunicados')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg>
+          Avisos de la app
+        </div>
+        <div class="nav-item" onclick="showSection('pm-app')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+          App y usuarios
+        </div>
       </div>
     </nav>
     <div class="sidebar-footer">
@@ -801,6 +822,76 @@ body.con-aviso .toast { bottom: 6.5rem; }
       </div>
     </div>
 
+    <!-- PIEBA MAIL: COMUNICADOS DE LA APP (solo superadmin) -->
+    <div class="content-section" id="sec-pm-comunicados">
+      <div class="page-header">
+        <div><div class="page-label">PIEBA Mail</div><h1 class="page-title">Avisos de la app</h1></div>
+        <button class="btn-add" onclick="openPmcModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Nuevo aviso
+        </button>
+      </div>
+      <p class="login-help" style="max-width:680px;">Llegan como notificación a los teléfonos con PIEBA Mail (aunque la app esté cerrada) y aparecen como cartel al abrirla. Se envían en menos de un minuto, o en la fecha programada.</p>
+      <div class="items-list" id="list-pm-comunicados">
+        <div class="empty-state"><p>Cargando…</p></div>
+      </div>
+    </div>
+
+    <!-- PIEBA MAIL: APP Y USUARIOS (solo superadmin) -->
+    <div class="content-section" id="sec-pm-app">
+      <div class="page-header">
+        <div><div class="page-label">PIEBA Mail</div><h1 class="page-title">App y usuarios</h1></div>
+      </div>
+
+      <h3 class="pm-sub">Teléfonos con la app</h3>
+      <p class="login-help" style="max-width:680px;">Los administradores ven en la app el registro de errores y el estado del servidor. El resto ve solo lo normal.</p>
+      <div class="items-list" id="list-pm-dispositivos"><div class="empty-state"><p>Cargando…</p></div></div>
+      <form class="user-add-row" style="margin-top:1rem;" onsubmit="event.preventDefault(); agregarAdminApp();">
+        <div class="form-field" style="flex:2;margin:0;"><label for="pmNuevoAdmin">Agregar administrador de la app</label><input type="email" id="pmNuevoAdmin" placeholder="nombre@primeradeasuncion.org.py" required></div>
+        <button type="submit" class="btn-add">Agregar</button>
+      </form>
+
+      <h3 class="pm-sub" style="margin-top:2.2rem;">Versión de la app</h3>
+      <p class="login-help" style="max-width:680px;">Cada versión nueva que se compila aparece acá. Al publicarla, los teléfonos con una versión anterior ven el aviso <b>"Hay una actualización"</b> y se actualizan sin desinstalar.</p>
+      <div class="item-meta" id="pmVersionActual" style="margin-bottom:.8rem;"></div>
+      <div class="items-list" id="list-pm-versiones"><div class="empty-state"><p>Cargando…</p></div></div>
+
+      <h3 class="pm-sub" style="margin-top:2.2rem;">Configuración de la app</h3>
+      <p class="login-help" style="max-width:680px;">Se aplica en todos los teléfonos la próxima vez que abren la app, sin reinstalar.</p>
+      <div style="max-width:680px;">
+        <div class="form-field">
+          <label for="pmAvisoGeneral">Aviso fijo arriba de la bandeja (vacío = sin aviso)</label>
+          <input type="text" id="pmAvisoGeneral" placeholder="Ej: Mantenimiento del correo el sábado de 8 a 10">
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="pmColorNoche">Color de acento · modo noche</label>
+            <div style="display:flex;gap:.6rem;align-items:center;"><input type="color" id="pmColorNoche" value="#c9a96e" style="width:56px;height:38px;padding:2px;"><button type="button" class="btn-secondary" onclick="document.getElementById('pmColorNoche').value='#c9a96e'">Original</button></div>
+          </div>
+          <div class="form-field">
+            <label for="pmColorDia">Color de acento · modo día</label>
+            <div style="display:flex;gap:.6rem;align-items:center;"><input type="color" id="pmColorDia" value="#b82e22" style="width:56px;height:38px;padding:2px;"><button type="button" class="btn-secondary" onclick="document.getElementById('pmColorDia').value='#b82e22'">Original</button></div>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Funciones visibles</label>
+          <label class="pm-check"><input type="checkbox" id="pmFnPlantillas"> Plantillas</label>
+          <label class="pm-check"><input type="checkbox" id="pmFnContactos"> Contactos</label>
+        </div>
+        <div class="form-field">
+          <label>Carpetas del menú</label>
+          <label class="pm-check"><input type="checkbox" data-carpeta="inbox"> Bandeja de entrada</label>
+          <label class="pm-check"><input type="checkbox" data-carpeta="sent"> Enviados</label>
+          <label class="pm-check"><input type="checkbox" data-carpeta="spam"> Correo no deseado</label>
+          <label class="pm-check"><input type="checkbox" data-carpeta="trash"> Papelera</label>
+          <label class="pm-check"><input type="checkbox" data-carpeta="archive"> Archivados</label>
+        </div>
+        <div class="form-actions" style="justify-content:flex-start;">
+          <button class="btn-save" id="btnPmConfig" onclick="guardarPmConfig()">Guardar configuración</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 </div>
@@ -851,6 +942,83 @@ body.con-aviso .toast { bottom: 6.5rem; }
       <div class="form-actions"><span class="cambios-pill">Cambios sin guardar</span>
         <button class="btn-secondary" onclick="closeModal('modalAviso')">Cancelar</button>
         <button class="btn-save" onclick="saveAviso()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal aviso de la app PIEBA Mail -->
+<div class="modal-overlay" id="modalPmc">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalPmcTitle">Nuevo aviso de la app</span>
+      <button class="modal-close" onclick="closeModal('modalPmc')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="pmcId">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="pmcTipo">Tipo</label>
+          <select id="pmcTipo">
+            <option value="actualizacion">¡Nuevas actualizaciones!</option>
+            <option value="aviso" selected>Aviso importante</option>
+            <option value="problemas">Problemas conocidos / Mejoras</option>
+            <option value="saludos">Saludos / Festividades</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="pmcDestino">Para quién</label>
+          <select id="pmcDestino" onchange="pintarDestinoPmc()">
+            <option value="todos">Todos los usuarios de la app</option>
+            <option value="usuarios">Usuarios específicos</option>
+            <option value="version_vieja">Quienes tienen una versión vieja</option>
+            <option value="version_nueva">Quienes ya tienen la versión nueva</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-field" id="pmcUsuariosWrap" style="display:none;">
+        <label>Elegí los usuarios</label>
+        <div id="pmcUsuarios" class="pm-checks"></div>
+      </div>
+      <div class="form-field" id="pmcVersionWrap" style="display:none;">
+        <label for="pmcVersion">Número de versión (build) de referencia</label>
+        <input type="number" id="pmcVersion" min="1" placeholder="Ej: 2">
+      </div>
+      <div class="form-field">
+        <label for="pmcTitulo">Título (es lo que se ve en la notificación)</label>
+        <input type="text" id="pmcTitulo" maxlength="80" placeholder="Ej: ¡Feliz Navidad!">
+      </div>
+      <div class="form-field">
+        <label>Mensaje</label>
+        <div class="editor-wrap"><div id="pmcEditor"></div></div>
+      </div>
+      <div class="form-field">
+        <label>Imagen (opcional, ej. un flyer)</label>
+        <div class="img-upload-area" onclick="uploadImage('pmc')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="rgba(201,169,110,.5)"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+          <p>Clic para subir imagen</p>
+        </div>
+        <img class="img-preview" id="pmcImgPreview">
+        <button class="img-clear-btn" id="pmcImgClear" onclick="clearImage('pmc')">Quitar imagen</button>
+        <input type="hidden" id="pmcImagen">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="pmcCuando">Cuándo enviarlo</label>
+          <select id="pmcCuando" onchange="pintarCuandoPmc()">
+            <option value="ahora">Ahora (en menos de un minuto)</option>
+            <option value="programar">Programar fecha y hora</option>
+          </select>
+        </div>
+        <div class="form-field" id="pmcFechaWrap" style="display:none;">
+          <label for="pmcFecha">Fecha y hora</label>
+          <input type="datetime-local" id="pmcFecha">
+        </div>
+      </div>
+      <p class="editor-help" id="pmcNotaEnviado" style="display:none;">Este aviso ya se envió: los cambios se ven en la app, pero no se manda otra notificación.</p>
+      <div class="form-actions"><span class="cambios-pill">Cambios sin guardar</span>
+        <button class="btn-secondary" onclick="closeModal('modalPmc')">Cancelar</button>
+        <button class="btn-save" onclick="savePmc()">Guardar</button>
       </div>
     </div>
   </div>
@@ -1063,7 +1231,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
     <p id="confirmTexto">Esta acción no se puede deshacer. El registro será eliminado permanentemente de la base de datos.</p>
     <div class="confirm-btns">
       <button class="btn-cancel" onclick="closeConfirm()">Cancelar</button>
-      <button class="btn-confirm-del" onclick="confirmDelete()">Eliminar</button>
+      <button class="btn-confirm-del" id="confirmBoton" onclick="confirmDelete()">Eliminar</button>
     </div>
   </div>
 </div>
@@ -1462,8 +1630,9 @@ window.removeAlbumPhoto = (i) => { albumPhotos.splice(i, 1); renderAlbumPhotosGr
 ════════════════════════════════ */
 let pendingDelete = null;
 const CONFIRM_DEFAULT = ['¿Eliminar este elemento?', 'Esta acción no se puede deshacer. El registro será eliminado permanentemente de la base de datos.'];
-window.askDelete = (fn, titulo, texto) => {
+window.askDelete = (fn, titulo, texto, boton = 'Eliminar') => {
   pendingDelete = fn;
+  $('confirmBoton').textContent = boton;
   $('confirmTitulo').textContent = titulo || CONFIRM_DEFAULT[0];
   $('confirmTexto').textContent = texto || CONFIRM_DEFAULT[1];
   $('confirmOverlay').classList.add('open');
@@ -2033,10 +2202,284 @@ window.quitarUsuario = (email) => askDelete(async () => {
 }, '¿Quitar acceso?', `${email} ya no podrá ingresar al panel. Su cuenta se elimina; si lo volvés a agregar, tendrá que crear una contraseña nueva.`);
 
 /* ════════════════════════════════
+   PIEBA MAIL (solo superadmin)
+════════════════════════════════ */
+let pmComunicados = [], pmDispositivos = [], pmVistos = {}, pmQuill = null, pmConfig = {};
+const PM_TIPOS = { actualizacion: '¡Nuevas actualizaciones!', aviso: 'Aviso importante', problemas: 'Problemas / Mejoras', saludos: 'Saludos / Festividades' };
+const PM_DESTINOS = { todos: 'Todos', usuarios: 'Usuarios específicos', version_vieja: 'Versión vieja', version_nueva: 'Versión nueva' };
+
+function crearEditorPmc() {
+  if (pmQuill || typeof Quill === 'undefined') return pmQuill;
+  pmQuill = new Quill('#pmcEditor', {
+    theme: 'snow',
+    placeholder: 'Escribí el mensaje…',
+    modules: { toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ color: ['#2c2836', '#a8823f', '#c9a96e', '#b03a3a', '#2e7d5b', '#1f5fa8'] }],
+      [{ align: [] }], [{ list: 'ordered' }, { list: 'bullet' }], ['link'], ['clean']
+    ] }
+  });
+  pmQuill.on('text-change', () => actualizarPillModal('modalPmc'));
+  return pmQuill;
+}
+function getContenidoPmc() {
+  const q = crearEditorPmc(); if (!q) return '';
+  return q.getText().trim() === '' ? '' : q.root.innerHTML;
+}
+function setContenidoPmc(html) {
+  const q = crearEditorPmc(); if (!q) return;
+  q.setContents([]); if (html) q.clipboard.dangerouslyPasteHTML(0, html); q.history.clear();
+}
+
+async function loadPiebaMail() {
+  const esSuper = ok(await supabase.rpc('es_superadmin'));
+  $('navPiebaMail').style.display = esSuper ? '' : 'none';
+  if (!esSuper) return;
+  await Promise.all([loadPmComunicados(), loadPmDispositivos(), loadPmConfig()]);
+}
+
+async function loadPmComunicados() {
+  pmComunicados = ok(await supabase.from('mail_comunicados').select('*').order('programado_para', { ascending: false }));
+  const vistos = ok(await supabase.from('mail_comunicados_vistos').select('comunicado_id'));
+  pmVistos = {};
+  (vistos || []).forEach(v => { pmVistos[v.comunicado_id] = (pmVistos[v.comunicado_id] || 0) + 1; });
+  renderPmComunicados();
+}
+function estadoPmc(c) {
+  if (!c.activo) return '<span class="pm-estado inactivo">DESACTIVADO</span>';
+  if (!c.enviado_en) return `<span class="pm-estado programado">PROGRAMADO · ${escapeHtml(new Date(c.programado_para).toLocaleString('es-PY', { dateStyle: 'medium', timeStyle: 'short' }))}</span>`;
+  return `<span class="pm-estado enviado">ENVIADO A ${c.enviados} · VISTO POR ${pmVistos[c.id] || 0}</span>`;
+}
+function renderPmComunicados() {
+  const cont = $('list-pm-comunicados');
+  if (!pmComunicados.length) { cont.innerHTML = '<div class="empty-state"><p>Todavía no hay avisos. Creá el primero.</p></div>'; return; }
+  cont.innerHTML = pmComunicados.map(c => `
+    <div class="item-card" style="${c.activo ? '' : 'opacity:.55'}">
+      ${thumb(c.imagen_url, 'M18 11v2h4v-2h-4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4z')}
+      <div class="item-info">
+        <div class="item-title">${escapeHtml(c.titulo || '(Sin título)')}</div>
+        <div class="item-meta"><span class="item-tag info">${escapeHtml(PM_TIPOS[c.tipo] || c.tipo)}</span> ${escapeHtml(PM_DESTINOS[c.destino] || '')}${c.destino === 'usuarios' ? ` (${(c.destino_emails || []).length})` : ''}</div>
+        <div class="item-meta" style="margin-top:.35rem;">${estadoPmc(c)}</div>
+      </div>
+      <div class="item-actions">
+        <label class="pm-switch" title="Activo"><input type="checkbox" ${c.activo ? 'checked' : ''} onchange="activarPmc('${c.id}', this.checked)"> Activo</label>
+        <button class="btn-icon" title="Editar" onclick="editPmc('${c.id}')">${ICON_EDIT}</button>
+        <button class="btn-icon danger" title="Eliminar" onclick="askDelete(()=>deletePmc('${c.id}'), '¿Eliminar aviso?', 'Deja de verse en el historial de la app. Las notificaciones ya enviadas no se pueden quitar de los teléfonos.')">${ICON_DEL}</button>
+      </div>
+    </div>`).join('');
+}
+function pintarUsuariosPmc(seleccion = []) {
+  const emails = [...new Set(pmDispositivos.map(d => d.email))];
+  $('pmcUsuarios').innerHTML = emails.length
+    ? emails.map(e => `<label class="pm-check"><input type="checkbox" value="${escapeHtml(e)}" ${seleccion.includes(e) ? 'checked' : ''}> ${escapeHtml(e)}</label>`).join('')
+    : '<p class="editor-help">Todavía nadie inició sesión en la app nueva.</p>';
+}
+window.pintarDestinoPmc = () => {
+  const d = $('pmcDestino').value;
+  $('pmcUsuariosWrap').style.display = d === 'usuarios' ? '' : 'none';
+  $('pmcVersionWrap').style.display = d.startsWith('version') ? '' : 'none';
+};
+window.pintarCuandoPmc = () => { $('pmcFechaWrap').style.display = $('pmcCuando').value === 'programar' ? '' : 'none'; };
+function aLocalInput(iso) {
+  const d = iso ? new Date(iso) : new Date(Date.now() + 3600e3);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+window.openPmcModal = () => {
+  $('pmcId').value = ''; $('pmcTipo').value = 'aviso'; $('pmcDestino').value = 'todos';
+  $('pmcTitulo').value = ''; $('pmcVersion').value = ''; $('pmcCuando').value = 'ahora';
+  $('pmcFecha').value = aLocalInput(); setImagen('pmc', ''); setContenidoPmc('');
+  pintarUsuariosPmc(); pintarDestinoPmc(); pintarCuandoPmc();
+  $('pmcNotaEnviado').style.display = 'none';
+  $('modalPmcTitle').textContent = 'Nuevo aviso de la app';
+  openModal('modalPmc');
+};
+window.editPmc = (id) => {
+  const c = pmComunicados.find(x => x.id === id); if (!c) return;
+  $('pmcId').value = id; $('pmcTipo').value = c.tipo; $('pmcDestino').value = c.destino;
+  $('pmcTitulo').value = c.titulo || ''; $('pmcVersion').value = c.version_code ?? '';
+  $('pmcCuando').value = c.enviado_en ? 'ahora' : 'programar';
+  $('pmcFecha').value = aLocalInput(c.programado_para);
+  setImagen('pmc', c.imagen_url); setContenidoPmc(c.contenido);
+  pintarUsuariosPmc(c.destino_emails || []); pintarDestinoPmc(); pintarCuandoPmc();
+  $('pmcNotaEnviado').style.display = c.enviado_en ? '' : 'none';
+  $('modalPmcTitle').textContent = 'Editar aviso de la app';
+  openModal('modalPmc');
+};
+window.savePmc = () => {
+  const titulo = $('pmcTitulo').value.trim();
+  if (!titulo) { toast('El título es obligatorio', 'error'); return; }
+  const destino = $('pmcDestino').value;
+  const emails = [...$('pmcUsuarios').querySelectorAll('input:checked')].map(i => i.value);
+  if (destino === 'usuarios' && !emails.length) { toast('Elegí al menos un usuario', 'error'); return; }
+  const version = parseInt($('pmcVersion').value, 10);
+  if (destino.startsWith('version') && !version) { toast('Poné el número de versión', 'error'); return; }
+  const id = $('pmcId').value;
+  const previo = pmComunicados.find(x => x.id === id);
+  const programar = $('pmcCuando').value === 'programar';
+  const datos = {
+    tipo: $('pmcTipo').value, titulo, contenido: getContenidoPmc(),
+    imagen_url: $('pmcImagen').value || null, destino,
+    destino_emails: destino === 'usuarios' ? emails : null,
+    version_code: destino.startsWith('version') ? version : null,
+  };
+  if (!previo?.enviado_en) {
+    datos.programado_para = programar ? new Date($('pmcFecha').value).toISOString() : new Date().toISOString();
+  }
+  if (!id) datos.creado_por = authEmail;
+  return conGuardado('modalPmc', 'Guardando…', async () => {
+    await guardar('mail_comunicados', id, datos);
+    closeModal('modalPmc', true);
+    await loadPmComunicados();
+    toast(previo?.enviado_en ? 'Aviso actualizado ✓' : programar ? 'Aviso programado ✓' : 'Aviso en camino: llega en menos de un minuto ✓');
+  });
+};
+window.activarPmc = async (id, activo) => {
+  try { await guardar('mail_comunicados', id, { activo }); await loadPmComunicados(); }
+  catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
+};
+window.deletePmc = async (id) => {
+  await borrar('mail_comunicados', id);
+  await loadPmComunicados();
+  toast('Aviso eliminado');
+};
+
+async function loadPmDispositivos() {
+  pmDispositivos = ok(await supabase.rpc('mail_listar_dispositivos')) || [];
+  const admins = ok(await supabase.from('mail_admins').select('email')) || [];
+  const adminSet = new Set(admins.map(a => a.email));
+  const filas = [...pmDispositivos];
+  admins.forEach(a => { if (!filas.some(d => d.email === a.email)) filas.push({ email: a.email, sinApp: true }); });
+  const cont = $('list-pm-dispositivos');
+  if (!filas.length) { cont.innerHTML = '<div class="empty-state"><p>Todavía nadie inició sesión en la app nueva.</p></div>'; return; }
+  cont.innerHTML = filas.map(d => `
+    <div class="item-card">
+      <div class="item-info">
+        <div class="item-title">${escapeHtml(d.email)}</div>
+        <div class="item-meta">${d.sinApp ? 'Todavía no abrió la app nueva' :
+          `Versión ${escapeHtml(d.version_nombre || '?')} (${d.version_code ?? '?'}) · usada ${escapeHtml(d.ultimo_uso ? new Date(d.ultimo_uso).toLocaleString('es-PY', { dateStyle: 'medium', timeStyle: 'short' }) : '—')}${d.avisos_correo === false ? ' · avisos de correo apagados' : ''}`}</div>
+      </div>
+      <div class="item-actions">
+        <label class="pm-switch"><input type="checkbox" ${adminSet.has(d.email) ? 'checked' : ''} onchange="cambiarAdminApp('${escapeHtml(d.email)}', this.checked)"> Administrador</label>
+      </div>
+    </div>`).join('');
+}
+window.cambiarAdminApp = async (email, admin) => {
+  try {
+    if (admin) ok(await supabase.from('mail_admins').insert({ email }));
+    else ok(await supabase.from('mail_admins').delete().eq('email', email));
+    toast(admin ? `${email} es administrador de la app ✓` : `${email} ya no es administrador`);
+    await loadPmDispositivos();
+  } catch (e) { toast('Error: ' + mensajeError(e), 'error'); await loadPmDispositivos(); }
+};
+window.agregarAdminApp = async () => {
+  const email = $('pmNuevoAdmin').value.trim().toLowerCase();
+  if (!email.endsWith('@primeradeasuncion.org.py')) { toast('Tiene que ser un correo @primeradeasuncion.org.py', 'error'); return; }
+  $('pmNuevoAdmin').value = '';
+  await cambiarAdminApp(email, true);
+};
+
+
+const PM_REPO_DESCARGAS = 'nosoysuperman17-max/Apk_descargas';
+let pmVersiones = [];
+async function loadPmVersiones() {
+  const v = pmConfig.version || {};
+  $('pmVersionActual').innerHTML = v.version_code
+    ? `Publicada ahora: <b>${escapeHtml(v.version_nombre || '')} (${v.version_code})</b>${v.obligatoria ? ' · obligatoria' : ''}`
+    : 'Todavía no se publicó ninguna versión por este medio.';
+  const cont = $('list-pm-versiones');
+  try {
+    const r = await fetch(`https://api.github.com/repos/${PM_REPO_DESCARGAS}/releases?per_page=30`);
+    if (!r.ok) throw new Error(`GitHub ${r.status}`);
+    pmVersiones = (await r.json())
+      .filter(x => /^pieba-mail-v/.test(x.tag_name))
+      .map(x => {
+        const m = x.tag_name.match(/^pieba-mail-v(.+)-(\d+)$/) || [];
+        const sha = (x.body || '').match(/sha256:\s*([0-9a-f]{64})/i)?.[1] || '';
+        const apk = (x.assets || []).find(a => a.name === 'PIEBA-Mail.apk');
+        return { tag: x.tag_name, nombre: m[1] || '', code: parseInt(m[2] || '0', 10), sha,
+                 url: apk?.browser_download_url || '', notas: (x.body || '').split(/\n\s*\nsha256:/)[0].trim(), fecha: x.created_at };
+      })
+      .filter(x => x.code && x.sha && x.url)
+      .slice(0, 6);
+  } catch (e) {
+    cont.innerHTML = `<div class="empty-state"><p>No se pudo consultar el repositorio de descargas (${escapeHtml(e.message)}).</p></div>`;
+    return;
+  }
+  if (!pmVersiones.length) { cont.innerHTML = '<div class="empty-state"><p>Todavía no hay versiones compiladas en el repositorio de descargas.</p></div>'; return; }
+  cont.innerHTML = pmVersiones.map((x, i) => {
+    const publicada = (pmConfig.version?.version_code || 0) === x.code;
+    return `
+    <div class="item-card">
+      <div class="item-info">
+        <div class="item-title">Versión ${escapeHtml(x.nombre)} (${x.code}) ${publicada ? '<span class="pm-estado enviado">PUBLICADA</span>' : ''}</div>
+        <div class="item-meta">${escapeHtml(formatDate(x.fecha))} · ${escapeHtml(x.notas || 'Sin notas')}</div>
+        ${publicada ? '' : `<div class="item-meta" style="margin-top:.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+          <label class="pm-switch"><input type="checkbox" id="pmvAvisar${i}" checked> Avisar con notificación</label>
+          <label class="pm-switch"><input type="checkbox" id="pmvOblig${i}"> Obligatoria</label>
+        </div>`}
+      </div>
+      <div class="item-actions">${publicada ? '' : `<button class="btn-add" onclick="publicarVersion(${i})">Publicar</button>`}</div>
+    </div>`;
+  }).join('');
+}
+window.publicarVersion = (i) => askDelete(async () => {
+  const x = pmVersiones[i]; if (!x) return;
+  const obligatoria = $(`pmvOblig${i}`)?.checked || false;
+  const avisar = $(`pmvAvisar${i}`)?.checked || false;
+  ok(await supabase.from('mail_config').upsert({
+    clave: 'version', actualizado_en: new Date().toISOString(),
+    valor: { version_code: x.code, version_nombre: x.nombre, url: x.url, sha256: x.sha, notas: x.notas, obligatoria },
+  }));
+  if (avisar) {
+    ok(await supabase.from('mail_comunicados').insert({
+      tipo: 'actualizacion', titulo: `Nueva versión de PIEBA Mail (${x.nombre})`,
+      contenido: `<p>${escapeHtml(x.notas || 'Hay una versión nueva disponible.')}</p><p>Abrí la app para actualizar.</p>`,
+      destino: 'version_vieja', version_code: x.code, creado_por: authEmail,
+    }));
+  }
+  await loadPmConfig();
+  await loadPmComunicados();
+  toast(`Versión ${x.nombre} publicada ✓`);
+}, '¿Publicar esta versión?', 'Los teléfonos con una versión anterior van a ver el aviso para actualizar.', 'Publicar');
+
+async function loadPmConfig() {
+  const filas = ok(await supabase.from('mail_config').select('clave, valor')) || [];
+  pmConfig = Object.fromEntries(filas.map(f => [f.clave, f.valor]));
+  $('pmAvisoGeneral').value = pmConfig.textos?.aviso_general || '';
+  $('pmColorNoche').value = pmConfig.colores?.acento_noche || '#c9a96e';
+  $('pmColorDia').value = pmConfig.colores?.acento_dia || '#b82e22';
+  $('pmFnPlantillas').checked = pmConfig.funciones?.plantillas !== false;
+  $('pmFnContactos').checked = pmConfig.funciones?.contactos !== false;
+  const menu = Array.isArray(pmConfig.menu) ? pmConfig.menu : ['inbox', 'sent', 'spam', 'trash', 'archive'];
+  document.querySelectorAll('[data-carpeta]').forEach(c => { c.checked = menu.includes(c.dataset.carpeta); });
+  loadPmVersiones();
+}
+window.guardarPmConfig = async () => {
+  const menu = [...document.querySelectorAll('[data-carpeta]')].filter(c => c.checked).map(c => c.dataset.carpeta);
+  if (!menu.includes('inbox')) { toast('La bandeja de entrada tiene que quedar visible', 'error'); return; }
+  const btn = $('btnPmConfig'); btn.disabled = true;
+  try {
+    const ahora = new Date().toISOString();
+    ok(await supabase.from('mail_config').upsert([
+      { clave: 'textos', valor: { ...(pmConfig.textos || {}), aviso_general: $('pmAvisoGeneral').value.trim() }, actualizado_en: ahora },
+      { clave: 'funciones', valor: { ...(pmConfig.funciones || {}), plantillas: $('pmFnPlantillas').checked, contactos: $('pmFnContactos').checked }, actualizado_en: ahora },
+      { clave: 'menu', valor: menu, actualizado_en: ahora },
+      { clave: 'colores', valor: {
+          acento_noche: $('pmColorNoche').value.toLowerCase() === '#c9a96e' ? '' : $('pmColorNoche').value,
+          acento_dia: $('pmColorDia').value.toLowerCase() === '#b82e22' ? '' : $('pmColorDia').value,
+        }, actualizado_en: ahora },
+    ]));
+    await loadPmConfig();
+    toast('Configuración de la app guardada ✓');
+  } catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
+  finally { btn.disabled = false; }
+};
+
+/* ════════════════════════════════
    CARGA INICIAL
 ════════════════════════════════ */
 async function loadAll() {
-  const tareas = [loadAvisos, loadEventos, loadGaleria, loadBlog, loadMiembros, loadUsuarios, loadWebConfig];
+  const tareas = [loadAvisos, loadEventos, loadGaleria, loadBlog, loadMiembros, loadUsuarios, loadWebConfig, loadPiebaMail];
   const resultados = await Promise.allSettled(tareas.map(fn => fn()));
   const fallas = resultados.filter(r => r.status === 'rejected');
   if (fallas.length) {
@@ -2189,11 +2632,12 @@ window.doLogout = async () => { if (await puedeSalir()) _doLogout(); };
 
 // Ventanas (comunicados, eventos, álbumes, blog, miembros)
 const fotoModal = {};
-const GUARDAR_MODAL = { modalAviso: () => saveAviso(), modalEvento: () => saveEvento(), modalAlbum: () => saveAlbum(), modalBlog: () => saveBlog(), modalMiembro: () => saveMiembro() };
+const GUARDAR_MODAL = { modalPmc: () => savePmc(), modalAviso: () => saveAviso(), modalEvento: () => saveEvento(), modalAlbum: () => saveAlbum(), modalBlog: () => saveBlog(), modalMiembro: () => saveMiembro() };
 function leerModal(id) {
   const m = $(id); if (!m) return '';
   const vals = [...m.querySelectorAll('input, textarea, select')].filter(el => el.id).map(el => [el.id, el.type === 'checkbox' ? el.checked : el.value]);
   if (id === 'modalBlog') vals.push(['contenido', getContenidoBlog()]);
+  if (id === 'modalPmc') vals.push(['contenido', getContenidoPmc()]);
   if (id === 'modalAlbum') vals.push(['fotos', JSON.stringify(albumPhotos)]);
   return JSON.stringify(vals);
 }
