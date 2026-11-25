@@ -851,6 +851,11 @@ body.con-aviso .toast { bottom: 6.5rem; }
         <button type="submit" class="btn-add">Agregar</button>
       </form>
 
+      <h3 class="pm-sub" style="margin-top:2.2rem;">Versión de la app</h3>
+      <p class="login-help" style="max-width:680px;">Cada versión nueva que se compila aparece acá. Al publicarla, los teléfonos con una versión anterior ven el aviso <b>"Hay una actualización"</b> y se actualizan sin desinstalar.</p>
+      <div class="item-meta" id="pmVersionActual" style="margin-bottom:.8rem;"></div>
+      <div class="items-list" id="list-pm-versiones"><div class="empty-state"><p>Cargando…</p></div></div>
+
       <h3 class="pm-sub" style="margin-top:2.2rem;">Configuración de la app</h3>
       <p class="login-help" style="max-width:680px;">Se aplica en todos los teléfonos la próxima vez que abren la app, sin reinstalar.</p>
       <div style="max-width:680px;">
@@ -1226,7 +1231,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
     <p id="confirmTexto">Esta acción no se puede deshacer. El registro será eliminado permanentemente de la base de datos.</p>
     <div class="confirm-btns">
       <button class="btn-cancel" onclick="closeConfirm()">Cancelar</button>
-      <button class="btn-confirm-del" onclick="confirmDelete()">Eliminar</button>
+      <button class="btn-confirm-del" id="confirmBoton" onclick="confirmDelete()">Eliminar</button>
     </div>
   </div>
 </div>
@@ -1625,8 +1630,9 @@ window.removeAlbumPhoto = (i) => { albumPhotos.splice(i, 1); renderAlbumPhotosGr
 ════════════════════════════════ */
 let pendingDelete = null;
 const CONFIRM_DEFAULT = ['¿Eliminar este elemento?', 'Esta acción no se puede deshacer. El registro será eliminado permanentemente de la base de datos.'];
-window.askDelete = (fn, titulo, texto) => {
+window.askDelete = (fn, titulo, texto, boton = 'Eliminar') => {
   pendingDelete = fn;
+  $('confirmBoton').textContent = boton;
   $('confirmTitulo').textContent = titulo || CONFIRM_DEFAULT[0];
   $('confirmTexto').textContent = texto || CONFIRM_DEFAULT[1];
   $('confirmOverlay').classList.add('open');
@@ -2372,6 +2378,70 @@ window.agregarAdminApp = async () => {
   await cambiarAdminApp(email, true);
 };
 
+
+const PM_REPO_DESCARGAS = 'nosoysuperman17-max/Apk_descargas';
+let pmVersiones = [];
+async function loadPmVersiones() {
+  const v = pmConfig.version || {};
+  $('pmVersionActual').innerHTML = v.version_code
+    ? `Publicada ahora: <b>${escapeHtml(v.version_nombre || '')} (${v.version_code})</b>${v.obligatoria ? ' · obligatoria' : ''}`
+    : 'Todavía no se publicó ninguna versión por este medio.';
+  const cont = $('list-pm-versiones');
+  try {
+    const r = await fetch(`https://api.github.com/repos/${PM_REPO_DESCARGAS}/releases?per_page=30`);
+    if (!r.ok) throw new Error(`GitHub ${r.status}`);
+    pmVersiones = (await r.json())
+      .filter(x => /^pieba-mail-v/.test(x.tag_name))
+      .map(x => {
+        const m = x.tag_name.match(/^pieba-mail-v(.+)-(\d+)$/) || [];
+        const sha = (x.body || '').match(/sha256:\s*([0-9a-f]{64})/i)?.[1] || '';
+        const apk = (x.assets || []).find(a => a.name === 'PIEBA-Mail.apk');
+        return { tag: x.tag_name, nombre: m[1] || '', code: parseInt(m[2] || '0', 10), sha,
+                 url: apk?.browser_download_url || '', notas: (x.body || '').split(/\n\s*\nsha256:/)[0].trim(), fecha: x.created_at };
+      })
+      .filter(x => x.code && x.sha && x.url)
+      .slice(0, 6);
+  } catch (e) {
+    cont.innerHTML = `<div class="empty-state"><p>No se pudo consultar el repositorio de descargas (${escapeHtml(e.message)}).</p></div>`;
+    return;
+  }
+  if (!pmVersiones.length) { cont.innerHTML = '<div class="empty-state"><p>Todavía no hay versiones compiladas en el repositorio de descargas.</p></div>'; return; }
+  cont.innerHTML = pmVersiones.map((x, i) => {
+    const publicada = (pmConfig.version?.version_code || 0) === x.code;
+    return `
+    <div class="item-card">
+      <div class="item-info">
+        <div class="item-title">Versión ${escapeHtml(x.nombre)} (${x.code}) ${publicada ? '<span class="pm-estado enviado">PUBLICADA</span>' : ''}</div>
+        <div class="item-meta">${escapeHtml(formatDate(x.fecha))} · ${escapeHtml(x.notas || 'Sin notas')}</div>
+        ${publicada ? '' : `<div class="item-meta" style="margin-top:.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+          <label class="pm-switch"><input type="checkbox" id="pmvAvisar${i}" checked> Avisar con notificación</label>
+          <label class="pm-switch"><input type="checkbox" id="pmvOblig${i}"> Obligatoria</label>
+        </div>`}
+      </div>
+      <div class="item-actions">${publicada ? '' : `<button class="btn-add" onclick="publicarVersion(${i})">Publicar</button>`}</div>
+    </div>`;
+  }).join('');
+}
+window.publicarVersion = (i) => askDelete(async () => {
+  const x = pmVersiones[i]; if (!x) return;
+  const obligatoria = $(`pmvOblig${i}`)?.checked || false;
+  const avisar = $(`pmvAvisar${i}`)?.checked || false;
+  ok(await supabase.from('mail_config').upsert({
+    clave: 'version', actualizado_en: new Date().toISOString(),
+    valor: { version_code: x.code, version_nombre: x.nombre, url: x.url, sha256: x.sha, notas: x.notas, obligatoria },
+  }));
+  if (avisar) {
+    ok(await supabase.from('mail_comunicados').insert({
+      tipo: 'actualizacion', titulo: `Nueva versión de PIEBA Mail (${x.nombre})`,
+      contenido: `<p>${escapeHtml(x.notas || 'Hay una versión nueva disponible.')}</p><p>Abrí la app para actualizar.</p>`,
+      destino: 'version_vieja', version_code: x.code, creado_por: authEmail,
+    }));
+  }
+  await loadPmConfig();
+  await loadPmComunicados();
+  toast(`Versión ${x.nombre} publicada ✓`);
+}, '¿Publicar esta versión?', 'Los teléfonos con una versión anterior van a ver el aviso para actualizar.', 'Publicar');
+
 async function loadPmConfig() {
   const filas = ok(await supabase.from('mail_config').select('clave, valor')) || [];
   pmConfig = Object.fromEntries(filas.map(f => [f.clave, f.valor]));
@@ -2382,6 +2452,7 @@ async function loadPmConfig() {
   $('pmFnContactos').checked = pmConfig.funciones?.contactos !== false;
   const menu = Array.isArray(pmConfig.menu) ? pmConfig.menu : ['inbox', 'sent', 'spam', 'trash', 'archive'];
   document.querySelectorAll('[data-carpeta]').forEach(c => { c.checked = menu.includes(c.dataset.carpeta); });
+  loadPmVersiones();
 }
 window.guardarPmConfig = async () => {
   const menu = [...document.querySelectorAll('[data-carpeta]')].filter(c => c.checked).map(c => c.dataset.carpeta);
