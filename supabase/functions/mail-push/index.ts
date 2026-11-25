@@ -201,7 +201,7 @@ async function registrar(p: Record<string, string>) {
   const ultimos = await ultimosCorreos(cuenta.host, cuenta.accountId, inbox, nuevo.token, 1);
   const base = Math.max(0, ...ultimos.map((m: Record<string, unknown>) => Number(m.receivedTime) || 0));
 
-  await db('POST', '?on_conflict=fcm_token', {
+  await db('POST', '?on_conflict=fcm_token,email', {
     fcm_token: p.fcm_token,
     email: cuenta.email,
     account_id: cuenta.accountId,
@@ -221,9 +221,11 @@ async function registrar(p: Record<string, string>) {
   return json(200, { ok: true, email: cuenta.email });
 }
 
+// Con "email": deja de avisar esa cuenta en ese teléfono. Sin email: todas.
 async function baja(p: Record<string, string>) {
   if (!p.fcm_token) return json(400, { error: 'faltan_datos' });
-  await db('DELETE', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}`);
+  const filtroEmail = p.email ? `&email=eq.${encodeURIComponent(String(p.email).toLowerCase())}` : '';
+  await db('DELETE', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}${filtroEmail}`);
   return json(200, { ok: true });
 }
 
@@ -233,8 +235,10 @@ type Dispositivo = {
   ultimo_recibido: number; errores_seguidos: number; avisos_correo?: boolean;
 };
 
-async function revisarDispositivo(d: Dispositivo) {
-  const filtro = `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}`;
+async function revisarDispositivo(d: Dispositivo, variasCuentas = false) {
+  const filtro = `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}&email=eq.${encodeURIComponent(d.email)}`;
+  // Con varias cuentas en el teléfono, el aviso dice a cuál llegó.
+  const para = variasCuentas ? ` · para ${d.email.split('@')[0]}` : '';
   try {
     // Token de acceso vigente (se renueva solo cuando vence: Zoho limita las renovaciones)
     let token = d.access_token_cifrado ? await descifrar(d.access_token_cifrado) : '';
@@ -256,7 +260,7 @@ async function revisarDispositivo(d: Dispositivo) {
     if (d.avisos_correo === false) {
       // Avisos de correo apagados en este teléfono: solo avanzar el punto de partida.
     } else if (nuevos.length > 3) {
-      const r = await enviarPush(d.fcm_token, `${nuevos.length} correos nuevos`, nuevos.slice(-3).map((m: Record<string, unknown>) => m.sender || m.fromAddress).join(', '), { tipo: 'varios' });
+      const r = await enviarPush(d.fcm_token, `${nuevos.length} correos nuevos${para}`, nuevos.slice(-3).map((m: Record<string, unknown>) => m.sender || m.fromAddress).join(', '), { tipo: 'varios', email: d.email });
       if (r === 'token_invalido') { await db('DELETE', filtro); return { email: d.email, baja: true }; }
       enviados = 1;
     } else {
@@ -264,10 +268,10 @@ async function revisarDispositivo(d: Dispositivo) {
         const r = await enviarPush(
           d.fcm_token,
           String(m.sender || m.fromAddress || 'Nuevo correo'),
-          String(m.subject || '(Sin asunto)'),
-          { tipo: 'correo', messageId: String(m.messageId), folderId: String(m.folderId ?? d.inbox_folder_id) },
+          String(m.subject || '(Sin asunto)') + para,
+          { tipo: 'correo', messageId: String(m.messageId), folderId: String(m.folderId ?? d.inbox_folder_id), email: d.email },
         );
-        if (r === 'token_invalido') { await db('DELETE', filtro); return { email: d.email, baja: true }; }
+        if (r === 'token_invalido') { await db('DELETE', `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}`); return { email: d.email, baja: true }; }
         enviados++;
       }
     }
@@ -286,10 +290,12 @@ async function revisarDispositivo(d: Dispositivo) {
 
 async function revisar() {
   const dispositivos: Dispositivo[] = await db('GET', '?select=*&order=actualizado_en.asc&limit=500');
+  const porTelefono = new Map<string, number>();
+  for (const d of dispositivos) porTelefono.set(d.fcm_token, (porTelefono.get(d.fcm_token) ?? 0) + 1);
   const resultados = [];
   // De a 5 en paralelo para no saturar a Zoho
   for (let i = 0; i < dispositivos.length; i += 5) {
-    const lote = await Promise.allSettled(dispositivos.slice(i, i + 5).map(revisarDispositivo));
+    const lote = await Promise.allSettled(dispositivos.slice(i, i + 5).map((d) => revisarDispositivo(d, (porTelefono.get(d.fcm_token) ?? 0) > 1)));
     for (const r of lote) resultados.push(r.status === 'fulfilled' ? r.value : { error: String(r.reason) });
   }
   const comunicados = await enviarComunicados().catch((e) => ({ error: String(e) }));
@@ -445,11 +451,13 @@ async function enviarComunicados() {
   const resumen = [];
   for (const c of listos) {
     let enviados = 0;
+    const yaAvisados = new Set<string>(); // un aviso por teléfono aunque tenga varias cuentas
     const cuerpo = String(c.contenido ?? '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 180);
     for (const d of dispositivos ?? []) {
       if (!comunicadoPara(c, d.email, d.version_code)) continue;
       const quiere = c.tipo === 'actualizacion' ? d.avisos_actualizacion !== false : d.avisos_comunicados !== false;
-      if (!quiere) continue;
+      if (!quiere || yaAvisados.has(d.fcm_token)) continue;
+      yaAvisados.add(d.fcm_token);
       try {
         const r = await enviarPush(d.fcm_token, c.titulo, cuerpo || 'Tocá para ver el comunicado', { tipo: 'comunicado', id: c.id }, CANAL_AVISOS);
         if (r === 'token_invalido') await db('DELETE', `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}`);
