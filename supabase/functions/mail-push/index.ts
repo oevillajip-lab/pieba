@@ -25,6 +25,7 @@ const ZOHO_ACCOUNTS = 'https://accounts.zoho.com';
 const DOMINIO_PERMITIDO = 'primeradeasuncion.org.py';
 const TABLA = 'mail_dispositivos';
 const CANAL_ANDROID = 'pieba_mail_channel';
+const CANAL_AVISOS = 'pieba_avisos_channel';
 
 const env = (k: string) => Deno.env.get(k) ?? '';
 const json = (status: number, body: unknown) =>
@@ -32,7 +33,10 @@ const json = (status: number, body: unknown) =>
 
 // ─── Base de datos (REST con la clave de servicio) ──────────────
 async function db(method: string, query: string, body?: unknown, prefer?: string) {
-  const res = await fetch(`${env('SUPABASE_URL')}/rest/v1/${TABLA}${query}`, {
+  return dbt(TABLA, method, query, body, prefer);
+}
+async function dbt(tabla: string, method: string, query: string, body?: unknown, prefer?: string) {
+  const res = await fetch(`${env('SUPABASE_URL')}/rest/v1/${tabla}${query}`, {
     method,
     headers: {
       apikey: env('SUPABASE_SERVICE_ROLE_KEY'),
@@ -153,7 +157,7 @@ async function tokenFirebase() {
 }
 
 // Devuelve 'ok', 'token_invalido' o lanza error
-async function enviarPush(fcmToken: string, titulo: string, cuerpo: string, datos: Record<string, string>) {
+async function enviarPush(fcmToken: string, titulo: string, cuerpo: string, datos: Record<string, string>, canal = CANAL_ANDROID) {
   const { token, proyecto } = await tokenFirebase();
   const res = await fetch(`https://fcm.googleapis.com/v1/projects/${proyecto}/messages:send`, {
     method: 'POST',
@@ -165,7 +169,7 @@ async function enviarPush(fcmToken: string, titulo: string, cuerpo: string, dato
         data: datos,
         android: {
           priority: 'high',
-          notification: { channel_id: CANAL_ANDROID, tag: datos.messageId ?? 'pieba' },
+          notification: { channel_id: canal, tag: datos.messageId ?? datos.id ?? 'pieba' },
         },
       },
     }),
@@ -178,18 +182,18 @@ async function enviarPush(fcmToken: string, titulo: string, cuerpo: string, dato
 
 // ─── Acciones ──────────────────────────────────────────────────
 async function registrar(p: Record<string, string>) {
-  if (!p.fcm_token || !p.access_token || !p.refresh_token) return json(400, { error: 'faltan_datos' });
+  if (!p.fcm_token || !p.refresh_token) return json(400, { error: 'faltan_datos' });
 
-  // 1. El access token prueba quién es
-  const cuenta = await cuentaDelToken(p.access_token);
+  // 1. El refresh token se renueva: eso prueba que la sesión es válida
+  let nuevo;
+  try { nuevo = await refrescarToken(p.refresh_token); } catch { return json(401, { error: 'refresh_invalido' }); }
+  const cuenta = await cuentaDelToken(nuevo.token);
   if (!cuenta) return json(401, { error: 'token_invalido' });
   if (!cuenta.email.endsWith(`@${DOMINIO_PERMITIDO}`)) return json(403, { error: 'dominio_no_permitido' });
 
-  // 2. El refresh token tiene que ser de la misma cuenta
-  let nuevo;
-  try { nuevo = await refrescarToken(p.refresh_token); } catch { return json(401, { error: 'refresh_invalido' }); }
-  const cuenta2 = await cuentaDelToken(nuevo.token);
-  if (!cuenta2 || cuenta2.email !== cuenta.email) return json(403, { error: 'cuentas_distintas' });
+  // 2. Si mandó también el access token (vigente), tiene que ser de la misma cuenta
+  const cuenta1 = p.access_token ? await cuentaDelToken(p.access_token) : null;
+  if (cuenta1 && cuenta1.email !== cuenta.email) return json(403, { error: 'cuentas_distintas' });
 
   // 3. Bandeja de entrada y punto de partida (no avisar correos viejos)
   const inbox = await carpetaEntrada(cuenta.host, cuenta.accountId, nuevo.token);
@@ -210,6 +214,8 @@ async function registrar(p: Record<string, string>) {
     errores_seguidos: 0,
     ultimo_error: null,
     actualizado_en: new Date().toISOString(),
+    ultimo_uso: new Date().toISOString(),
+    ...versionYPreferencias(p),
   }, 'resolution=merge-duplicates,return=minimal');
 
   return json(200, { ok: true, email: cuenta.email });
@@ -224,7 +230,7 @@ async function baja(p: Record<string, string>) {
 type Dispositivo = {
   fcm_token: string; email: string; account_id: string; api_host: string; inbox_folder_id: string;
   refresh_token_cifrado: string; access_token_cifrado: string | null; access_token_expira: string | null;
-  ultimo_recibido: number; errores_seguidos: number;
+  ultimo_recibido: number; errores_seguidos: number; avisos_correo?: boolean;
 };
 
 async function revisarDispositivo(d: Dispositivo) {
@@ -247,7 +253,9 @@ async function revisarDispositivo(d: Dispositivo) {
     const maxVisto = Math.max(Number(d.ultimo_recibido), ...correos.map((m: Record<string, unknown>) => Number(m.receivedTime) || 0));
 
     let enviados = 0;
-    if (nuevos.length > 3) {
+    if (d.avisos_correo === false) {
+      // Avisos de correo apagados en este teléfono: solo avanzar el punto de partida.
+    } else if (nuevos.length > 3) {
       const r = await enviarPush(d.fcm_token, `${nuevos.length} correos nuevos`, nuevos.slice(-3).map((m: Record<string, unknown>) => m.sender || m.fromAddress).join(', '), { tipo: 'varios' });
       if (r === 'token_invalido') { await db('DELETE', filtro); return { email: d.email, baja: true }; }
       enviados = 1;
@@ -284,12 +292,180 @@ async function revisar() {
     const lote = await Promise.allSettled(dispositivos.slice(i, i + 5).map(revisarDispositivo));
     for (const r of lote) resultados.push(r.status === 'fulfilled' ? r.value : { error: String(r.reason) });
   }
-  return json(200, { revisados: dispositivos.length, resultados });
+  const comunicados = await enviarComunicados().catch((e) => ({ error: String(e) }));
+  return json(200, { revisados: dispositivos.length, resultados, comunicados });
+}
+
+// ─── Datos de la app ───────────────────────────────────────────
+const num = (v: unknown) => { const n = Number(v); return Number.isFinite(n) ? n : null; };
+const bool = (v: unknown) => v === true || v === 'true' || v === 1 || v === '1';
+
+function versionYPreferencias(p: Record<string, unknown>) {
+  const out: Record<string, unknown> = {};
+  if (num(p.version_code) !== null) out.version_code = num(p.version_code);
+  if (typeof p.version_nombre === 'string') out.version_nombre = p.version_nombre.slice(0, 40);
+  for (const k of ['avisos_correo', 'avisos_comunicados', 'avisos_actualizacion']) {
+    if (k in p) out[k] = bool(p[k]);
+  }
+  return out;
+}
+
+// Quién es (por su access token de Zoho). Cache corto para no consultar a Zoho en cada llamada.
+const cacheCuentas = new Map<string, { email: string; hasta: number }>();
+async function quien(p: Record<string, unknown>) {
+  const token = typeof p.access_token === 'string' ? p.access_token : '';
+  if (!token) return null;
+  const c = cacheCuentas.get(token);
+  if (c && c.hasta > Date.now()) return c.email;
+  const cuenta = await cuentaDelToken(token);
+  if (!cuenta || !cuenta.email.endsWith(`@${DOMINIO_PERMITIDO}`)) return null;
+  if (cacheCuentas.size > 500) cacheCuentas.clear();
+  cacheCuentas.set(token, { email: cuenta.email, hasta: Date.now() + 5 * 60_000 });
+  return cuenta.email;
+}
+
+async function esAdminApp(email: string) {
+  const r = await dbt('mail_admins', 'GET', `?select=email&email=eq.${encodeURIComponent(email)}`);
+  return Array.isArray(r) && r.length > 0;
+}
+
+async function configApp() {
+  const filas: { clave: string; valor: unknown }[] = await dbt('mail_config', 'GET', '?select=clave,valor');
+  return Object.fromEntries((filas ?? []).map((f) => [f.clave, f.valor]));
+}
+
+type Comunicado = {
+  id: string; tipo: string; titulo: string; contenido: string; imagen_url: string | null;
+  destino: string; destino_emails: string[] | null; version_code: number | null;
+  programado_para: string; enviado_en: string | null; creado_en: string;
+};
+
+function comunicadoPara(c: Comunicado, email: string, version: number | null) {
+  if (c.destino === 'usuarios') return (c.destino_emails ?? []).map((e) => e.toLowerCase()).includes(email);
+  if (c.destino === 'version_vieja') return c.version_code != null && version != null && version < c.version_code;
+  if (c.destino === 'version_nueva') return c.version_code != null && version != null && version >= c.version_code;
+  return true;
+}
+
+async function comunicadosDe(email: string, version: number | null, limite = 50) {
+  const ahora = new Date().toISOString();
+  const lista: Comunicado[] = await dbt('mail_comunicados', 'GET',
+    `?select=id,tipo,titulo,contenido,imagen_url,destino,destino_emails,version_code,programado_para,enviado_en,creado_en` +
+    `&activo=eq.true&programado_para=lte.${encodeURIComponent(ahora)}&order=programado_para.desc&limit=200`);
+  const vistos: { comunicado_id: string }[] = await dbt('mail_comunicados_vistos', 'GET',
+    `?select=comunicado_id&email=eq.${encodeURIComponent(email)}`);
+  const vistosSet = new Set((vistos ?? []).map((v) => v.comunicado_id));
+  return (lista ?? [])
+    .filter((c) => comunicadoPara(c, email, version))
+    .slice(0, limite)
+    .map((c) => ({
+      id: c.id, tipo: c.tipo, titulo: c.titulo, contenido: c.contenido, imagen_url: c.imagen_url,
+      fecha: c.programado_para, visto: vistosSet.has(c.id),
+    }));
+}
+
+async function accionApp(p: Record<string, unknown>) {
+  const email = await quien(p);
+  if (!email) return json(401, { error: 'token_invalido' });
+  const version = num(p.version_code);
+
+  switch (p.accion) {
+    case 'perfil': {
+      if (typeof p.fcm_token === 'string' && p.fcm_token) {
+        await db('PATCH', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}&email=eq.${encodeURIComponent(email)}`,
+          { ultimo_uso: new Date().toISOString(), ...versionYPreferencias({ version_code: p.version_code, version_nombre: p.version_nombre }) },
+          'return=minimal');
+      }
+      const [admin, config, comunicados] = await Promise.all([esAdminApp(email), configApp(), comunicadosDe(email, version, 20)]);
+      return json(200, { email, es_admin: admin, config, comunicados_pendientes: comunicados.filter((c) => !c.visto) });
+    }
+    case 'preferencias': {
+      if (typeof p.fcm_token !== 'string' || !p.fcm_token) return json(400, { error: 'faltan_datos' });
+      await db('PATCH', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}&email=eq.${encodeURIComponent(email)}`,
+        versionYPreferencias(p), 'return=minimal');
+      return json(200, { ok: true });
+    }
+    case 'comunicados':
+      return json(200, { comunicados: await comunicadosDe(email, version) });
+    case 'comunicado_visto': {
+      if (typeof p.id !== 'string' || !/^[0-9a-f-]{36}$/i.test(p.id)) return json(400, { error: 'faltan_datos' });
+      await dbt('mail_comunicados_vistos', 'POST', '?on_conflict=comunicado_id,email',
+        { comunicado_id: p.id, email }, 'resolution=ignore-duplicates,return=minimal');
+      return json(200, { ok: true });
+    }
+    case 'plantillas': {
+      const filas = await dbt('mail_plantillas', 'GET',
+        `?select=id,nombre,asunto,cuerpo,borrada,actualizado_en&email=eq.${encodeURIComponent(email)}&order=actualizado_en.asc`);
+      return json(200, { plantillas: filas ?? [] });
+    }
+    case 'plantilla_guardar':
+    case 'plantilla_borrar': {
+      const id = typeof p.id === 'string' ? p.id.slice(0, 80) : '';
+      if (!id) return json(400, { error: 'faltan_datos' });
+      const fila: Record<string, unknown> = {
+        id, email, borrada: p.accion === 'plantilla_borrar',
+        actualizado_en: typeof p.actualizado_en === 'string' ? p.actualizado_en : new Date().toISOString(),
+      };
+      if (p.accion === 'plantilla_guardar') {
+        fila.nombre = String(p.nombre ?? '').slice(0, 200);
+        fila.asunto = String(p.asunto ?? '').slice(0, 500);
+        fila.cuerpo = String(p.cuerpo ?? '').slice(0, 50_000);
+      }
+      await dbt('mail_plantillas', 'POST', '?on_conflict=email,id', fila, 'resolution=merge-duplicates,return=minimal');
+      return json(200, { ok: true });
+    }
+    case 'admin_estado': {
+      if (!(await esAdminApp(email))) return json(403, { error: 'solo_admin' });
+      const dispositivos = await db('GET',
+        '?select=email,version_code,version_nombre,ultimo_uso,errores_seguidos,ultimo_error,avisos_correo,avisos_comunicados,actualizado_en&order=email.asc');
+      const pendientes = await dbt('mail_comunicados', 'GET', '?select=id&enviado_en=is.null&activo=eq.true');
+      return json(200, {
+        servidor: 'ok', hora: new Date().toISOString(),
+        dispositivos: dispositivos ?? [], comunicados_pendientes: (pendientes ?? []).length,
+        config: await configApp(),
+      });
+    }
+  }
+  return json(400, { error: 'accion_desconocida' });
+}
+
+// ─── Envío de comunicados (lo llama "revisar", cada minuto) ────
+async function enviarComunicados() {
+  const ahora = new Date().toISOString();
+  // Se "reservan" marcando enviado_en primero: así nunca se mandan dos veces.
+  const listos: Comunicado[] = await dbt('mail_comunicados', 'PATCH',
+    `?enviado_en=is.null&activo=eq.true&programado_para=lte.${encodeURIComponent(ahora)}`,
+    { enviado_en: ahora }, 'return=representation');
+  if (!listos?.length) return { enviados: 0 };
+
+  const dispositivos: { fcm_token: string; email: string; version_code: number | null;
+    avisos_comunicados: boolean; avisos_actualizacion: boolean }[] =
+    await db('GET', '?select=fcm_token,email,version_code,avisos_comunicados,avisos_actualizacion');
+
+  const resumen = [];
+  for (const c of listos) {
+    let enviados = 0;
+    const cuerpo = String(c.contenido ?? '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 180);
+    for (const d of dispositivos ?? []) {
+      if (!comunicadoPara(c, d.email, d.version_code)) continue;
+      const quiere = c.tipo === 'actualizacion' ? d.avisos_actualizacion !== false : d.avisos_comunicados !== false;
+      if (!quiere) continue;
+      try {
+        const r = await enviarPush(d.fcm_token, c.titulo, cuerpo || 'Tocá para ver el comunicado', { tipo: 'comunicado', id: c.id }, CANAL_AVISOS);
+        if (r === 'token_invalido') await db('DELETE', `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}`);
+        else enviados++;
+      } catch (e) { console.error('comunicado', c.id, e); }
+    }
+    await dbt('mail_comunicados', 'PATCH', `?id=eq.${c.id}`, { enviados }, 'return=minimal');
+    resumen.push({ id: c.id, enviados });
+  }
+  return resumen;
 }
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
-  let p: Record<string, string>;
+  // deno-lint-ignore no-explicit-any
+  let p: Record<string, any>;
   try { p = await req.json(); } catch { return json(400, { error: 'invalid_json' }); }
   try {
     if (p.accion === 'revisar') {
@@ -298,7 +474,7 @@ Deno.serve(async (req) => {
     }
     if (p.accion === 'registrar') return await registrar(p);
     if (p.accion === 'baja') return await baja(p);
-    return json(400, { error: 'accion_desconocida' });
+    return await accionApp(p);
   } catch (e) {
     console.error(e);
     return json(500, { error: 'error_interno' });
