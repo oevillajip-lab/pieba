@@ -858,6 +858,16 @@ body.con-aviso .toast { bottom: 6.5rem; }
           <label for="pmAvisoGeneral">Aviso fijo arriba de la bandeja (vacío = sin aviso)</label>
           <input type="text" id="pmAvisoGeneral" placeholder="Ej: Mantenimiento del correo el sábado de 8 a 10">
         </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="pmColorNoche">Color de acento · modo noche</label>
+            <div style="display:flex;gap:.6rem;align-items:center;"><input type="color" id="pmColorNoche" value="#c9a96e" style="width:56px;height:38px;padding:2px;"><button type="button" class="btn-secondary" onclick="document.getElementById('pmColorNoche').value='#c9a96e'">Original</button></div>
+          </div>
+          <div class="form-field">
+            <label for="pmColorDia">Color de acento · modo día</label>
+            <div style="display:flex;gap:.6rem;align-items:center;"><input type="color" id="pmColorDia" value="#b82e22" style="width:56px;height:38px;padding:2px;"><button type="button" class="btn-secondary" onclick="document.getElementById('pmColorDia').value='#b82e22'">Original</button></div>
+          </div>
+        </div>
         <div class="form-field">
           <label>Funciones visibles</label>
           <label class="pm-check"><input type="checkbox" id="pmFnPlantillas"> Plantillas</label>
@@ -2366,6 +2376,8 @@ async function loadPmConfig() {
   const filas = ok(await supabase.from('mail_config').select('clave, valor')) || [];
   pmConfig = Object.fromEntries(filas.map(f => [f.clave, f.valor]));
   $('pmAvisoGeneral').value = pmConfig.textos?.aviso_general || '';
+  $('pmColorNoche').value = pmConfig.colores?.acento_noche || '#c9a96e';
+  $('pmColorDia').value = pmConfig.colores?.acento_dia || '#b82e22';
   $('pmFnPlantillas').checked = pmConfig.funciones?.plantillas !== false;
   $('pmFnContactos').checked = pmConfig.funciones?.contactos !== false;
   const menu = Array.isArray(pmConfig.menu) ? pmConfig.menu : ['inbox', 'sent', 'spam', 'trash', 'archive'];
@@ -2381,6 +2393,10 @@ window.guardarPmConfig = async () => {
       { clave: 'textos', valor: { ...(pmConfig.textos || {}), aviso_general: $('pmAvisoGeneral').value.trim() }, actualizado_en: ahora },
       { clave: 'funciones', valor: { ...(pmConfig.funciones || {}), plantillas: $('pmFnPlantillas').checked, contactos: $('pmFnContactos').checked }, actualizado_en: ahora },
       { clave: 'menu', valor: menu, actualizado_en: ahora },
+      { clave: 'colores', valor: {
+          acento_noche: $('pmColorNoche').value.toLowerCase() === '#c9a96e' ? '' : $('pmColorNoche').value,
+          acento_dia: $('pmColorDia').value.toLowerCase() === '#b82e22' ? '' : $('pmColorDia').value,
+        }, actualizado_en: ahora },
     ]));
     await loadPmConfig();
     toast('Configuración de la app guardada ✓');
