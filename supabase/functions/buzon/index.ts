@@ -118,6 +118,25 @@ function aLista(c: Correo) {
     hasAttachment: c.tiene_adjuntos ? '1' : '0',
   };
 }
+// La lista trae también el texto y los adjuntos de cada correo: así la app
+// lo guarda todo de una vez y abrir un correo es instantáneo.
+const MAX_CUERPO_EN_LISTA = 300_000;
+async function conCuerpo(filas: Correo[]) {
+  const ids = filas.map((c) => String(c.id));
+  const adj: Correo[] = ids.length
+    ? await db('correo_adjuntos', 'GET', `?select=id,correo_id,nombre,tipo,tamano,cid&correo_id=in.(${ids.join(',')})&order=creado_en.asc`)
+    : [];
+  return filas.map((c) => {
+    const html = String(c.html || '') || (c.texto ? `<div style="white-space:pre-wrap">${escaparHtml(String(c.texto))}</div>` : '');
+    const item: Record<string, unknown> = {
+      ...aLista(c),
+      attachments: (adj ?? []).filter((a) => a.correo_id === c.id)
+        .map((x) => ({ attachmentId: x.id, attachmentName: x.nombre, size: x.tamano, cid: x.cid, contentType: x.tipo })),
+    };
+    if (html && html.length <= MAX_CUERPO_EN_LISTA) item.content = html;
+    return item;
+  });
+}
 const CAMPOS_LISTA = 'id,carpeta,asunto,de,de_nombre,para,cc,resumen,recibido_en,leido,tiene_adjuntos';
 
 // ─── Sesión ─────────────────────────────────────────────────────────
@@ -396,8 +415,8 @@ async function conSesion(email: string, p: Record<string, unknown>) {
       const desde = Math.max(0, (Number(p.start) || 1) - 1);
       const limite = Math.min(200, Math.max(1, Number(p.limit) || 50));
       const filas: Correo[] = await db('correos', 'GET',
-        `?select=${CAMPOS_LISTA}&buzon=eq.${enc(email)}&carpeta=eq.${carpeta}&order=recibido_en.desc&offset=${desde}&limit=${limite}`);
-      return json(200, (filas ?? []).map(aLista));
+        `?select=${CAMPOS_LISTA},html,texto&buzon=eq.${enc(email)}&carpeta=eq.${carpeta}&order=recibido_en.desc&offset=${desde}&limit=${limite}`);
+      return json(200, await conCuerpo(filas ?? []));
     }
     case 'buscar': {
       const q = String(p.q ?? '').replace(/[%,()*]/g, ' ').trim();
@@ -410,6 +429,7 @@ async function conSesion(email: string, p: Record<string, unknown>) {
       return json(200, (filas ?? []).map(aLista));
     }
     case 'detalle': {
+      if (!ids.length) return json(404, { error: 'no_existe' });
       const f: Correo[] = await db('correos', 'GET', `?select=*&${filtroIds}`);
       const c = f?.[0];
       if (!c) return json(404, { error: 'no_existe' });
