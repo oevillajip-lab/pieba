@@ -2593,7 +2593,7 @@ async function loadPmVersiones() {
   }
   if (!pmVersiones.length) { cont.innerHTML = '<div class="empty-state"><p>Todavía no hay versiones compiladas en el repositorio de descargas.</p></div>'; return; }
   if (pmVersiones.every(x => x.code === (pmConfig.version?.version_code || 0))) {
-    cont.innerHTML = pmVersiones.map(x => `<div class="item-card"><div class="item-info"><div class="item-title">Versión ${escapeHtml(x.nombre)} (${x.code}) <span class="pm-estado enviado">PUBLICADA</span></div><div class="item-meta">No hay versiones más nuevas para publicar.</div></div></div>`).join('');
+    cont.innerHTML = pmVersiones.map(x => `<div class="item-card"><div class="item-info"><div class="item-title">Versión ${escapeHtml(x.nombre)} (${x.code}) <span class="pm-estado enviado">PUBLICADA</span></div><div class="item-meta">No hay versiones más nuevas para publicar.</div></div><div class="item-actions"><a class="btn-edit" style="padding:.5rem .8rem;text-decoration:none;" href="${escapeHtml(x.url)}" download>Descargar</a></div></div>`).join('');
     return;
   }
   cont.innerHTML = pmVersiones.map((x, i) => {
@@ -2608,7 +2608,10 @@ async function loadPmVersiones() {
           <label class="pm-switch"><input type="checkbox" id="pmvOblig${i}"> Obligatoria</label>
         </div>`}
       </div>
-      <div class="item-actions">${publicada ? '' : `<button class="btn-add" onclick="publicarVersion(${i})">Publicar</button>`}</div>
+      <div class="item-actions">
+        <a class="btn-edit" style="padding:.5rem .8rem;text-decoration:none;" href="${escapeHtml(x.url)}" download>Descargar</a>
+        ${publicada ? '' : `<button class="btn-add" onclick="publicarVersion(${i})">Publicar</button>`}
+      </div>
     </div>`;
   }).join('');
 }
