@@ -1,9 +1,9 @@
 // Puerta de entrada de la app PIEBA Mail: la app solo conoce este dominio.
 // Reenvía a las funciones de Supabase agregando la clave del proyecto, así el
-// APK no contiene ninguna clave, URL de Supabase ni identificador de Zoho.
+// APK no contiene ninguna clave ni URL de Supabase.
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ywftajhexpnofsoupfht.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_toCu6NDhiY3cGz5eBbHTvA_5qUgpH2J';
-const FUNCIONES = { token: 'zoho-token', push: 'mail-push', buzon: 'buzon' };
+const FUNCIONES = { push: 'mail-push', buzon: 'buzon' };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });

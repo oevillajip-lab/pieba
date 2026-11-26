@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PIEBA — Panel de Administración</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -118,7 +118,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .item-card-thumb { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; flex-shrink: 0; background: var(--navy-light); }
 .item-card-thumb-ph { width: 60px; height: 60px; border-radius: 4px; flex-shrink: 0; background: var(--navy-light); display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-b); }
 .item-info { flex: 1; min-width: 0; }
-.item-title { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-title { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.7; padding: 1px 0; }
 .item-meta { font-size: .72rem; color: var(--muted); margin-top: .3rem; }
 .item-tag { display: inline-block; font-size: .55rem; letter-spacing: .14em; text-transform: uppercase; padding: .15rem .55rem; border-radius: 2px; margin-right: .4rem; }
 .item-tag.urgente { background: rgba(224,85,85,.15); color: #ff9090; }
@@ -385,7 +385,21 @@ body.con-aviso .toast { bottom: 6.5rem; }
   .btn-add { justify-content: center; width: 100%; }
   .form-row { grid-template-columns: 1fr; }
   .dash-grid { grid-template-columns: 1fr; }
-  .item-card { flex-wrap: nowrap; }
+  .item-card { flex-wrap: wrap; padding: .9rem 1rem; }
+  .item-info { flex: 1 1 calc(100% - 80px); }
+  .item-title { white-space: normal; overflow-wrap: anywhere; }
+  .item-meta { overflow-wrap: anywhere; }
+  .item-actions { width: 100%; flex-wrap: wrap; }
+  .item-actions > .btn-edit, .item-actions > .btn-add, .item-actions > .btn-secondary, .item-actions > a { flex: 1 1 auto; justify-content: center; text-align: center; }
+  .item-actions .pm-switch { flex: 1 1 100%; }
+  /* iPhone: sin zoom automático al escribir y respetando la muesca */
+  input, select, textarea { font-size: 16px !important; }
+  .mobile-topbar { padding-top: env(safe-area-inset-top); height: calc(52px + env(safe-area-inset-top)); }
+  .main-content { padding-top: calc(52px + env(safe-area-inset-top)); padding-bottom: env(safe-area-inset-bottom); }
+  .sidebar { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  #bzLocal, #bzDominio { flex: 1 1 100% !important; }
+  .toast { left: 1rem; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); }
+  .user-add-row .form-field > div[style*="display:flex"] { flex-wrap: wrap; }
 }
 
 /* PIEBA Mail */
@@ -393,7 +407,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
 .pm-check { display: flex !important; align-items: center; gap: .55rem; font-size: .85rem !important; text-transform: none !important; letter-spacing: 0 !important; color: var(--white) !important; margin: .35rem 0 !important; cursor: pointer; }
 .pm-check input { width: auto !important; accent-color: var(--gold); }
 .pm-checks { max-height: 210px; overflow: auto; border: 1px solid rgba(255,255,255,.1); border-radius: 4px; padding: .4rem .8rem; }
-.pm-estado { font-size: .7rem; letter-spacing: .08em; padding: .15rem .5rem; border-radius: 3px; border: 1px solid currentColor; }
+.pm-estado { display: inline-block; vertical-align: middle; line-height: 1.5; font-size: .7rem; letter-spacing: .08em; padding: .1rem .5rem; border-radius: 3px; border: 1px solid currentColor; margin-left: .35rem; }
 .pm-estado.programado { color: #e0b05c; } .pm-estado.enviado { color: #6fcf97; } .pm-estado.inactivo { color: rgba(255,255,255,.4); }
 .pm-switch { display:flex; align-items:center; gap:.45rem; font-size:.75rem; color: var(--muted); cursor:pointer; }
 .pm-switch input { accent-color: var(--gold); }
@@ -846,7 +860,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
       <div class="page-header">
         <div><div class="page-label">PIEBA Mail</div><h1 class="page-title">Cuentas de correo</h1></div>
       </div>
-      <p class="login-help" style="max-width:680px;">Al crear una cuenta se genera una <b>clave de acceso de un solo uso</b>. Pasásela a la persona: entra a PIEBA Mail con su correo y esa clave, y la app le pide crear su propia contraseña. Si tenía correos en Zoho, se copian solos. Al crear su contraseña, cada persona tiene que poner un correo de recuperación: si la olvida, desde la app se le manda una clave ahí. También podés generarle una clave nueva desde aquí. Una cuenta desactivada deja de recibir correos y no puede entrar.</p>
+      <p class="login-help" style="max-width:680px;">Al crear una cuenta se genera una <b>clave de acceso de un solo uso</b>. Pasásela a la persona: entra a PIEBA Mail con su correo y esa clave, y la app le pide crear su propia contraseña. Al crear su contraseña, cada persona tiene que poner un correo de recuperación: si la olvida, desde la app se le manda una clave ahí. También podés generarle una clave nueva desde aquí. Una cuenta desactivada deja de recibir correos y no puede entrar.</p>
       <form class="user-add-row" onsubmit="event.preventDefault(); crearBuzon();">
         <div class="form-field" style="flex:1.6;margin:0;"><label for="bzLocal">Dirección</label>
           <div style="display:flex;align-items:center;gap:.4rem;">
@@ -865,13 +879,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
         <div class="empty-state"><p>Cargando…</p></div>
       </div>
 
-      <div class="page-header" style="margin-top:2.5rem;">
-        <div><div class="page-label">Migración</div><h1 class="page-title" style="font-size:1.4rem;">Traer correos de Zoho</h1></div>
-      </div>
-      <p class="login-help" style="max-width:680px;">Copia todo lo que la persona tenía en Zoho: recibidos, enviados, borradores, spam, papelera, sus carpetas (quedan en Archivados), adjuntos y contactos. Se hace sola cuando entra por primera vez. Desde aquí podés repetirla (no duplica), por ejemplo para traer lo que llegó a Zoho antes del cambio.</p>
-      <div class="items-list" id="list-pm-zoho">
-        <div class="empty-state"><p>Cargando…</p></div>
-      </div>
+
     </div>
 
     <!-- PIEBA MAIL: APP Y USUARIOS (solo superadmin) -->
@@ -2272,7 +2280,7 @@ async function loadPiebaMail() {
   const esSuper = ok(await supabase.rpc('es_superadmin'));
   $('navPiebaMail').style.display = esSuper ? '' : 'none';
   if (!esSuper) return;
-  await Promise.all([loadPmComunicados(), loadPmDispositivos(), loadPmConfig(), loadPmBuzones(), loadPmZoho()]);
+  await Promise.all([loadPmComunicados(), loadPmDispositivos(), loadPmConfig(), loadPmBuzones()]);
 }
 
 async function loadPmComunicados() {
@@ -2462,7 +2470,7 @@ window.crearBuzon = async () => {
     ok(await supabase.from('buzones').insert({ email, nombre, creado_por: authEmail || null }));
     $('bzLocal').value = ''; $('bzNombre').value = '';
     await claveTemporalBuzon(email, true);
-    await Promise.all([loadPmBuzones(), loadPmZoho()]);
+    await Promise.all([loadPmBuzones()]);
   } catch (e) {
     toast(String(e.message || e).includes('duplicate') ? 'Esa dirección ya existe.' : 'Error: ' + mensajeError(e), 'error');
   } finally { btn.disabled = false; }
@@ -2493,7 +2501,7 @@ window.eliminarBuzon = async (email) => {
   try {
     await invocar('buzon', { accion: 'eliminar_buzon', email });
     toast(`${email} eliminada`);
-    await Promise.all([loadPmBuzones(), loadPmZoho()]);
+    await Promise.all([loadPmBuzones()]);
   } catch (e) { toast('No se pudo eliminar: ' + (e.message || e), 'error'); }
 };
 window.copiarClave = async (btn, email, clave) => {
@@ -2508,57 +2516,6 @@ window.activarBuzon = async (email, activo) => {
     toast(activo ? `${email} activada` : `${email} desactivada`);
     await loadPmBuzones();
   } catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
-};
-async function loadPmZoho() {
-  const cont = $('list-pm-zoho');
-  try {
-    const r = await invocar('mail-push', { accion: 'migrar_zoho', listar: true });
-    const cuentas = r?.cuentas || [];
-    if (!cuentas.length) { cont.innerHTML = '<div class="empty-state"><p>No hay cuentas de Zoho con permiso guardado.</p></div>'; return; }
-    cont.innerHTML = cuentas.map(c => {
-      const e = escapeHtml(c.email);
-      const id = 'zoho-' + c.email.replace(/[^a-z0-9]/gi, '_');
-      return `
-      <div class="item-card">
-        <div class="item-info">
-          <div class="item-title">${e}</div>
-          <div class="item-meta" id="${id}">${c.tiene_buzon ? 'Lista para copiar' : 'Primero creá el buzón con esta dirección'}</div>
-        </div>
-        <div class="item-actions">
-          <button class="btn-edit" ${c.tiene_buzon ? '' : 'disabled'} onclick="migrarZoho('${e}', '${id}', this)">Traer correos</button>
-        </div>
-      </div>`;
-    }).join('');
-  } catch (e) {
-    cont.innerHTML = `<div class="empty-state"><p>No se pudo consultar: ${escapeHtml(e.message || String(e))}</p></div>`;
-  }
-}
-window.migrarZoho = async (email, idEstado, btn) => {
-  const estado = $(idEstado);
-  btn.disabled = true;
-  let cursor = { carpeta_idx: 0, start: 1 };
-  let copiados = 0, repetidos = 0, errores = 0;
-  const saltadas = [];
-  let contactos = null, errorContactos = '';
-  try {
-    for (let vuelta = 0; vuelta < 2000; vuelta++) {
-      const r = await invocar('mail-push', { accion: 'migrar_zoho', email, ...cursor });
-      copiados += r.copiados || 0; repetidos += r.repetidos || 0; errores += r.errores || 0;
-      (r.saltadas || []).forEach(n => { if (!saltadas.includes(n)) saltadas.push(n); });
-      if (r.contactos != null) contactos = r.contactos;
-      if (r.error_contactos) errorContactos = r.error_contactos;
-      estado.textContent = r.terminado
-        ? `Terminado: ${copiados} copiados${repetidos ? `, ${repetidos} ya estaban` : ''}${errores ? `, ${errores} con error (podés repetir)` : ''}${contactos != null ? `, ${contactos} contacto${contactos == 1 ? '' : 's'}` : ''}${errorContactos ? `. Contactos: no se pudieron traer (${errorContactos})` : ''}${saltadas.length ? `. Carpetas que Zoho no deja leer: ${saltadas.join(', ')}` : ''}.`
-        : `Copiando ${r.carpeta || ''} (${(r.carpeta_idx || 0) + 1} de ${r.total_carpetas})… ${copiados} copiados`;
-      if (r.terminado) break;
-      cursor = { carpeta_idx: r.carpeta_idx, start: r.start };
-    }
-    toast(`Correos de ${email} copiados`);
-    await loadPmBuzones();
-  } catch (e) {
-    estado.textContent = `Se detuvo: ${e.message || e}. Tocá de nuevo para continuar (no duplica).`;
-    toast('Error al copiar: ' + (e.message || e), 'error');
-  } finally { btn.disabled = false; }
 };
 
 const PM_REPO_DESCARGAS = 'nosoysuperman17-max/Apk_descargas';

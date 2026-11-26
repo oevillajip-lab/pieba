@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-//  PIEBA Mail · Correo propio (sin Zoho)
+//  PIEBA Mail · Correo propio
 // ═══════════════════════════════════════════════════════════════════
 //  Una sola función para todo el correo:
 //   · Sin sesión: login (contraseña o clave de un solo uso), refresh,
@@ -111,7 +111,7 @@ async function buzonActivo(email: string) {
   return r?.[0]?.activo ? r[0] as { email: string; nombre: string; correo_personal: string | null } : null;
 }
 
-// Forma "tipo Zoho" que ya entiende la app (así no cambia su lógica).
+// Formato de lista que entiende la app.
 type Correo = Record<string, unknown>;
 function aLista(c: Correo) {
   const t = new Date(String(c.recibido_en)).getTime();
@@ -311,13 +311,6 @@ async function sinSesion(p: Record<string, unknown>) {
       if (!r.ok) return json(500, { error: 'cuenta', mensaje: 'No se pudo guardar la contraseña.' });
       await db('buzon_pines', 'DELETE', `?email=eq.${enc(email)}`);
       await db('buzones', 'PATCH', `?email=eq.${enc(email)}`, { correo_personal: recuperacion }, 'return=minimal');
-      // Si tenía correos en Zoho, se copian solos en segundo plano.
-      // deno-lint-ignore no-explicit-any
-      (globalThis as any).EdgeRuntime?.waitUntil(fetch(`${env('SUPABASE_URL')}/functions/v1/mail-push`, {
-        method: 'POST',
-        headers: { apikey: env('SUPABASE_SERVICE_ROLE_KEY'), 'Content-Type': 'application/json', 'x-buzon-secreto': env('BUZON_SECRETO') },
-        body: JSON.stringify({ accion: 'migrar_zoho', email, auto: true }),
-      }).catch((e) => console.error('migrar', e)));
       const s = await sesionPorPassword(email, password);
       return json(200, { ...s, email, nombre: b.nombre });
     }
@@ -372,7 +365,7 @@ async function panel(p: Record<string, unknown>) {
   if (p.accion === 'eliminar_buzon') {
     const b = await db('buzones', 'GET', `?select=email&email=eq.${enc(email)}`);
     if (!b?.length) return json(404, { error: 'no_existe', mensaje: 'Esa cuenta no existe.' });
-    // Archivos adjuntos guardados (carpetas recibidos/salida/zoho de la cuenta).
+    // Archivos adjuntos guardados (todas las carpetas de la cuenta).
     const rutas: string[] = [];
     const listar = async (prefijo: string) => {
       const r = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/list/correo`, {
@@ -392,7 +385,8 @@ async function panel(p: Record<string, unknown>) {
     }
     const id = await rpc('buzon_user_id', { p_email: email });
     if (id) await auth(`/admin/users/${id}`, 'DELETE');
-    await db('buzones', 'DELETE', `?email=eq.${enc(email)}`); // borra correos, contactos, etc.
+    await db('mail_admins', 'DELETE', `?email=eq.${enc(email)}`).catch(() => {});
+    await db('buzones', 'DELETE', `?email=eq.${enc(email)}`); // borra correos, contactos, teléfonos, etc.
     return json(200, { ok: true, archivos: rutas.length });
   }
   return json(400, { error: 'accion_desconocida' });
@@ -518,16 +512,8 @@ async function conSesion(email: string, p: Record<string, unknown>) {
 }
 
 async function eliminarCorreos(filtro: string) {
-  const correos: { id: string; buzon: string; message_id: string | null }[] =
-    await db('correos', 'GET', `${filtro}&select=id,buzon,message_id`);
+  const correos: { id: string }[] = await db('correos', 'GET', `${filtro}&select=id`);
   if (!correos?.length) return;
-  // Los que vinieron de Zoho: recordarlos para que la copia no los traiga de nuevo.
-  const deZoho = correos.filter((c) => c.message_id?.startsWith('<zoho-'))
-    .map((c) => ({ buzon: c.buzon, message_id: c.message_id }));
-  if (deZoho.length) {
-    await db('buzon_zoho_borrados', 'POST', '?on_conflict=buzon,message_id', deZoho, 'resolution=ignore-duplicates,return=minimal')
-      .catch((e) => console.error('zoho_borrados', e));
-  }
   const lista = correos.map((c) => c.id).join(',');
   const adj: { ruta: string }[] = await db('correo_adjuntos', 'GET', `?select=ruta&correo_id=in.(${lista})`);
   await borrarArchivos((adj ?? []).map((a) => a.ruta));
