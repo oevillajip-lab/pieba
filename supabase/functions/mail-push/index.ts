@@ -552,6 +552,69 @@ async function zohoBinario(host: string, path: string, token: string) {
   return new Uint8Array(await res.arrayBuffer());
 }
 
+
+// Contactos guardados en Zoho Contacts → buzon_contactos (no duplica).
+function hostContactos(mailHost: string) {
+  if (mailHost.startsWith('mail.')) return mailHost.replace(/^mail\./, 'contacts.');
+  const m = mailHost.match(/^mail(sa|eu|in|australian)\./);
+  return m ? `contacts${m[1]}.zoho.com` : 'contacts.zoho.com';
+}
+function emailDeContacto(c: Record<string, unknown>): string {
+  for (const k of ['email', 'emailId', 'email_address', 'mailId', 'primaryEmail', 'emailIds', 'emailAddresses', 'emails']) {
+    const v = c[k];
+    const lista = Array.isArray(v) ? v : [v];
+    for (const x of lista) {
+      if (typeof x === 'string' && x.includes('@')) return x.trim().toLowerCase();
+      if (x && typeof x === 'object') {
+        const o = x as Record<string, unknown>;
+        const e = o.value ?? o.email ?? o.emailId ?? o.mailId ?? o.address;
+        if (typeof e === 'string' && e.includes('@')) return e.trim().toLowerCase();
+      }
+    }
+  }
+  return '';
+}
+function telefonoDeContacto(c: Record<string, unknown>): string {
+  for (const k of ['mobile', 'phone', 'mobileNumber', 'phoneNumber', 'phones', 'phoneNumbers']) {
+    const v = c[k];
+    const lista = Array.isArray(v) ? v : [v];
+    for (const x of lista) {
+      if (typeof x === 'string' && x.trim()) return x.trim();
+      if (x && typeof x === 'object') {
+        const t = (x as Record<string, unknown>).value ?? (x as Record<string, unknown>).number;
+        if (typeof t === 'string' && t.trim()) return t.trim();
+      }
+    }
+  }
+  return '';
+}
+async function migrarContactos(email: string, mailHost: string, token: string) {
+  const host = hostContactos(mailHost);
+  const filas: { buzon: string; email: string; nombre: string; telefono: string }[] = [];
+  for (let pagina = 1; pagina <= 20; pagina++) {
+    const res = await fetch(`https://${host}/api/v1/accounts/self/contacts?page=${pagina}&per_page=200`,
+      { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
+    if (!res.ok) { if (pagina === 1) throw new Error(`Contactos HTTP ${res.status}`); break; }
+    const t = await res.text();
+    const d = JSON.parse(t.replace(/([:\[,]\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'));
+    const lista = d?.contacts ?? d?.data?.contacts ?? d?.data?.data ?? d?.data ?? [];
+    if (!Array.isArray(lista) || !lista.length) break;
+    for (const c of lista as Record<string, unknown>[]) {
+      const e = emailDeContacto(c);
+      if (!e) continue;
+      const nombre = String(c.contactName ?? c.full_name ?? c.display_name ?? '') ||
+        [c.firstName ?? c.first_name, c.lastName ?? c.last_name].filter(Boolean).join(' ');
+      filas.push({ buzon: email, email: e, nombre: String(nombre || e.split('@')[0]).slice(0, 200), telefono: telefonoDeContacto(c).slice(0, 50) });
+    }
+    if (lista.length < 200) break;
+  }
+  const unicos = [...new Map(filas.map((f) => [f.email, f])).values()];
+  if (unicos.length) {
+    await dbt('buzon_contactos', 'POST', '?on_conflict=buzon,email', unicos, 'resolution=ignore-duplicates,return=minimal');
+  }
+  return unicos.length;
+}
+
 async function migrarZoho(p: Record<string, unknown>) {
   const email = String(p.email ?? '').trim().toLowerCase();
   // Cuentas con permiso de Zoho guardado (las que entraron alguna vez a la app).
@@ -595,6 +658,15 @@ async function migrarZoho(p: Record<string, unknown>) {
 
   let idx = Math.max(0, Number(p.carpeta_idx) || 0);
   let start = Math.max(1, Number(p.start) || 1);
+  // En la primera vuelta, también la libreta de contactos.
+  let contactos: number | null = null;
+  let errorContactos = '';
+  if (idx === 0 && start === 1) {
+    try { contactos = await migrarContactos(email, host, token); } catch (e) {
+      console.error('contactos', email, e);
+      errorContactos = String(e instanceof Error ? e.message : e).slice(0, 120);
+    }
+  }
   const LOTE = 15;
   let copiados = 0, repetidos = 0, errores = 0;
   const saltadas: string[] = [];
@@ -675,7 +747,7 @@ async function migrarZoho(p: Record<string, unknown>) {
 
   const terminado = idx >= carpetas.length;
   return json(200, {
-    terminado, copiados, repetidos, errores, saltadas,
+    terminado, copiados, repetidos, errores, saltadas, contactos, error_contactos: errorContactos || undefined,
     carpeta: terminado ? null : carpetas[idx]?.nombre, carpeta_idx: idx, start, total_carpetas: carpetas.length,
   });
 }

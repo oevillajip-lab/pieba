@@ -868,7 +868,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
       <div class="page-header" style="margin-top:2.5rem;">
         <div><div class="page-label">Migración</div><h1 class="page-title" style="font-size:1.4rem;">Traer correos de Zoho</h1></div>
       </div>
-      <p class="login-help" style="max-width:680px;">La copia se hace sola cuando la persona entra por primera vez. Desde aquí podés repetirla (no duplica), por ejemplo para traer lo que llegó a Zoho antes del cambio.</p>
+      <p class="login-help" style="max-width:680px;">Copia todo lo que la persona tenía en Zoho: recibidos, enviados, borradores, spam, papelera, sus carpetas (quedan en Archivados), adjuntos y contactos. Se hace sola cuando entra por primera vez. Desde aquí podés repetirla (no duplica), por ejemplo para traer lo que llegó a Zoho antes del cambio.</p>
       <div class="items-list" id="list-pm-zoho">
         <div class="empty-state"><p>Cargando…</p></div>
       </div>
@@ -2539,13 +2539,16 @@ window.migrarZoho = async (email, idEstado, btn) => {
   let cursor = { carpeta_idx: 0, start: 1 };
   let copiados = 0, repetidos = 0, errores = 0;
   const saltadas = [];
+  let contactos = null, errorContactos = '';
   try {
     for (let vuelta = 0; vuelta < 2000; vuelta++) {
       const r = await invocar('mail-push', { accion: 'migrar_zoho', email, ...cursor });
       copiados += r.copiados || 0; repetidos += r.repetidos || 0; errores += r.errores || 0;
       (r.saltadas || []).forEach(n => { if (!saltadas.includes(n)) saltadas.push(n); });
+      if (r.contactos != null) contactos = r.contactos;
+      if (r.error_contactos) errorContactos = r.error_contactos;
       estado.textContent = r.terminado
-        ? `Terminado: ${copiados} copiados${repetidos ? `, ${repetidos} ya estaban` : ''}${errores ? `, ${errores} con error (podés repetir)` : ''}${saltadas.length ? `. Carpetas que Zoho no deja leer: ${saltadas.join(', ')}` : ''}.`
+        ? `Terminado: ${copiados} copiados${repetidos ? `, ${repetidos} ya estaban` : ''}${errores ? `, ${errores} con error (podés repetir)` : ''}${contactos != null ? `, ${contactos} contacto${contactos == 1 ? '' : 's'}` : ''}${errorContactos ? `. Contactos: no se pudieron traer (${errorContactos})` : ''}${saltadas.length ? `. Carpetas que Zoho no deja leer: ${saltadas.join(', ')}` : ''}.`
         : `Copiando ${r.carpeta || ''} (${(r.carpeta_idx || 0) + 1} de ${r.total_carpetas})… ${copiados} copiados`;
       if (r.terminado) break;
       cursor = { carpeta_idx: r.carpeta_idx, start: r.start };
