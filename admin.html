@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PIEBA — Panel de Administración</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -118,7 +118,7 @@ html, body { height: 100%; font-family: 'Raleway', sans-serif; background: var(-
 .item-card-thumb { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; flex-shrink: 0; background: var(--navy-light); }
 .item-card-thumb-ph { width: 60px; height: 60px; border-radius: 4px; flex-shrink: 0; background: var(--navy-light); display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-b); }
 .item-info { flex: 1; min-width: 0; }
-.item-title { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-title { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.7; padding: 1px 0; }
 .item-meta { font-size: .72rem; color: var(--muted); margin-top: .3rem; }
 .item-tag { display: inline-block; font-size: .55rem; letter-spacing: .14em; text-transform: uppercase; padding: .15rem .55rem; border-radius: 2px; margin-right: .4rem; }
 .item-tag.urgente { background: rgba(224,85,85,.15); color: #ff9090; }
@@ -385,7 +385,21 @@ body.con-aviso .toast { bottom: 6.5rem; }
   .btn-add { justify-content: center; width: 100%; }
   .form-row { grid-template-columns: 1fr; }
   .dash-grid { grid-template-columns: 1fr; }
-  .item-card { flex-wrap: nowrap; }
+  .item-card { flex-wrap: wrap; padding: .9rem 1rem; }
+  .item-info { flex: 1 1 calc(100% - 80px); }
+  .item-title { white-space: normal; overflow-wrap: anywhere; }
+  .item-meta { overflow-wrap: anywhere; }
+  .item-actions { width: 100%; flex-wrap: wrap; }
+  .item-actions > .btn-edit, .item-actions > .btn-add, .item-actions > .btn-secondary, .item-actions > a { flex: 1 1 auto; justify-content: center; text-align: center; }
+  .item-actions .pm-switch { flex: 1 1 100%; }
+  /* iPhone: sin zoom automático al escribir y respetando la muesca */
+  input, select, textarea { font-size: 16px !important; }
+  .mobile-topbar { padding-top: env(safe-area-inset-top); height: calc(52px + env(safe-area-inset-top)); }
+  .main-content { padding-top: calc(52px + env(safe-area-inset-top)); padding-bottom: env(safe-area-inset-bottom); }
+  .sidebar { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  #bzLocal, #bzDominio { flex: 1 1 100% !important; }
+  .toast { left: 1rem; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); }
+  .user-add-row .form-field > div[style*="display:flex"] { flex-wrap: wrap; }
 }
 
 /* PIEBA Mail */
@@ -393,7 +407,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
 .pm-check { display: flex !important; align-items: center; gap: .55rem; font-size: .85rem !important; text-transform: none !important; letter-spacing: 0 !important; color: var(--white) !important; margin: .35rem 0 !important; cursor: pointer; }
 .pm-check input { width: auto !important; accent-color: var(--gold); }
 .pm-checks { max-height: 210px; overflow: auto; border: 1px solid rgba(255,255,255,.1); border-radius: 4px; padding: .4rem .8rem; }
-.pm-estado { font-size: .7rem; letter-spacing: .08em; padding: .15rem .5rem; border-radius: 3px; border: 1px solid currentColor; }
+.pm-estado { display: inline-block; vertical-align: middle; line-height: 1.5; font-size: .7rem; letter-spacing: .08em; padding: .1rem .5rem; border-radius: 3px; border: 1px solid currentColor; margin-left: .35rem; }
 .pm-estado.programado { color: #e0b05c; } .pm-estado.enviado { color: #6fcf97; } .pm-estado.inactivo { color: rgba(255,255,255,.4); }
 .pm-switch { display:flex; align-items:center; gap:.45rem; font-size:.75rem; color: var(--muted); cursor:pointer; }
 .pm-switch input { accent-color: var(--gold); }
