@@ -59,17 +59,23 @@ async function auth(path: string, method: string, body?: unknown) {
   const t = await res.text();
   return { ok: res.ok, status: res.status, data: t ? JSON.parse(t) : null };
 }
+const rutaUrl = (ruta: string) => ruta.split('/').map(encodeURIComponent).join('/');
 async function firmarDescarga(ruta: string, segundos = 300) {
-  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/sign/${BUCKET}/${ruta}`, {
-    method: 'POST', headers: cabeceras(), body: JSON.stringify({ expiresIn: segundos }),
+  // Se firma por el cuerpo (no en la URL): así la firma coincide aunque la
+  // ruta tenga @, espacios o acentos. Firmar con la ruta en la URL la
+  // codificaba distinto y Storage respondía "Invalid signature".
+  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/sign/${BUCKET}`, {
+    method: 'POST', headers: cabeceras(), body: JSON.stringify({ expiresIn: segundos, paths: [ruta] }),
   });
-  if (!res.ok) throw new Error(`Storage firmar ${res.status}`);
-  const { signedURL } = await res.json();
-  return `${env('SUPABASE_URL')}/storage/v1${signedURL}`;
+  if (!res.ok) throw new Error(`Storage firmar ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const [r] = await res.json();
+  if (!r?.signedURL) throw new Error(`Storage firmar: ${r?.error ?? 'sin enlace'}`);
+  return `${env('SUPABASE_URL')}/storage/v1${r.signedURL}`;
 }
 async function firmarSubida(ruta: string) {
-  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/upload/sign/${BUCKET}/${ruta}`, {
-    method: 'POST', headers: cabeceras(),
+  // Storage exige un cuerpo cuando se manda Content-Type: application/json.
+  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/upload/sign/${BUCKET}/${rutaUrl(ruta)}`, {
+    method: 'POST', headers: cabeceras(), body: '{}',
   });
   if (!res.ok) throw new Error(`Storage subida ${res.status}: ${await res.text()}`);
   const { url } = await res.json();
@@ -449,7 +455,8 @@ async function conSesion(email: string, p: Record<string, unknown>) {
       if (!a?.length) return json(404, { error: 'no_existe' });
       const propio = await db('correos', 'GET', `?select=id&id=eq.${a[0].correo_id}&buzon=eq.${enc(email)}`);
       if (!propio?.length) return json(404, { error: 'no_existe' });
-      return json(200, { url: await firmarDescarga(a[0].ruta) });
+      const url = await firmarDescarga(a[0].ruta);
+      return json(200, { url });
     }
     case 'actualizar': {
       if (!ids.length) return json(400, { error: 'faltan_datos' });
@@ -474,7 +481,7 @@ async function conSesion(email: string, p: Record<string, unknown>) {
       return json(200, { ok: true });
     }
     case 'subir': {
-      const nombre = String(p.nombre ?? 'adjunto').replace(/[^\w.\- ]+/g, '_').slice(0, 120);
+      const nombre = String(p.nombre ?? 'adjunto').replace(/[^\w.\-]+/g, '_').slice(0, 120);
       const ruta = `${email}/salida/${crypto.randomUUID()}/${nombre}`;
       return json(200, { ruta, url: await firmarSubida(ruta) });
     }
@@ -600,7 +607,7 @@ async function entrante(p: Record<string, unknown>) {
     // Enlaces para subir los adjuntos directo a Storage.
     case 'entrante_subir': {
       const buzon = limpiarEmail(p.buzon);
-      const nombres = (Array.isArray(p.nombres) ? p.nombres : []).map((n) => String(n).replace(/[^\w.\- ]+/g, '_').slice(0, 120));
+      const nombres = (Array.isArray(p.nombres) ? p.nombres : []).map((n) => String(n).replace(/[^\w.\-]+/g, '_').slice(0, 120));
       const base = `${buzon}/entrada/${crypto.randomUUID()}`;
       const subidas = await Promise.all(nombres.map(async (n, i) => {
         const ruta = `${base}/${i}_${n}`;
@@ -628,7 +635,10 @@ async function entrante(p: Record<string, unknown>) {
         asunto: String(p.asunto ?? '').slice(0, 500),
         html: html.slice(0, 2_000_000), texto: texto.slice(0, 500_000),
         resumen: (textoPlano(html) || texto.replace(/\s+/g, ' ')).slice(0, 200),
-        tiene_adjuntos: adjuntos.some((a) => !a.cid), tamano: Number(p.tamano) || 0,
+        // Adjunto de verdad = no está pegado en el texto (Gmail les pone cid
+        // también a los adjuntos comunes, así que se mira si el texto lo usa).
+        tiene_adjuntos: adjuntos.some((a) => !a.cid || !html.includes(`cid:${String(a.cid).replace(/[<>]/g, '')}`)),
+        tamano: Number(p.tamano) || 0,
         recibido_en: p.fecha ? new Date(String(p.fecha)).toISOString() : new Date().toISOString(),
       };
       if (Number.isNaN(new Date(correo.recibido_en).getTime())) correo.recibido_en = new Date().toISOString();
