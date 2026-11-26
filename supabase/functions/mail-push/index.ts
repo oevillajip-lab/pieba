@@ -559,17 +559,26 @@ function hostContactos(mailHost: string) {
   const m = mailHost.match(/^mail(sa|eu|in|australian)\./);
   return m ? `contacts${m[1]}.zoho.com` : 'contacts.zoho.com';
 }
-function emailDeContacto(c: Record<string, unknown>): string {
-  for (const k of ['email', 'emailId', 'email_address', 'mailId', 'primaryEmail', 'emailIds', 'emailAddresses', 'emails']) {
-    const v = c[k];
-    const lista = Array.isArray(v) ? v : [v];
-    for (const x of lista) {
-      if (typeof x === 'string' && x.includes('@')) return x.trim().toLowerCase();
-      if (x && typeof x === 'object') {
-        const o = x as Record<string, unknown>;
-        const e = o.value ?? o.email ?? o.emailId ?? o.mailId ?? o.address;
-        if (typeof e === 'string' && e.includes('@')) return e.trim().toLowerCase();
-      }
+function emailDeContacto(c: unknown, nivel = 0): string {
+  // Zoho cambia el nombre del campo según la versión (email, email_id,
+  // emails[].value...): se busca el primer texto con forma de correo.
+  if (nivel > 4 || c == null) return '';
+  if (typeof c === 'string') {
+    const m = c.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+    return m ? m[0].toLowerCase() : '';
+  }
+  if (Array.isArray(c)) {
+    for (const x of c) { const e = emailDeContacto(x, nivel + 1); if (e) return e; }
+    return '';
+  }
+  if (typeof c === 'object') {
+    const o = c as Record<string, unknown>;
+    // Primero los campos que suelen ser el correo; después cualquier otro.
+    const claves = Object.keys(o).sort((a, b) => Number(!/mail/i.test(a)) - Number(!/mail/i.test(b)));
+    for (const k of claves) {
+      if (/photo|url|image|link|note/i.test(k)) continue;
+      const e = emailDeContacto(o[k], nivel + 1);
+      if (e) return e;
     }
   }
   return '';
@@ -598,11 +607,15 @@ async function migrarContactos(email: string, mailHost: string, token: string) {
     const t = await res.text();
     const d = JSON.parse(t.replace(/([:\[,]\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'));
     const lista = d?.contacts ?? d?.data?.contacts ?? d?.data?.data ?? d?.data ?? [];
-    if (!Array.isArray(lista) || !lista.length) break;
+    if (!Array.isArray(lista) || !lista.length) {
+      if (pagina === 1) console.log('contactos: respuesta sin lista', t.slice(0, 300));
+      break;
+    }
+    if (pagina === 1) console.log('contactos: ejemplo', JSON.stringify(lista[0]).slice(0, 400));
     for (const c of lista as Record<string, unknown>[]) {
       const e = emailDeContacto(c);
       if (!e) continue;
-      const nombre = String(c.contactName ?? c.full_name ?? c.display_name ?? '') ||
+      const nombre = String(c.contactName ?? c.full_name ?? c.display_name ?? c.fullName ?? c.displayName ?? '') ||
         [c.firstName ?? c.first_name, c.lastName ?? c.last_name].filter(Boolean).join(' ');
       filas.push({ buzon: email, email: e, nombre: String(nombre || e.split('@')[0]).slice(0, 200), telefono: telefonoDeContacto(c).slice(0, 50) });
     }
