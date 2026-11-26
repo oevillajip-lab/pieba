@@ -846,7 +846,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
       <div class="page-header">
         <div><div class="page-label">PIEBA Mail</div><h1 class="page-title">Cuentas de correo</h1></div>
       </div>
-      <p class="login-help" style="max-width:680px;">Al crear una cuenta se genera una <b>clave de acceso de un solo uso</b>. Pasásela a la persona: entra a PIEBA Mail con su correo y esa clave, y la app le pide crear su propia contraseña. Si tenía correos en Zoho, se copian solos. Si alguien olvida su contraseña, generale una clave nueva. Una cuenta desactivada deja de recibir correos y no puede entrar.</p>
+      <p class="login-help" style="max-width:680px;">Al crear una cuenta se genera una <b>clave de acceso de un solo uso</b>. Pasásela a la persona: entra a PIEBA Mail con su correo y esa clave, y la app le pide crear su propia contraseña. Si tenía correos en Zoho, se copian solos. Al crear su contraseña, cada persona tiene que poner un correo de recuperación: si la olvida, desde la app se le manda una clave ahí. También podés generarle una clave nueva desde aquí. Una cuenta desactivada deja de recibir correos y no puede entrar.</p>
       <form class="user-add-row" onsubmit="event.preventDefault(); crearBuzon();">
         <div class="form-field" style="flex:1.6;margin:0;"><label for="bzLocal">Dirección</label>
           <div style="display:flex;align-items:center;gap:.4rem;">
@@ -2442,11 +2442,12 @@ async function loadPmBuzones() {
     <div class="item-card" style="${b.activo ? '' : 'opacity:.55;'}">
       <div class="item-info">
         <div class="item-title">${e}${b.nombre ? ` · ${escapeHtml(b.nombre)}` : ''}</div>
-        <div class="item-meta">${estado} · ${b.correos} correo${b.correos == 1 ? '' : 's'} · ${b.dispositivos} teléfono${b.dispositivos == 1 ? '' : 's'}</div>
+        <div class="item-meta">${estado} · ${b.correos} correo${b.correos == 1 ? '' : 's'} · ${b.dispositivos} teléfono${b.dispositivos == 1 ? '' : 's'}${b.correo_personal ? ` · recuperación: ${escapeHtml(b.correo_personal)}` : ''}</div>
       </div>
       <div class="item-actions">
         ${b.activo ? `<button class="btn-edit" style="padding:.5rem .8rem;" onclick="claveTemporalBuzon('${e}')">Clave de acceso</button>` : ''}
         <button class="btn-edit" style="padding:.5rem .8rem;${b.activo ? 'color:var(--danger);border-color:var(--danger);' : ''}" onclick="activarBuzon('${e}', ${!b.activo})">${b.activo ? 'Desactivar' : 'Activar'}</button>
+        <button class="btn-edit" style="padding:.5rem .8rem;color:var(--danger);border-color:var(--danger);" onclick="eliminarBuzon('${e}')">Eliminar</button>
       </div>
     </div>`;
   }).join('');
@@ -2485,6 +2486,15 @@ window.claveTemporalBuzon = async (email, nueva = false) => {
       </div>`;
     $('bzClave').scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (e) { toast('No se pudo generar la clave: ' + (e.message || e), 'error'); }
+};
+window.eliminarBuzon = async (email) => {
+  const ok1 = prompt(`Esto borra para siempre ${email}: todos sus correos, adjuntos y contactos. No se puede deshacer.\n\nSi solo querés que no entre, usá Desactivar.\n\nPara confirmar, escribí la dirección completa:`);
+  if ((ok1 || '').trim().toLowerCase() !== email) { if (ok1 !== null) toast('La dirección no coincide; no se borró nada.', 'error'); return; }
+  try {
+    await invocar('buzon', { accion: 'eliminar_buzon', email });
+    toast(`${email} eliminada`);
+    await Promise.all([loadPmBuzones(), loadPmZoho()]);
+  } catch (e) { toast('No se pudo eliminar: ' + (e.message || e), 'error'); }
 };
 window.copiarClave = async (btn, email, clave) => {
   const texto = `PIEBA Mail\nCorreo: ${email}\nClave de acceso: ${clave}\nAbrí la app, ingresá con estos datos y creá tu contraseña.`;

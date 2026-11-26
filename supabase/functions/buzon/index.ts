@@ -3,8 +3,8 @@
 // ═══════════════════════════════════════════════════════════════════
 //  Una sola función para todo el correo:
 //   · Sin sesión: login (contraseña o clave de un solo uso), refresh,
-//     crear_clave (primer ingreso).
-//   · Panel, solo superadmin: clave_temporal.
+//     olvide, crear_clave (primer ingreso, con correo de recuperación).
+//   · Panel, solo superadmin: clave_temporal, eliminar_buzon.
 //   · Con sesión (access_token de Supabase): carpetas, listar, buscar,
 //     detalle, adjuntos, descargar, actualizar, eliminar, vaciar, enviar,
 //     subir, contactos, contacto_guardar, contacto_borrar, registrar, baja,
@@ -149,6 +149,20 @@ async function resend(body: unknown) {
   if (!res.ok) throw new Error(`Resend ${res.status}: ${t.slice(0, 300)}`);
   return JSON.parse(t);
 }
+function plantillaRecuperar(email: string, clave: string, nombre: string) {
+  return `<!DOCTYPE html><html><body style="margin:0;background:#07051e;font-family:Georgia,serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#07051e;padding:40px 16px;"><tr><td align="center">
+  <table width="460" cellpadding="0" cellspacing="0" style="max-width:460px;background:#0f0b32;border:1px solid rgba(201,169,110,.35);border-radius:6px;">
+  <tr><td style="padding:32px 32px 8px;text-align:center;color:#c9a96e;letter-spacing:3px;font-size:12px;">PIEBA MAIL</td></tr>
+  <tr><td style="padding:8px 32px;text-align:center;color:#fff;font-size:20px;">Recuperar tu cuenta</td></tr>
+  <tr><td style="padding:8px 32px 0;text-align:center;color:rgba(255,255,255,.7);font-family:Arial,sans-serif;font-size:14px;line-height:1.6;">
+    Hola${nombre ? ` ${escaparHtml(nombre)}` : ''}. Para entrar a <b style="color:#fff;">${escaparHtml(email)}</b>, abrí PIEBA Mail e ingresá con esta clave de acceso. Después vas a crear una contraseña nueva.</td></tr>
+  <tr><td style="padding:24px 32px;text-align:center;"><span style="display:inline-block;padding:14px 22px;border:1px solid #c9a96e;border-radius:4px;color:#c9a96e;font-size:26px;letter-spacing:6px;font-family:'Courier New',monospace;">${clave}</span></td></tr>
+  <tr><td style="padding:0 32px 32px;text-align:center;color:rgba(255,255,255,.5);font-family:Arial,sans-serif;font-size:12px;">
+    Sirve una sola vez y vence en 1 hora. Si no lo pediste, ignorá este mensaje: tu contraseña actual sigue funcionando.</td></tr>
+  </table></td></tr></table></body></html>`;
+}
+
 // ─── Avisos (Firebase) ──────────────────────────────────────────────
 const b64 = (u: Uint8Array) => btoa(String.fromCharCode(...u));
 const unb64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
@@ -218,7 +232,7 @@ async function sinSesion(p: Record<string, unknown>) {
       if (s) return json(200, { ...s, email, nombre: b.nombre });
       // ¿Es la clave de un solo uso que dio el administrador?
       const t = await claveTemporal(email, password);
-      if (t === 'ok') return json(200, { requiere_cambio: true, email, nombre: b.nombre });
+      if (t === 'ok') return json(200, { requiere_cambio: true, email, nombre: b.nombre, correo_recuperacion: b.correo_personal ?? '' });
       if (t === 'vencida') return json(401, { error: 'temporal_vencida', mensaje: 'Esa clave de acceso venció. Pedí una nueva al administrador.' });
       return json(401, { error: 'credenciales', mensaje: 'Correo o contraseña incorrectos.' });
     }
@@ -229,6 +243,28 @@ async function sinSesion(p: Record<string, unknown>) {
       if (!(await buzonActivo(e))) return json(403, { error: 'cuenta_inactiva' });
       return json(200, { access_token: r.data.access_token, refresh_token: r.data.refresh_token, expires_in: r.data.expires_in, email: e });
     }
+    // Olvidé mi contraseña: manda una clave de acceso al correo de
+    // recuperación. Responde igual exista o no (no revela cuentas).
+    case 'olvide': {
+      const b = await buzonActivo(email);
+      if (b?.correo_personal) {
+        const previa = (await db('buzon_pines', 'GET', `?select=creado_en&email=eq.${enc(email)}`))?.[0];
+        const reciente = previa && Date.now() - new Date(previa.creado_en).getTime() < 2 * 60_000;
+        if (!reciente) {
+          const clave = nuevaClaveTemporal();
+          await db('buzon_pines', 'POST', '?on_conflict=email', {
+            email, pin_hash: await hashTemporal(email, clave),
+            expira_en: new Date(Date.now() + 60 * 60_000).toISOString(), intentos: 0, creado_en: new Date().toISOString(),
+          }, 'resolution=merge-duplicates,return=minimal');
+          const dominio = email.split('@')[1].replace(/^prueba\./, '');
+          await resend({
+            from: `PIEBA Mail <no-responder@${dominio}>`, to: [b.correo_personal],
+            subject: 'Recuperar tu cuenta de PIEBA Mail', html: plantillaRecuperar(email, clave, b.nombre),
+          });
+        }
+      }
+      return json(200, { ok: true });
+    }
     // Primer ingreso: con la clave de un solo uso crea su contraseña.
     case 'crear_clave': {
       const password = String(p.password ?? '');
@@ -238,12 +274,18 @@ async function sinSesion(p: Record<string, unknown>) {
       const t = await claveTemporal(email, String(p.temporal ?? ''));
       if (t !== 'ok') return json(401, { error: 'temporal_vencida', mensaje: 'La clave de acceso ya no es válida. Pedí una nueva al administrador.' });
       if (password === String(p.temporal ?? '')) return json(400, { error: 'igual', mensaje: 'Elegí una contraseña distinta a la clave de acceso.' });
+      const recuperacion = limpiarEmail(p.correo_recuperacion);
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(recuperacion)) return json(400, { error: 'recuperacion', mensaje: 'Escribí un correo de recuperación válido.' });
+      if ((await dominios()).includes(recuperacion.split('@')[1])) {
+        return json(400, { error: 'recuperacion', mensaje: 'El correo de recuperación tiene que ser personal (Gmail, Hotmail, etc.), no de la iglesia.' });
+      }
       const id = await rpc('buzon_user_id', { p_email: email });
       const r = id
         ? await auth(`/admin/users/${id}`, 'PUT', { password })
         : await auth('/admin/users', 'POST', { email, password, email_confirm: true });
       if (!r.ok) return json(500, { error: 'cuenta', mensaje: 'No se pudo guardar la contraseña.' });
       await db('buzon_pines', 'DELETE', `?email=eq.${enc(email)}`);
+      await db('buzones', 'PATCH', `?email=eq.${enc(email)}`, { correo_personal: recuperacion }, 'return=minimal');
       // Si tenía correos en Zoho, se copian solos en segundo plano.
       // deno-lint-ignore no-explicit-any
       (globalThis as any).EdgeRuntime?.waitUntil(fetch(`${env('SUPABASE_URL')}/functions/v1/mail-push`, {
@@ -301,6 +343,32 @@ async function panel(p: Record<string, unknown>) {
       expira_en: new Date(Date.now() + 7 * 24 * 3600_000).toISOString(), intentos: 0, creado_en: new Date().toISOString(),
     }, 'resolution=merge-duplicates,return=minimal');
     return json(200, { clave, vence: '7 días' });
+  }
+  if (p.accion === 'eliminar_buzon') {
+    const b = await db('buzones', 'GET', `?select=email&email=eq.${enc(email)}`);
+    if (!b?.length) return json(404, { error: 'no_existe', mensaje: 'Esa cuenta no existe.' });
+    // Archivos adjuntos guardados (carpetas recibidos/salida/zoho de la cuenta).
+    const rutas: string[] = [];
+    const listar = async (prefijo: string) => {
+      const r = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/list/correo`, {
+        method: 'POST', headers: cabeceras(), body: JSON.stringify({ prefix: prefijo, limit: 1000 }),
+      });
+      const items: { name: string; id: string | null }[] = r.ok ? await r.json() : [];
+      for (const it of items) {
+        if (it.id) rutas.push(`${prefijo}${it.name}`);
+        else await listar(`${prefijo}${it.name}/`);
+      }
+    };
+    await listar(`${email}/`).catch((e) => console.error('listar', e));
+    for (let i = 0; i < rutas.length; i += 100) {
+      await fetch(`${env('SUPABASE_URL')}/storage/v1/object/correo`, {
+        method: 'DELETE', headers: cabeceras(), body: JSON.stringify({ prefixes: rutas.slice(i, i + 100) }),
+      }).catch((e) => console.error('borrar archivos', e));
+    }
+    const id = await rpc('buzon_user_id', { p_email: email });
+    if (id) await auth(`/admin/users/${id}`, 'DELETE');
+    await db('buzones', 'DELETE', `?email=eq.${enc(email)}`); // borra correos, contactos, etc.
+    return json(200, { ok: true, archivos: rutas.length });
   }
   return json(400, { error: 'accion_desconocida' });
 }
@@ -562,7 +630,7 @@ Deno.serve(async (req) => {
       if (!env('BUZON_SECRETO') || s !== env('BUZON_SECRETO')) return json(401, { error: 'no_autorizado' });
       return await entrante(p);
     }
-    if (p.accion === 'clave_temporal') {
+    if (p.accion === 'clave_temporal' || p.accion === 'eliminar_buzon') {
       if (!(await esSuperadmin(req))) return json(403, { error: 'solo_superadmin' });
       return await panel(p);
     }
