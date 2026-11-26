@@ -30,7 +30,7 @@ const CARPETAS: Record<string, string> = {
 
 const env = (k: string) => Deno.env.get(k) ?? '';
 const json = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...CORS } });
 const enc = encodeURIComponent;
 
 // ─── Base de datos / Storage / Auth (con la clave de servicio) ──────
@@ -117,6 +117,25 @@ function aLista(c: Correo) {
     isRead: c.leido, status: c.leido ? '1' : '0',
     hasAttachment: c.tiene_adjuntos ? '1' : '0',
   };
+}
+// La lista trae también el texto y los adjuntos de cada correo: así la app
+// lo guarda todo de una vez y abrir un correo es instantáneo.
+const MAX_CUERPO_EN_LISTA = 300_000;
+async function conCuerpo(filas: Correo[]) {
+  const ids = filas.map((c) => String(c.id));
+  const adj: Correo[] = ids.length
+    ? await db('correo_adjuntos', 'GET', `?select=id,correo_id,nombre,tipo,tamano,cid&correo_id=in.(${ids.join(',')})&order=creado_en.asc`)
+    : [];
+  return filas.map((c) => {
+    const html = String(c.html || '') || (c.texto ? `<div style="white-space:pre-wrap">${escaparHtml(String(c.texto))}</div>` : '');
+    const item: Record<string, unknown> = {
+      ...aLista(c),
+      attachments: (adj ?? []).filter((a) => a.correo_id === c.id)
+        .map((x) => ({ attachmentId: x.id, attachmentName: x.nombre, size: x.tamano, cid: x.cid, contentType: x.tipo })),
+    };
+    if (html && html.length <= MAX_CUERPO_EN_LISTA) item.content = html;
+    return item;
+  });
 }
 const CAMPOS_LISTA = 'id,carpeta,asunto,de,de_nombre,para,cc,resumen,recibido_en,leido,tiene_adjuntos';
 
@@ -396,8 +415,8 @@ async function conSesion(email: string, p: Record<string, unknown>) {
       const desde = Math.max(0, (Number(p.start) || 1) - 1);
       const limite = Math.min(200, Math.max(1, Number(p.limit) || 50));
       const filas: Correo[] = await db('correos', 'GET',
-        `?select=${CAMPOS_LISTA}&buzon=eq.${enc(email)}&carpeta=eq.${carpeta}&order=recibido_en.desc&offset=${desde}&limit=${limite}`);
-      return json(200, (filas ?? []).map(aLista));
+        `?select=${CAMPOS_LISTA},html,texto&buzon=eq.${enc(email)}&carpeta=eq.${carpeta}&order=recibido_en.desc&offset=${desde}&limit=${limite}`);
+      return json(200, await conCuerpo(filas ?? []));
     }
     case 'buscar': {
       const q = String(p.q ?? '').replace(/[%,()*]/g, ' ').trim();
@@ -410,6 +429,7 @@ async function conSesion(email: string, p: Record<string, unknown>) {
       return json(200, (filas ?? []).map(aLista));
     }
     case 'detalle': {
+      if (!ids.length) return json(404, { error: 'no_existe' });
       const f: Correo[] = await db('correos', 'GET', `?select=*&${filtroIds}`);
       const c = f?.[0];
       if (!c) return json(404, { error: 'no_existe' });
@@ -619,7 +639,14 @@ async function entrante(p: Record<string, unknown>) {
   return json(400, { error: 'accion_desconocida' });
 }
 
+// El panel web llama directo desde el navegador: permitir CORS.
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json(405, { error: 'metodo' });
   // deno-lint-ignore no-explicit-any
   let p: Record<string, any>;

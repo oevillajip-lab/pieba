@@ -29,7 +29,7 @@ const CANAL_AVISOS = 'pieba_avisos_channel';
 
 const env = (k: string) => Deno.env.get(k) ?? '';
 const json = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...CORS } });
 
 // ─── Base de datos (REST con la clave de servicio) ──────────────
 async function db(method: string, query: string, body?: unknown, prefer?: string) {
@@ -444,12 +444,18 @@ async function accionApp(p: Record<string, unknown>) {
     }
     case 'admin_estado': {
       if (!(await esAdminApp(email))) return json(403, { error: 'solo_admin' });
+      // Un teléfono por cuenta: primero el sistema nuevo; los registros de la
+      // app anterior (Zoho) solo si ese teléfono todavía no se pasó.
+      const nuevos: Record<string, unknown>[] = (await dbt('buzon_dispositivos', 'GET',
+        '?select=fcm_token,email,version_code,version_nombre,ultimo_uso,avisos_correo,avisos_comunicados&order=email.asc').catch(() => [])) ?? [];
+      const viejos: Record<string, unknown>[] = (await db('GET',
+        '?select=fcm_token,email,version_code,version_nombre,ultimo_uso,errores_seguidos,ultimo_error,avisos_correo,avisos_comunicados,actualizado_en&order=email.asc')) ?? [];
+      const telefonosNuevos = new Set(nuevos.map((d) => String(d.fcm_token)));
       const dispositivos = [
-        ...((await db('GET',
-          '?select=email,version_code,version_nombre,ultimo_uso,errores_seguidos,ultimo_error,avisos_correo,avisos_comunicados,actualizado_en&order=email.asc')) ?? []),
-        ...((await dbt('buzon_dispositivos', 'GET',
-          '?select=email,version_code,version_nombre,ultimo_uso,avisos_correo,avisos_comunicados&order=email.asc').catch(() => [])) ?? []),
-      ];
+        ...nuevos,
+        ...viejos.filter((d) => !telefonosNuevos.has(String(d.fcm_token))).map((d) => ({ ...d, zoho: true })),
+      ].map(({ fcm_token: _f, ...d }) => d)
+        .sort((a, b) => String(a.email).localeCompare(String(b.email)));
       const pendientes = await dbt('mail_comunicados', 'GET', '?select=id&enviado_en=is.null&activo=eq.true');
       return json(200, {
         servidor: 'ok', hora: new Date().toISOString(),
@@ -531,6 +537,15 @@ const tipoArchivo = (n: string) => {
     txt: 'text/plain', zip: 'application/zip' } as Record<string, string>)[x] ?? 'application/octet-stream';
 };
 
+// Zoho devuelve algunos ids como números de 19 cifras: JSON.parse los
+// redondea (y el id deja de existir). Se leen como texto.
+async function zohoGetExacto(host: string, path: string, token: string) {
+  const res = await fetch(`https://${host}${path}`, { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
+  const t = await res.text();
+  if (!res.ok) throw new Error(`Zoho ${path.split('?')[0]} HTTP ${res.status}: ${t.slice(0, 160)}`);
+  return JSON.parse(t.replace(/([:\[,]\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'))?.data;
+}
+
 async function zohoBinario(host: string, path: string, token: string) {
   const res = await fetch(`https://${host}${path}`, { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
   if (!res.ok) throw new Error(`Zoho ${path} HTTP ${res.status}`);
@@ -562,32 +577,57 @@ async function migrarZoho(p: Record<string, unknown>) {
   if (!cuenta) return json(502, { error: 'zoho', mensaje: 'Zoho no respondió.' });
   const { host, accountId } = cuenta;
 
-  const carpetas = ((await zohoGet(host, `/api/accounts/${accountId}/folders`, token)) ?? [])
-    .map((f: Record<string, unknown>) => {
-      const tipo = String(f.folderType ?? '').toLowerCase();
-      if (['outbox', 'templates', 'snoozed'].includes(tipo)) return null;
-      return { id: String(f.folderId), nombre: String(f.folderName ?? tipo), destino: CARPETA_ZOHO[tipo] ?? 'archive' };
-    })
-    .filter(Boolean) as { id: string; nombre: string; destino: string }[];
+  let carpetas: { id: string; nombre: string; destino: string }[];
+  try {
+    carpetas = ((await zohoGetExacto(host, `/api/accounts/${accountId}/folders`, token)) ?? [])
+      .map((f: Record<string, unknown>) => {
+        const tipo = String(f.folderType ?? '').toLowerCase();
+        if (['outbox', 'templates', 'snoozed'].includes(tipo)) return null;
+        return { id: String(f.folderId), nombre: String(f.folderName ?? tipo), destino: CARPETA_ZOHO[tipo] ?? 'archive' };
+      })
+      .filter(Boolean) as { id: string; nombre: string; destino: string }[];
+  } catch (e) {
+    // A veces Zoho no entrega la lista de carpetas de una cuenta: entonces
+    // se copia lo que Zoho devuelve sin indicar carpeta (la bandeja).
+    console.error('carpetas', email, e);
+    carpetas = [{ id: '', nombre: 'Recibidos', destino: 'inbox' }];
+  }
 
   let idx = Math.max(0, Number(p.carpeta_idx) || 0);
   let start = Math.max(1, Number(p.start) || 1);
   const LOTE = 15;
   let copiados = 0, repetidos = 0, errores = 0;
+  const saltadas: string[] = [];
 
   while (idx < carpetas.length) {
     const c = carpetas[idx];
-    const q = new URLSearchParams({ folderId: c.id, start: String(start), limit: String(LOTE), includeto: 'true' });
-    const lista: Record<string, unknown>[] = (await zohoGet(host, `/api/accounts/${accountId}/messages/view?${q}`, token)) ?? [];
+    const q = new URLSearchParams({ start: String(start), limit: String(LOTE) });
+    if (c.id) q.set('folderId', c.id);
+    let lista: Record<string, unknown>[] = [];
+    try {
+      lista = (await zohoGetExacto(host, `/api/accounts/${accountId}/messages/view?${q}`, token)) ?? [];
+    } catch (e) {
+      // Algunas carpetas especiales de Zoho no se pueden listar: se saltan.
+      console.error('carpeta', c.nombre, e);
+      saltadas.push(c.nombre);
+      idx++; start = 1; continue;
+    }
     if (!lista.length) { idx++; start = 1; continue; }
 
     for (const m of lista) {
       const mid = `<zoho-${m.messageId}@${DOMINIO_PERMITIDO}>`;
       try {
-        const ya = await dbt('correos', 'GET', `?select=id&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`);
-        if (ya?.length) { repetidos++; continue; }
-        const base = `/api/accounts/${accountId}/folders/${c.id}/messages/${m.messageId}`;
-        const contenido = await zohoGet(host, `${base}/content`, token).catch(() => null);
+        const ya = await dbt('correos', 'GET', `?select=id,html,tiene_adjuntos&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`);
+        const base = `/api/accounts/${accountId}/folders/${c.id || m.folderId}/messages/${m.messageId}`;
+        if (ya?.length) {
+          // Ya copiado. Si quedó sin texto (falló Zoho la vez anterior), reintentar solo eso.
+          if (!ya[0].html) {
+            const ct = await zohoGetExacto(host, `${base}/content`, token).catch(() => null);
+            if (ct?.content) await dbt('correos', 'PATCH', `?id=eq.${ya[0].id}`, { html: String(ct.content).slice(0, 2_000_000) }, 'return=minimal');
+          }
+          repetidos++; continue;
+        }
+        const contenido = await zohoGetExacto(host, `${base}/content`, token).catch((e) => { console.error('contenido', m.messageId, e); return null; });
         const html = String(contenido?.content ?? '');
         const texto = html.replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
         const recibido = Number(m.receivedTime ?? m.sentDateInGMT);
@@ -604,7 +644,7 @@ async function migrarZoho(p: Record<string, unknown>) {
         const [nuevo] = await dbt('correos', 'POST', '', fila, 'return=representation');
 
         if (fila.tiene_adjuntos) {
-          const info = await zohoGet(host, `${base}/attachmentinfo`, token).catch(() => null);
+          const info = await zohoGetExacto(host, `${base}/attachmentinfo`, token).catch(() => null);
           const adj: Record<string, unknown>[] = [...(info?.attachments ?? []), ...(info?.inline ?? [])];
           const filasAdj = [];
           for (const a of adj) {
@@ -635,12 +675,19 @@ async function migrarZoho(p: Record<string, unknown>) {
 
   const terminado = idx >= carpetas.length;
   return json(200, {
-    terminado, copiados, repetidos, errores,
+    terminado, copiados, repetidos, errores, saltadas,
     carpeta: terminado ? null : carpetas[idx]?.nombre, carpeta_idx: idx, start, total_carpetas: carpetas.length,
   });
 }
 
+// El panel web llama directo desde el navegador: permitir CORS.
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
   // deno-lint-ignore no-explicit-any
   let p: Record<string, any>;
@@ -653,7 +700,11 @@ Deno.serve(async (req) => {
     if (p.accion === 'migrar_zoho') {
       const interno = !!env('BUZON_SECRETO') && req.headers.get('x-buzon-secreto') === env('BUZON_SECRETO');
       if (!interno && !(await esSuperadminPanel(req))) return json(403, { error: 'solo_superadmin' });
-      const res = await migrarZoho(p);
+      let res: Response;
+      try { res = await migrarZoho(p); } catch (e) {
+        console.error('migrar_zoho', p.email, e);
+        return json(500, { error: 'migracion', mensaje: String(e instanceof Error ? e.message : e).slice(0, 300) });
+      }
       // Automática (primer ingreso): sigue sola, lote por lote, hasta terminar.
       if (interno && p.auto === true) {
         const d = await res.clone().json().catch(() => ({}));
