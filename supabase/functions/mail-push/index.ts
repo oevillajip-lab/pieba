@@ -444,12 +444,18 @@ async function accionApp(p: Record<string, unknown>) {
     }
     case 'admin_estado': {
       if (!(await esAdminApp(email))) return json(403, { error: 'solo_admin' });
+      // Un teléfono por cuenta: primero el sistema nuevo; los registros de la
+      // app anterior (Zoho) solo si ese teléfono todavía no se pasó.
+      const nuevos: Record<string, unknown>[] = (await dbt('buzon_dispositivos', 'GET',
+        '?select=fcm_token,email,version_code,version_nombre,ultimo_uso,avisos_correo,avisos_comunicados&order=email.asc').catch(() => [])) ?? [];
+      const viejos: Record<string, unknown>[] = (await db('GET',
+        '?select=fcm_token,email,version_code,version_nombre,ultimo_uso,errores_seguidos,ultimo_error,avisos_correo,avisos_comunicados,actualizado_en&order=email.asc')) ?? [];
+      const telefonosNuevos = new Set(nuevos.map((d) => String(d.fcm_token)));
       const dispositivos = [
-        ...((await db('GET',
-          '?select=email,version_code,version_nombre,ultimo_uso,errores_seguidos,ultimo_error,avisos_correo,avisos_comunicados,actualizado_en&order=email.asc')) ?? []),
-        ...((await dbt('buzon_dispositivos', 'GET',
-          '?select=email,version_code,version_nombre,ultimo_uso,avisos_correo,avisos_comunicados&order=email.asc').catch(() => [])) ?? []),
-      ];
+        ...nuevos,
+        ...viejos.filter((d) => !telefonosNuevos.has(String(d.fcm_token))).map((d) => ({ ...d, zoho: true })),
+      ].map(({ fcm_token: _f, ...d }) => d)
+        .sort((a, b) => String(a.email).localeCompare(String(b.email)));
       const pendientes = await dbt('mail_comunicados', 'GET', '?select=id&enviado_en=is.null&activo=eq.true');
       return json(200, {
         servidor: 'ok', hora: new Date().toISOString(),
