@@ -87,7 +87,7 @@ async function refrescarToken(refreshToken: string) {
   });
   const body = await res.json().catch(() => ({}));
   if (!body.access_token) {
-    const err = new Error(`refresh: ${body.error ?? res.status}`) as Error & { revocado?: boolean };
+    const err = new Error(`refresh: ${body.error ?? res.status}${body.error_description ? ' ' + body.error_description : ''}`) as Error & { revocado?: boolean };
     err.revocado = body.error === 'invalid_code' || body.error === 'invalid_token';
     throw err;
   }
@@ -644,11 +644,29 @@ async function migrarZoho(p: Record<string, unknown>) {
 
   const disp: Dispositivo[] = await db('GET', `?email=eq.${encodeURIComponent(email)}&order=actualizado_en.desc&limit=5`);
   if (!disp?.length) return json(404, { error: 'sin_permiso', mensaje: 'Esa cuenta nunca entró a la app con Zoho.' });
+  // Reusar el token vigente (Zoho limita cuántas veces por hora se renueva;
+  // renovar en cada lote lo bloqueaba). Solo se renueva si venció.
   let token = '';
+  let motivo = '';
   for (const d of disp) {
-    try { token = (await refrescarToken(await descifrar(d.refresh_token_cifrado))).token; break; } catch { /* probar otro */ }
+    try {
+      if (d.access_token_cifrado && d.access_token_expira && new Date(d.access_token_expira).getTime() > Date.now() + 120_000) {
+        token = await descifrar(d.access_token_cifrado);
+        break;
+      }
+      const nuevo = await refrescarToken(await descifrar(d.refresh_token_cifrado));
+      token = nuevo.token;
+      await db('PATCH', `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}&email=eq.${encodeURIComponent(d.email)}`,
+        { access_token_cifrado: await cifrar(token), access_token_expira: new Date(nuevo.expira).toISOString() }, 'return=minimal');
+      break;
+    } catch (e) { motivo = String(e instanceof Error ? e.message : e); }
   }
-  if (!token) return json(409, { error: 'permiso_vencido', mensaje: 'Zoho ya no acepta el permiso guardado de esa cuenta.' });
+  if (!token) {
+    const limite = /too many|access denied|limit/i.test(motivo);
+    return json(409, { error: 'permiso_vencido', mensaje: limite
+      ? 'Zoho bloqueó por un rato los pedidos de esta cuenta (demasiados seguidos). Probá de nuevo en 15 minutos.'
+      : `Zoho ya no acepta el permiso guardado de esa cuenta (${motivo.slice(0, 80)}).` });
+  }
   const cuenta = await cuentaDelToken(token);
   if (!cuenta) return json(502, { error: 'zoho', mensaje: 'Zoho no respondió.' });
   const { host, accountId } = cuenta;
