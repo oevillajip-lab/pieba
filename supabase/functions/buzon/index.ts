@@ -511,8 +511,16 @@ async function conSesion(email: string, p: Record<string, unknown>) {
 }
 
 async function eliminarCorreos(filtro: string) {
-  const correos: { id: string }[] = await db('correos', 'GET', `${filtro}&select=id`);
+  const correos: { id: string; buzon: string; message_id: string | null }[] =
+    await db('correos', 'GET', `${filtro}&select=id,buzon,message_id`);
   if (!correos?.length) return;
+  // Los que vinieron de Zoho: recordarlos para que la copia no los traiga de nuevo.
+  const deZoho = correos.filter((c) => c.message_id?.startsWith('<zoho-'))
+    .map((c) => ({ buzon: c.buzon, message_id: c.message_id }));
+  if (deZoho.length) {
+    await db('buzon_zoho_borrados', 'POST', '?on_conflict=buzon,message_id', deZoho, 'resolution=ignore-duplicates,return=minimal')
+      .catch((e) => console.error('zoho_borrados', e));
+  }
   const lista = correos.map((c) => c.id).join(',');
   const adj: { ruta: string }[] = await db('correo_adjuntos', 'GET', `?select=ruta&correo_id=in.(${lista})`);
   await borrarArchivos((adj ?? []).map((a) => a.ruta));

@@ -691,6 +691,12 @@ async function migrarZoho(p: Record<string, unknown>) {
       try {
         const ya = await dbt('correos', 'GET', `?select=id,html,tiene_adjuntos&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`);
         const base = `/api/accounts/${accountId}/folders/${c.id || m.folderId}/messages/${m.messageId}`;
+        if (!ya?.length) {
+          // Lo borró el usuario en la app nueva: no traerlo de vuelta.
+          const borrado = await dbt('buzon_zoho_borrados', 'GET',
+            `?select=message_id&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`).catch(() => []);
+          if (borrado?.length) { repetidos++; continue; }
+        }
         if (ya?.length) {
           // Ya copiado. Si quedó sin texto (falló Zoho la vez anterior), reintentar solo eso.
           if (!ya[0].html) {
