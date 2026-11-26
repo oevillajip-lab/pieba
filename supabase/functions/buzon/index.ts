@@ -429,8 +429,18 @@ async function enviar(email: string, p: Record<string, unknown>) {
   const html = String(p.html ?? '');
   const dominio = email.split('@')[1];
   const messageId = `<${crypto.randomUUID()}@${dominio}>`;
-  const inReplyTo = String(p.in_reply_to ?? '').trim();
-  const referencias = [String(p.referencias ?? '').trim(), inReplyTo].filter(Boolean).join(' ').trim();
+  // La app manda el id del correo que responde; buscamos su Message-ID real
+  // para que el hilo se arme bien en Gmail, Outlook, etc.
+  let inReplyTo = String(p.in_reply_to ?? '').trim();
+  let refPrevias = String(p.referencias ?? '').trim();
+  if (inReplyTo && !inReplyTo.startsWith('<')) {
+    const orig = /^[0-9a-f-]{36}$/i.test(inReplyTo)
+      ? await db('correos', 'GET', `?select=message_id,referencias&id=eq.${inReplyTo}&buzon=eq.${encodeURIComponent(email)}&limit=1`) as { message_id: string | null; referencias: string | null }[]
+      : [];
+    inReplyTo = orig[0]?.message_id ?? '';
+    refPrevias = orig[0]?.referencias ?? refPrevias;
+  }
+  const referencias = [refPrevias, inReplyTo].filter(Boolean).join(' ').trim();
 
   const adjuntos = (Array.isArray(p.adjuntos) ? p.adjuntos : []) as { ruta: string; nombre: string; tipo?: string; tamano?: number }[];
   const propios = adjuntos.filter((a) => String(a.ruta ?? '').startsWith(`${email}/salida/`));
