@@ -2538,12 +2538,14 @@ window.migrarZoho = async (email, idEstado, btn) => {
   btn.disabled = true;
   let cursor = { carpeta_idx: 0, start: 1 };
   let copiados = 0, repetidos = 0, errores = 0;
+  const saltadas = [];
   try {
     for (let vuelta = 0; vuelta < 2000; vuelta++) {
       const r = await invocar('mail-push', { accion: 'migrar_zoho', email, ...cursor });
       copiados += r.copiados || 0; repetidos += r.repetidos || 0; errores += r.errores || 0;
+      (r.saltadas || []).forEach(n => { if (!saltadas.includes(n)) saltadas.push(n); });
       estado.textContent = r.terminado
-        ? `Terminado: ${copiados} copiados${repetidos ? `, ${repetidos} ya estaban` : ''}${errores ? `, ${errores} con error (podés repetir)` : ''}.`
+        ? `Terminado: ${copiados} copiados${repetidos ? `, ${repetidos} ya estaban` : ''}${errores ? `, ${errores} con error (podés repetir)` : ''}${saltadas.length ? `. Carpetas que Zoho no deja leer: ${saltadas.join(', ')}` : ''}.`
         : `Copiando ${r.carpeta || ''} (${(r.carpeta_idx || 0) + 1} de ${r.total_carpetas})… ${copiados} copiados`;
       if (r.terminado) break;
       cursor = { carpeta_idx: r.carpeta_idx, start: r.start };

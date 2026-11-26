@@ -531,6 +531,15 @@ const tipoArchivo = (n: string) => {
     txt: 'text/plain', zip: 'application/zip' } as Record<string, string>)[x] ?? 'application/octet-stream';
 };
 
+// Zoho devuelve algunos ids como números de 19 cifras: JSON.parse los
+// redondea (y el id deja de existir). Se leen como texto.
+async function zohoGetExacto(host: string, path: string, token: string) {
+  const res = await fetch(`https://${host}${path}`, { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
+  const t = await res.text();
+  if (!res.ok) throw new Error(`Zoho ${path.split('?')[0]} HTTP ${res.status}: ${t.slice(0, 160)}`);
+  return JSON.parse(t.replace(/([:\[,]\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'))?.data;
+}
+
 async function zohoBinario(host: string, path: string, token: string) {
   const res = await fetch(`https://${host}${path}`, { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
   if (!res.ok) throw new Error(`Zoho ${path} HTTP ${res.status}`);
@@ -562,7 +571,7 @@ async function migrarZoho(p: Record<string, unknown>) {
   if (!cuenta) return json(502, { error: 'zoho', mensaje: 'Zoho no respondió.' });
   const { host, accountId } = cuenta;
 
-  const carpetas = ((await zohoGet(host, `/api/accounts/${accountId}/folders`, token)) ?? [])
+  const carpetas = ((await zohoGetExacto(host, `/api/accounts/${accountId}/folders`, token)) ?? [])
     .map((f: Record<string, unknown>) => {
       const tipo = String(f.folderType ?? '').toLowerCase();
       if (['outbox', 'templates', 'snoozed'].includes(tipo)) return null;
@@ -574,20 +583,36 @@ async function migrarZoho(p: Record<string, unknown>) {
   let start = Math.max(1, Number(p.start) || 1);
   const LOTE = 15;
   let copiados = 0, repetidos = 0, errores = 0;
+  const saltadas: string[] = [];
 
   while (idx < carpetas.length) {
     const c = carpetas[idx];
-    const q = new URLSearchParams({ folderId: c.id, start: String(start), limit: String(LOTE), includeto: 'true' });
-    const lista: Record<string, unknown>[] = (await zohoGet(host, `/api/accounts/${accountId}/messages/view?${q}`, token)) ?? [];
+    const q = new URLSearchParams({ folderId: c.id, start: String(start), limit: String(LOTE) });
+    let lista: Record<string, unknown>[] = [];
+    try {
+      lista = (await zohoGetExacto(host, `/api/accounts/${accountId}/messages/view?${q}`, token)) ?? [];
+    } catch (e) {
+      // Algunas carpetas especiales de Zoho no se pueden listar: se saltan.
+      console.error('carpeta', c.nombre, e);
+      saltadas.push(c.nombre);
+      idx++; start = 1; continue;
+    }
     if (!lista.length) { idx++; start = 1; continue; }
 
     for (const m of lista) {
       const mid = `<zoho-${m.messageId}@${DOMINIO_PERMITIDO}>`;
       try {
-        const ya = await dbt('correos', 'GET', `?select=id&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`);
-        if (ya?.length) { repetidos++; continue; }
+        const ya = await dbt('correos', 'GET', `?select=id,html,tiene_adjuntos&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`);
         const base = `/api/accounts/${accountId}/folders/${c.id}/messages/${m.messageId}`;
-        const contenido = await zohoGet(host, `${base}/content`, token).catch(() => null);
+        if (ya?.length) {
+          // Ya copiado. Si quedó sin texto (falló Zoho la vez anterior), reintentar solo eso.
+          if (!ya[0].html) {
+            const ct = await zohoGetExacto(host, `${base}/content`, token).catch(() => null);
+            if (ct?.content) await dbt('correos', 'PATCH', `?id=eq.${ya[0].id}`, { html: String(ct.content).slice(0, 2_000_000) }, 'return=minimal');
+          }
+          repetidos++; continue;
+        }
+        const contenido = await zohoGetExacto(host, `${base}/content`, token).catch((e) => { console.error('contenido', m.messageId, e); return null; });
         const html = String(contenido?.content ?? '');
         const texto = html.replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
         const recibido = Number(m.receivedTime ?? m.sentDateInGMT);
@@ -604,7 +629,7 @@ async function migrarZoho(p: Record<string, unknown>) {
         const [nuevo] = await dbt('correos', 'POST', '', fila, 'return=representation');
 
         if (fila.tiene_adjuntos) {
-          const info = await zohoGet(host, `${base}/attachmentinfo`, token).catch(() => null);
+          const info = await zohoGetExacto(host, `${base}/attachmentinfo`, token).catch(() => null);
           const adj: Record<string, unknown>[] = [...(info?.attachments ?? []), ...(info?.inline ?? [])];
           const filasAdj = [];
           for (const a of adj) {
@@ -635,7 +660,7 @@ async function migrarZoho(p: Record<string, unknown>) {
 
   const terminado = idx >= carpetas.length;
   return json(200, {
-    terminado, copiados, repetidos, errores,
+    terminado, copiados, repetidos, errores, saltadas,
     carpeta: terminado ? null : carpetas[idx]?.nombre, carpeta_idx: idx, start, total_carpetas: carpetas.length,
   });
 }
