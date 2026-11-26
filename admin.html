@@ -559,6 +559,10 @@ body.con-aviso .toast { bottom: 6.5rem; }
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
           App y usuarios
         </div>
+        <div class="nav-item" onclick="showSection('pm-buzones')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Cuentas de correo
+        </div>
       </div>
     </nav>
     <div class="sidebar-footer">
@@ -833,6 +837,39 @@ body.con-aviso .toast { bottom: 6.5rem; }
       </div>
       <p class="login-help" style="max-width:680px;">Llegan como notificación a los teléfonos con PIEBA Mail (aunque la app esté cerrada) y aparecen como cartel al abrirla. Se envían en menos de un minuto, o en la fecha programada.</p>
       <div class="items-list" id="list-pm-comunicados">
+        <div class="empty-state"><p>Cargando…</p></div>
+      </div>
+    </div>
+
+    <!-- PIEBA MAIL: CUENTAS DE CORREO (solo superadmin) -->
+    <div class="content-section" id="sec-pm-buzones">
+      <div class="page-header">
+        <div><div class="page-label">PIEBA Mail</div><h1 class="page-title">Cuentas de correo</h1></div>
+      </div>
+      <p class="login-help" style="max-width:680px;">Creá aquí las direcciones de la iglesia. La persona abre PIEBA Mail, toca <b>Primer ingreso u olvidé mi contraseña</b>, recibe un código en su correo personal y crea su contraseña. Una cuenta desactivada deja de recibir correos y no puede entrar.</p>
+      <form class="user-add-row" onsubmit="event.preventDefault(); crearBuzon();">
+        <div class="form-field" style="flex:1.6;margin:0;"><label for="bzLocal">Dirección</label>
+          <div style="display:flex;align-items:center;gap:.4rem;">
+            <input type="text" id="bzLocal" placeholder="nombre.apellido" required autocomplete="off" style="flex:1;min-width:0;">
+            <select id="bzDominio" style="flex:1.3;min-width:0;"></select>
+          </div>
+        </div>
+        <div class="form-field" style="flex:1.1;margin:0;"><label for="bzNombre">Nombre completo</label><input type="text" id="bzNombre" placeholder="Nombre y apellido" required></div>
+        <div class="form-field" style="flex:1.3;margin:0;"><label for="bzPersonal">Correo personal (para el código)</label><input type="email" id="bzPersonal" placeholder="persona@gmail.com" required></div>
+        <button type="submit" class="btn-add" id="btnCrearBuzon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Crear
+        </button>
+      </form>
+      <div class="items-list" id="list-pm-buzones">
+        <div class="empty-state"><p>Cargando…</p></div>
+      </div>
+
+      <div class="page-header" style="margin-top:2.5rem;">
+        <div><div class="page-label">Migración</div><h1 class="page-title" style="font-size:1.4rem;">Traer correos de Zoho</h1></div>
+      </div>
+      <p class="login-help" style="max-width:680px;">Copia todos los correos (con adjuntos) de cada cuenta que alguna vez entró a la app con Zoho al buzón nuevo de la misma dirección. Se puede repetir sin duplicar. Primero creá el buzón arriba.</p>
+      <div class="items-list" id="list-pm-zoho">
         <div class="empty-state"><p>Cargando…</p></div>
       </div>
     </div>
@@ -2235,7 +2272,7 @@ async function loadPiebaMail() {
   const esSuper = ok(await supabase.rpc('es_superadmin'));
   $('navPiebaMail').style.display = esSuper ? '' : 'none';
   if (!esSuper) return;
-  await Promise.all([loadPmComunicados(), loadPmDispositivos(), loadPmConfig()]);
+  await Promise.all([loadPmComunicados(), loadPmDispositivos(), loadPmConfig(), loadPmBuzones(), loadPmZoho()]);
 }
 
 async function loadPmComunicados() {
@@ -2378,6 +2415,131 @@ window.agregarAdminApp = async () => {
   await cambiarAdminApp(email, true);
 };
 
+
+// ─── Cuentas de correo propio ────────────────────────────────
+const fechaCorta = (f) => f ? new Date(f).toLocaleString('es-PY', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+async function invocar(funcion, body) {
+  const { data, error } = await supabase.functions.invoke(funcion, { body });
+  if (error) {
+    let det = '';
+    try { const j = await error.context.json(); det = j.mensaje || j.error || ''; } catch (_) {}
+    throw new Error(det || error.message);
+  }
+  return data;
+}
+async function loadPmBuzones() {
+  const doms = ok(await supabase.from('buzon_dominios').select('dominio').order('dominio')) || [];
+  const sel = $('bzDominio');
+  if (!sel.options.length) sel.innerHTML = doms.map(d => `<option value="${escapeHtml(d.dominio)}">@${escapeHtml(d.dominio)}</option>`).join('');
+  const lista = ok(await supabase.rpc('listar_buzones')) || [];
+  const cont = $('list-pm-buzones');
+  if (!lista.length) { cont.innerHTML = '<div class="empty-state"><p>Todavía no hay cuentas creadas.</p></div>'; return; }
+  cont.innerHTML = lista.map(b => {
+    const e = escapeHtml(b.email);
+    const estado = !b.activo ? 'Desactivada'
+      : b.ultimo_ingreso ? `Último ingreso ${escapeHtml(fechaCorta(b.ultimo_ingreso))}` : 'Todavía no creó su contraseña';
+    return `
+    <div class="item-card" style="${b.activo ? '' : 'opacity:.55;'}">
+      <div class="item-info">
+        <div class="item-title">${e}${b.nombre ? ` · ${escapeHtml(b.nombre)}` : ''}</div>
+        <div class="item-meta">${estado} · ${b.correos} correo${b.correos == 1 ? '' : 's'} · ${b.dispositivos} teléfono${b.dispositivos == 1 ? '' : 's'}${b.correo_personal ? ` · código a ${escapeHtml(b.correo_personal)}` : ''}</div>
+      </div>
+      <div class="item-actions">
+        ${b.activo ? `<button class="btn-edit" style="padding:.5rem .8rem;" onclick="enviarCodigoBuzon('${e}')">Enviar código</button>` : ''}
+        <button class="btn-edit" style="padding:.5rem .8rem;" onclick="editarPersonalBuzon('${e}', '${escapeHtml(b.correo_personal || '')}')">Correo personal</button>
+        <button class="btn-edit" style="padding:.5rem .8rem;${b.activo ? 'color:var(--danger);border-color:var(--danger);' : ''}" onclick="activarBuzon('${e}', ${!b.activo})">${b.activo ? 'Desactivar' : 'Activar'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.crearBuzon = async () => {
+  const local = $('bzLocal').value.trim().toLowerCase().replace(/@.*$/, '');
+  if (!/^[a-z0-9][a-z0-9._-]{0,62}$/.test(local)) { toast('La dirección solo puede tener letras, números, punto, guion y guion bajo.', 'error'); return; }
+  const email = `${local}@${$('bzDominio').value}`;
+  const nombre = $('bzNombre').value.trim();
+  const personal = $('bzPersonal').value.trim().toLowerCase();
+  if (personal.endsWith('@' + $('bzDominio').value)) { toast('El correo personal tiene que ser de afuera (Gmail, Hotmail, etc.).', 'error'); return; }
+  const btn = $('btnCrearBuzon'); btn.disabled = true;
+  try {
+    ok(await supabase.from('buzones').insert({ email, nombre, correo_personal: personal, creado_por: authEmail || null }));
+    $('bzLocal').value = ''; $('bzNombre').value = ''; $('bzPersonal').value = '';
+    toast(`Cuenta ${email} creada. Ya puede recibir correos.`);
+    await Promise.all([loadPmBuzones(), loadPmZoho()]);
+  } catch (e) {
+    toast(String(e.message || e).includes('duplicate') ? 'Esa dirección ya existe.' : 'Error: ' + mensajeError(e), 'error');
+  } finally { btn.disabled = false; }
+};
+window.activarBuzon = async (email, activo) => {
+  if (!activo && !confirm(`¿Desactivar ${email}? Dejará de recibir correos y no podrá entrar a la app. Sus correos se conservan.`)) return;
+  try {
+    ok(await supabase.from('buzones').update({ activo }).eq('email', email));
+    toast(activo ? `${email} activada` : `${email} desactivada`);
+    await loadPmBuzones();
+  } catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
+};
+window.editarPersonalBuzon = async (email, actual) => {
+  const nuevo = (prompt(`Correo personal de ${email} (ahí llega el código):`, actual) || '').trim().toLowerCase();
+  if (!nuevo || nuevo === actual) return;
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(nuevo)) { toast('Correo no válido', 'error'); return; }
+  try {
+    ok(await supabase.from('buzones').update({ correo_personal: nuevo }).eq('email', email));
+    toast('Correo personal actualizado');
+    await loadPmBuzones();
+  } catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
+};
+window.enviarCodigoBuzon = async (email) => {
+  try {
+    const r = await invocar('buzon', { accion: 'solicitar_pin', email });
+    toast(`Código enviado${r?.destino ? ' a ' + r.destino : ''}. Vence en 15 minutos.`);
+  } catch (e) { toast('No se pudo enviar el código: ' + (e.message || e), 'error'); }
+};
+
+async function loadPmZoho() {
+  const cont = $('list-pm-zoho');
+  try {
+    const r = await invocar('mail-push', { accion: 'migrar_zoho', listar: true });
+    const cuentas = r?.cuentas || [];
+    if (!cuentas.length) { cont.innerHTML = '<div class="empty-state"><p>No hay cuentas de Zoho con permiso guardado.</p></div>'; return; }
+    cont.innerHTML = cuentas.map(c => {
+      const e = escapeHtml(c.email);
+      const id = 'zoho-' + c.email.replace(/[^a-z0-9]/gi, '_');
+      return `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">${e}</div>
+          <div class="item-meta" id="${id}">${c.tiene_buzon ? 'Lista para copiar' : 'Primero creá el buzón con esta dirección'}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" ${c.tiene_buzon ? '' : 'disabled'} onclick="migrarZoho('${e}', '${id}', this)">Traer correos</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    cont.innerHTML = `<div class="empty-state"><p>No se pudo consultar: ${escapeHtml(e.message || String(e))}</p></div>`;
+  }
+}
+window.migrarZoho = async (email, idEstado, btn) => {
+  const estado = $(idEstado);
+  btn.disabled = true;
+  let cursor = { carpeta_idx: 0, start: 1 };
+  let copiados = 0, repetidos = 0, errores = 0;
+  try {
+    for (let vuelta = 0; vuelta < 2000; vuelta++) {
+      const r = await invocar('mail-push', { accion: 'migrar_zoho', email, ...cursor });
+      copiados += r.copiados || 0; repetidos += r.repetidos || 0; errores += r.errores || 0;
+      estado.textContent = r.terminado
+        ? `Terminado: ${copiados} copiados${repetidos ? `, ${repetidos} ya estaban` : ''}${errores ? `, ${errores} con error (podés repetir)` : ''}.`
+        : `Copiando ${r.carpeta || ''} (${(r.carpeta_idx || 0) + 1} de ${r.total_carpetas})… ${copiados} copiados`;
+      if (r.terminado) break;
+      cursor = { carpeta_idx: r.carpeta_idx, start: r.start };
+    }
+    toast(`Correos de ${email} copiados`);
+    await loadPmBuzones();
+  } catch (e) {
+    estado.textContent = `Se detuvo: ${e.message || e}. Tocá de nuevo para continuar (no duplica).`;
+    toast('Error al copiar: ' + (e.message || e), 'error');
+  } finally { btn.disabled = false; }
+};
 
 const PM_REPO_DESCARGAS = 'nosoysuperman17-max/Apk_descargas';
 let pmVersiones = [];
