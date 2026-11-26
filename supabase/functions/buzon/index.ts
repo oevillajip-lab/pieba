@@ -30,7 +30,7 @@ const CARPETAS: Record<string, string> = {
 
 const env = (k: string) => Deno.env.get(k) ?? '';
 const json = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...CORS } });
 const enc = encodeURIComponent;
 
 // ─── Base de datos / Storage / Auth (con la clave de servicio) ──────
@@ -619,7 +619,14 @@ async function entrante(p: Record<string, unknown>) {
   return json(400, { error: 'accion_desconocida' });
 }
 
+// El panel web llama directo desde el navegador: permitir CORS.
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json(405, { error: 'metodo' });
   // deno-lint-ignore no-explicit-any
   let p: Record<string, any>;

@@ -29,7 +29,7 @@ const CANAL_AVISOS = 'pieba_avisos_channel';
 
 const env = (k: string) => Deno.env.get(k) ?? '';
 const json = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...CORS } });
 
 // ─── Base de datos (REST con la clave de servicio) ──────────────
 async function db(method: string, query: string, body?: unknown, prefer?: string) {
@@ -640,7 +640,14 @@ async function migrarZoho(p: Record<string, unknown>) {
   });
 }
 
+// El panel web llama directo desde el navegador: permitir CORS.
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
   // deno-lint-ignore no-explicit-any
   let p: Record<string, any>;
