@@ -2579,12 +2579,20 @@ async function loadPmVersiones() {
                  url: apk?.browser_download_url || '', notas: (x.body || '').split(/\n\s*\nsha256:/)[0].trim(), fecha: x.created_at };
       })
       .filter(x => x.code && x.sha && x.url)
-      .slice(0, 6);
+      // Solo tiene sentido publicar algo más nuevo que lo publicado: se
+      // muestran la publicada y hasta 3 candidatas más nuevas.
+      .filter(x => x.code >= (pmConfig.version?.version_code || 0))
+      .sort((a, b) => b.code - a.code)
+      .slice(0, 4);
   } catch (e) {
     cont.innerHTML = `<div class="empty-state"><p>No se pudo consultar el repositorio de descargas (${escapeHtml(e.message)}).</p></div>`;
     return;
   }
   if (!pmVersiones.length) { cont.innerHTML = '<div class="empty-state"><p>Todavía no hay versiones compiladas en el repositorio de descargas.</p></div>'; return; }
+  if (pmVersiones.every(x => x.code === (pmConfig.version?.version_code || 0))) {
+    cont.innerHTML = pmVersiones.map(x => `<div class="item-card"><div class="item-info"><div class="item-title">Versión ${escapeHtml(x.nombre)} (${x.code}) <span class="pm-estado enviado">PUBLICADA</span></div><div class="item-meta">No hay versiones más nuevas para publicar.</div></div></div>`).join('');
+    return;
+  }
   cont.innerHTML = pmVersiones.map((x, i) => {
     const publicada = (pmConfig.version?.version_code || 0) === x.code;
     return `
@@ -2603,6 +2611,7 @@ async function loadPmVersiones() {
 }
 window.publicarVersion = (i) => askDelete(async () => {
   const x = pmVersiones[i]; if (!x) return;
+  if (x.code <= (pmConfig.version?.version_code || 0)) { toast('Ya hay publicada una versión igual o más nueva.', 'error'); return; }
   const obligatoria = $(`pmvOblig${i}`)?.checked || false;
   const avisar = $(`pmvAvisar${i}`)?.checked || false;
   ok(await supabase.from('mail_config').upsert({
