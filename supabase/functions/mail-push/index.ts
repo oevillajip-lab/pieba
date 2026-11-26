@@ -571,13 +571,21 @@ async function migrarZoho(p: Record<string, unknown>) {
   if (!cuenta) return json(502, { error: 'zoho', mensaje: 'Zoho no respondió.' });
   const { host, accountId } = cuenta;
 
-  const carpetas = ((await zohoGetExacto(host, `/api/accounts/${accountId}/folders`, token)) ?? [])
-    .map((f: Record<string, unknown>) => {
-      const tipo = String(f.folderType ?? '').toLowerCase();
-      if (['outbox', 'templates', 'snoozed'].includes(tipo)) return null;
-      return { id: String(f.folderId), nombre: String(f.folderName ?? tipo), destino: CARPETA_ZOHO[tipo] ?? 'archive' };
-    })
-    .filter(Boolean) as { id: string; nombre: string; destino: string }[];
+  let carpetas: { id: string; nombre: string; destino: string }[];
+  try {
+    carpetas = ((await zohoGetExacto(host, `/api/accounts/${accountId}/folders`, token)) ?? [])
+      .map((f: Record<string, unknown>) => {
+        const tipo = String(f.folderType ?? '').toLowerCase();
+        if (['outbox', 'templates', 'snoozed'].includes(tipo)) return null;
+        return { id: String(f.folderId), nombre: String(f.folderName ?? tipo), destino: CARPETA_ZOHO[tipo] ?? 'archive' };
+      })
+      .filter(Boolean) as { id: string; nombre: string; destino: string }[];
+  } catch (e) {
+    // A veces Zoho no entrega la lista de carpetas de una cuenta: entonces
+    // se copia lo que Zoho devuelve sin indicar carpeta (la bandeja).
+    console.error('carpetas', email, e);
+    carpetas = [{ id: '', nombre: 'Recibidos', destino: 'inbox' }];
+  }
 
   let idx = Math.max(0, Number(p.carpeta_idx) || 0);
   let start = Math.max(1, Number(p.start) || 1);
@@ -587,7 +595,8 @@ async function migrarZoho(p: Record<string, unknown>) {
 
   while (idx < carpetas.length) {
     const c = carpetas[idx];
-    const q = new URLSearchParams({ folderId: c.id, start: String(start), limit: String(LOTE) });
+    const q = new URLSearchParams({ start: String(start), limit: String(LOTE) });
+    if (c.id) q.set('folderId', c.id);
     let lista: Record<string, unknown>[] = [];
     try {
       lista = (await zohoGetExacto(host, `/api/accounts/${accountId}/messages/view?${q}`, token)) ?? [];
@@ -603,7 +612,7 @@ async function migrarZoho(p: Record<string, unknown>) {
       const mid = `<zoho-${m.messageId}@${DOMINIO_PERMITIDO}>`;
       try {
         const ya = await dbt('correos', 'GET', `?select=id,html,tiene_adjuntos&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`);
-        const base = `/api/accounts/${accountId}/folders/${c.id}/messages/${m.messageId}`;
+        const base = `/api/accounts/${accountId}/folders/${c.id || m.folderId}/messages/${m.messageId}`;
         if (ya?.length) {
           // Ya copiado. Si quedó sin texto (falló Zoho la vez anterior), reintentar solo eso.
           if (!ya[0].html) {
