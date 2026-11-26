@@ -897,7 +897,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
       </form>
 
       <h3 class="pm-sub" style="margin-top:2.2rem;">Versión de la app</h3>
-      <p class="login-help" style="max-width:680px;">Cada versión nueva que se compila aparece acá. Al publicarla, los teléfonos con una versión anterior ven el aviso <b>"Hay una actualización"</b> y se actualizan sin desinstalar.</p>
+      <p class="login-help" style="max-width:680px;">Cada compilación nueva queda como <b>candidata</b> para probar (botón Descargar). Se puede publicar desde acá o desde GitHub (Actions → Publicar versión). Al publicarla, los teléfonos con una versión anterior ven el aviso <b>"Hay una actualización"</b> y se actualizan sin desinstalar.</p>
       <div class="item-meta" id="pmVersionActual" style="margin-bottom:.8rem;"></div>
       <div class="items-list" id="list-pm-versiones"><div class="empty-state"><p>Cargando…</p></div></div>
 
@@ -2542,8 +2542,11 @@ async function loadPmVersiones() {
       // Solo tiene sentido publicar algo más nuevo que lo publicado: se
       // muestran la publicada y hasta 3 candidatas más nuevas.
       .filter(x => x.code >= (pmConfig.version?.version_code || 0))
-      .sort((a, b) => b.code - a.code)
-      .slice(0, 4);
+      .sort((a, b) => b.code - a.code);
+    // La publicada y solo la candidata más nueva (las anteriores ya no sirven).
+    const pub = pmVersiones.find(x => x.code === (pmConfig.version?.version_code || 0));
+    const cand = pmVersiones.find(x => x.code > (pmConfig.version?.version_code || 0));
+    pmVersiones = [cand, pub].filter(Boolean);
   } catch (e) {
     cont.innerHTML = `<div class="empty-state"><p>No se pudo consultar el repositorio de descargas (${escapeHtml(e.message)}).</p></div>`;
     return;
@@ -2558,7 +2561,7 @@ async function loadPmVersiones() {
     return `
     <div class="item-card">
       <div class="item-info">
-        <div class="item-title">Versión ${escapeHtml(x.nombre)} (${x.code}) ${publicada ? '<span class="pm-estado enviado">PUBLICADA</span>' : ''}</div>
+        <div class="item-title">Versión ${escapeHtml(x.nombre)} (${x.code}) ${publicada ? '<span class="pm-estado enviado">PUBLICADA</span>' : '<span class="pm-estado programado">CANDIDATA</span>'}</div>
         <div class="item-meta">${escapeHtml(formatDate(x.fecha))} · ${escapeHtml(x.notas || 'Sin notas')}</div>
         ${publicada ? '' : `<div class="item-meta" style="margin-top:.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
           <label class="pm-switch"><input type="checkbox" id="pmvAvisar${i}" checked> Avisar con notificación</label>
@@ -2577,21 +2580,14 @@ window.publicarVersion = (i) => askDelete(async () => {
   if (x.code <= (pmConfig.version?.version_code || 0)) { toast('Ya hay publicada una versión igual o más nueva.', 'error'); return; }
   const obligatoria = $(`pmvOblig${i}`)?.checked || false;
   const avisar = $(`pmvAvisar${i}`)?.checked || false;
-  ok(await supabase.from('mail_config').upsert({
-    clave: 'version', actualizado_en: new Date().toISOString(),
-    valor: { version_code: x.code, version_nombre: x.nombre, url: x.url, sha256: x.sha, notas: x.notas, obligatoria },
-  }));
-  if (avisar) {
-    ok(await supabase.from('mail_comunicados').insert({
-      tipo: 'actualizacion', titulo: `Nueva versión de PIEBA Mail (${x.nombre})`,
-      contenido: `<p>${escapeHtml(x.notas || 'Hay una versión nueva disponible.')}</p><p>Abrí la app para actualizar.</p>`,
-      destino: 'version_vieja', version_code: x.code, creado_por: authEmail,
-    }));
-  }
-  await loadPmConfig();
-  await loadPmComunicados();
-  toast(`Versión ${x.nombre} publicada ✓`);
-}, '¿Publicar esta versión?', 'Los teléfonos con una versión anterior van a ver el aviso para actualizar.', 'Publicar');
+  try {
+    // El servidor la publica en GitHub (le saca la marca de candidata) y la anuncia.
+    await invocar('mail-push', { accion: 'publicar_version', tag: x.tag, obligatoria, avisar });
+    await loadPmConfig();
+    await loadPmComunicados();
+    toast(`Versión ${x.nombre} (${x.code}) publicada`);
+  } catch (e) { toast('No se pudo publicar: ' + (e.message || e), 'error'); }
+}, '¿Publicar esta versión?', 'Se publica en GitHub y los teléfonos con una versión anterior van a ver el aviso para actualizar.', 'Publicar');
 
 async function loadPmConfig() {
   const filas = ok(await supabase.from('mail_config').select('clave, valor')) || [];
