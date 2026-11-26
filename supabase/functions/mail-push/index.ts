@@ -501,6 +501,145 @@ async function enviarComunicados() {
   return resumen;
 }
 
+
+// ─── Migración única: Zoho → correo propio (solo superadmin del panel) ─────
+// El panel llama repetidas veces con el "cursor" que devuelve la anterior,
+// hasta que responde terminado=true. Cada llamada copia hasta 15 correos.
+async function esSuperadminPanel(req: Request) {
+  const auth = req.headers.get('Authorization') ?? '';
+  if (!auth.startsWith('Bearer ')) return false;
+  const r = await fetch(`${env('SUPABASE_URL')}/rest/v1/rpc/es_superadmin`, {
+    method: 'POST',
+    headers: { apikey: env('SUPABASE_ANON_KEY') || env('SUPABASE_SERVICE_ROLE_KEY'), Authorization: auth, 'Content-Type': 'application/json' },
+    body: '{}',
+  });
+  return r.ok && (await r.json()) === true;
+}
+
+const CARPETA_ZOHO: Record<string, string> = {
+  inbox: 'inbox', sent: 'sent', drafts: 'drafts', spam: 'spam', trash: 'trash',
+};
+const desHtml = (t: unknown) => String(t ?? '')
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+const soloEmails = (t: unknown) =>
+  (desHtml(t).match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g) ?? []).map((e) => e.toLowerCase()).join(', ');
+const tipoArchivo = (n: string) => {
+  const x = n.toLowerCase().split('.').pop() ?? '';
+  return ({ pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif',
+    webp: 'image/webp', doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    txt: 'text/plain', zip: 'application/zip' } as Record<string, string>)[x] ?? 'application/octet-stream';
+};
+
+async function zohoBinario(host: string, path: string, token: string) {
+  const res = await fetch(`https://${host}${path}`, { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
+  if (!res.ok) throw new Error(`Zoho ${path} HTTP ${res.status}`);
+  return new Uint8Array(await res.arrayBuffer());
+}
+
+async function migrarZoho(p: Record<string, unknown>) {
+  const email = String(p.email ?? '').trim().toLowerCase();
+  // Cuentas con permiso de Zoho guardado (las que entraron alguna vez a la app).
+  if (p.listar === true) {
+    const filas: { email: string }[] = (await db('GET', '?select=email')) ?? [];
+    const buzones: { email: string }[] = (await dbt('buzones', 'GET', '?select=email')) ?? [];
+    const conBuzon = new Set(buzones.map((b) => b.email));
+    const unicos = [...new Set(filas.map((f) => f.email))].sort();
+    return json(200, { cuentas: unicos.map((e) => ({ email: e, tiene_buzon: conBuzon.has(e) })) });
+  }
+  if (!email) return json(400, { error: 'falta_email' });
+  const b = await dbt('buzones', 'GET', `?select=email&email=eq.${encodeURIComponent(email)}`);
+  if (!b?.length) return json(400, { error: 'sin_buzon', mensaje: 'Primero creá el buzón con esa dirección.' });
+
+  const disp: Dispositivo[] = await db('GET', `?email=eq.${encodeURIComponent(email)}&order=actualizado_en.desc&limit=5`);
+  if (!disp?.length) return json(404, { error: 'sin_permiso', mensaje: 'Esa cuenta nunca entró a la app con Zoho.' });
+  let token = '';
+  for (const d of disp) {
+    try { token = (await refrescarToken(await descifrar(d.refresh_token_cifrado))).token; break; } catch { /* probar otro */ }
+  }
+  if (!token) return json(409, { error: 'permiso_vencido', mensaje: 'Zoho ya no acepta el permiso guardado de esa cuenta.' });
+  const cuenta = await cuentaDelToken(token);
+  if (!cuenta) return json(502, { error: 'zoho', mensaje: 'Zoho no respondió.' });
+  const { host, accountId } = cuenta;
+
+  const carpetas = ((await zohoGet(host, `/api/accounts/${accountId}/folders`, token)) ?? [])
+    .map((f: Record<string, unknown>) => {
+      const tipo = String(f.folderType ?? '').toLowerCase();
+      if (['outbox', 'templates', 'snoozed'].includes(tipo)) return null;
+      return { id: String(f.folderId), nombre: String(f.folderName ?? tipo), destino: CARPETA_ZOHO[tipo] ?? 'archive' };
+    })
+    .filter(Boolean) as { id: string; nombre: string; destino: string }[];
+
+  let idx = Math.max(0, Number(p.carpeta_idx) || 0);
+  let start = Math.max(1, Number(p.start) || 1);
+  const LOTE = 15;
+  let copiados = 0, repetidos = 0, errores = 0;
+
+  while (idx < carpetas.length) {
+    const c = carpetas[idx];
+    const q = new URLSearchParams({ folderId: c.id, start: String(start), limit: String(LOTE), includeto: 'true' });
+    const lista: Record<string, unknown>[] = (await zohoGet(host, `/api/accounts/${accountId}/messages/view?${q}`, token)) ?? [];
+    if (!lista.length) { idx++; start = 1; continue; }
+
+    for (const m of lista) {
+      const mid = `<zoho-${m.messageId}@${DOMINIO_PERMITIDO}>`;
+      try {
+        const ya = await dbt('correos', 'GET', `?select=id&buzon=eq.${encodeURIComponent(email)}&message_id=eq.${encodeURIComponent(mid)}`);
+        if (ya?.length) { repetidos++; continue; }
+        const base = `/api/accounts/${accountId}/folders/${c.id}/messages/${m.messageId}`;
+        const contenido = await zohoGet(host, `${base}/content`, token).catch(() => null);
+        const html = String(contenido?.content ?? '');
+        const texto = html.replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+        const recibido = Number(m.receivedTime ?? m.sentDateInGMT);
+        const fila = {
+          buzon: email, carpeta: c.destino, message_id: mid,
+          de: soloEmails(m.fromAddress).split(', ')[0] ?? '', de_nombre: desHtml(m.sender ?? '').slice(0, 200),
+          para: soloEmails(m.toAddress).slice(0, 2000), cc: soloEmails(m.ccAddress).slice(0, 2000),
+          asunto: desHtml(m.subject ?? '').slice(0, 500), html: html.slice(0, 2_000_000), texto: texto.slice(0, 500_000),
+          resumen: (desHtml(m.summary ?? '') || texto).slice(0, 200),
+          leido: String(m.status ?? '') === '1' || c.destino === 'sent' || c.destino === 'drafts',
+          tiene_adjuntos: String(m.hasAttachment ?? '0') === '1', tamano: Number(m.size) || 0,
+          recibido_en: Number.isFinite(recibido) && recibido > 0 ? new Date(recibido).toISOString() : new Date().toISOString(),
+        };
+        const [nuevo] = await dbt('correos', 'POST', '', fila, 'return=representation');
+
+        if (fila.tiene_adjuntos) {
+          const info = await zohoGet(host, `${base}/attachmentinfo`, token).catch(() => null);
+          const adj: Record<string, unknown>[] = [...(info?.attachments ?? []), ...(info?.inline ?? [])];
+          const filasAdj = [];
+          for (const a of adj) {
+            const nombre = String(a.attachmentName ?? 'adjunto').replace(/[\\/]/g, '_').slice(0, 150);
+            try {
+              const bytes = await zohoBinario(host, `${base}/attachments/${a.attachmentId}`, token);
+              const ruta = `${email}/zoho/${crypto.randomUUID()}/${nombre}`;
+              const up = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/correo/${ruta.split('/').map(encodeURIComponent).join('/')}`, {
+                method: 'POST',
+                headers: { apikey: env('SUPABASE_SERVICE_ROLE_KEY'), Authorization: `Bearer ${env('SUPABASE_SERVICE_ROLE_KEY')}`,
+                  'Content-Type': tipoArchivo(nombre), 'x-upsert': 'true' },
+                body: bytes,
+              });
+              if (!up.ok) throw new Error(`storage ${up.status}`);
+              filasAdj.push({ correo_id: nuevo.id, nombre, tipo: tipoArchivo(nombre), tamano: bytes.length,
+                cid: a.cid ? String(a.cid).replace(/[<>]/g, '') : null, ruta });
+            } catch (e) { console.error('adjunto', nombre, e); errores++; }
+          }
+          if (filasAdj.length) await dbt('correo_adjuntos', 'POST', '', filasAdj, 'return=minimal');
+        }
+        copiados++;
+      } catch (e) { console.error('migrar', m.messageId, e); errores++; }
+    }
+    start += lista.length;
+    if (lista.length < LOTE) { idx++; start = 1; }
+    break; // un lote por llamada: así nunca se pasa del tiempo límite
+  }
+
+  const terminado = idx >= carpetas.length;
+  return json(200, {
+    terminado, copiados, repetidos, errores,
+    carpeta: terminado ? null : carpetas[idx]?.nombre, carpeta_idx: idx, start, total_carpetas: carpetas.length,
+  });
+}
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
   // deno-lint-ignore no-explicit-any
@@ -510,6 +649,25 @@ Deno.serve(async (req) => {
     if (p.accion === 'revisar') {
       if (!env('MAIL_CRON_SECRET') || req.headers.get('x-cron-secret') !== env('MAIL_CRON_SECRET')) return json(401, { error: 'no_autorizado' });
       return await revisar();
+    }
+    if (p.accion === 'migrar_zoho') {
+      const interno = !!env('BUZON_SECRETO') && req.headers.get('x-buzon-secreto') === env('BUZON_SECRETO');
+      if (!interno && !(await esSuperadminPanel(req))) return json(403, { error: 'solo_superadmin' });
+      const res = await migrarZoho(p);
+      // Automática (primer ingreso): sigue sola, lote por lote, hasta terminar.
+      if (interno && p.auto === true) {
+        const d = await res.clone().json().catch(() => ({}));
+        const vuelta = (Number(p.vuelta) || 0) + 1;
+        if (res.ok && !d.terminado && vuelta < 500) {
+          // deno-lint-ignore no-explicit-any
+          (globalThis as any).EdgeRuntime?.waitUntil(fetch(`${env('SUPABASE_URL')}/functions/v1/mail-push`, {
+            method: 'POST',
+            headers: { apikey: env('SUPABASE_SERVICE_ROLE_KEY'), 'Content-Type': 'application/json', 'x-buzon-secreto': env('BUZON_SECRETO') },
+            body: JSON.stringify({ accion: 'migrar_zoho', email: p.email, auto: true, vuelta, carpeta_idx: d.carpeta_idx, start: d.start }),
+          }).catch((e) => console.error('migrar siguiente', e)));
+        }
+      }
+      return res;
     }
     if (p.accion === 'registrar') return await registrar(p);
     if (p.accion === 'baja') return await baja(p);
