@@ -635,7 +635,10 @@ async function entrante(p: Record<string, unknown>) {
         asunto: String(p.asunto ?? '').slice(0, 500),
         html: html.slice(0, 2_000_000), texto: texto.slice(0, 500_000),
         resumen: (textoPlano(html) || texto.replace(/\s+/g, ' ')).slice(0, 200),
-        tiene_adjuntos: adjuntos.some((a) => !a.cid), tamano: Number(p.tamano) || 0,
+        // Adjunto de verdad = no está pegado en el texto (Gmail les pone cid
+        // también a los adjuntos comunes, así que se mira si el texto lo usa).
+        tiene_adjuntos: adjuntos.some((a) => !a.cid || !html.includes(`cid:${String(a.cid).replace(/[<>]/g, '')}`)),
+        tamano: Number(p.tamano) || 0,
         recibido_en: p.fecha ? new Date(String(p.fecha)).toISOString() : new Date().toISOString(),
       };
       if (Number.isNaN(new Date(correo.recibido_en).getTime())) correo.recibido_en = new Date().toISOString();
