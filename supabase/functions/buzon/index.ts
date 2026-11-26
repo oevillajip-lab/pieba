@@ -59,8 +59,9 @@ async function auth(path: string, method: string, body?: unknown) {
   const t = await res.text();
   return { ok: res.ok, status: res.status, data: t ? JSON.parse(t) : null };
 }
+const rutaUrl = (ruta: string) => ruta.split('/').map(encodeURIComponent).join('/');
 async function firmarDescarga(ruta: string, segundos = 300) {
-  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/sign/${BUCKET}/${ruta}`, {
+  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/sign/${BUCKET}/${rutaUrl(ruta)}`, {
     method: 'POST', headers: cabeceras(), body: JSON.stringify({ expiresIn: segundos }),
   });
   if (!res.ok) throw new Error(`Storage firmar ${res.status}`);
@@ -68,8 +69,9 @@ async function firmarDescarga(ruta: string, segundos = 300) {
   return `${env('SUPABASE_URL')}/storage/v1${signedURL}`;
 }
 async function firmarSubida(ruta: string) {
-  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/upload/sign/${BUCKET}/${ruta}`, {
-    method: 'POST', headers: cabeceras(),
+  // Storage exige un cuerpo cuando se manda Content-Type: application/json.
+  const res = await fetch(`${env('SUPABASE_URL')}/storage/v1/object/upload/sign/${BUCKET}/${rutaUrl(ruta)}`, {
+    method: 'POST', headers: cabeceras(), body: '{}',
   });
   if (!res.ok) throw new Error(`Storage subida ${res.status}: ${await res.text()}`);
   const { url } = await res.json();
