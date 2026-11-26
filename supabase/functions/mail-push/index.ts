@@ -651,8 +651,23 @@ Deno.serve(async (req) => {
       return await revisar();
     }
     if (p.accion === 'migrar_zoho') {
-      if (!(await esSuperadminPanel(req))) return json(403, { error: 'solo_superadmin' });
-      return await migrarZoho(p);
+      const interno = !!env('BUZON_SECRETO') && req.headers.get('x-buzon-secreto') === env('BUZON_SECRETO');
+      if (!interno && !(await esSuperadminPanel(req))) return json(403, { error: 'solo_superadmin' });
+      const res = await migrarZoho(p);
+      // Automática (primer ingreso): sigue sola, lote por lote, hasta terminar.
+      if (interno && p.auto === true) {
+        const d = await res.clone().json().catch(() => ({}));
+        const vuelta = (Number(p.vuelta) || 0) + 1;
+        if (res.ok && !d.terminado && vuelta < 500) {
+          // deno-lint-ignore no-explicit-any
+          (globalThis as any).EdgeRuntime?.waitUntil(fetch(`${env('SUPABASE_URL')}/functions/v1/mail-push`, {
+            method: 'POST',
+            headers: { apikey: env('SUPABASE_SERVICE_ROLE_KEY'), 'Content-Type': 'application/json', 'x-buzon-secreto': env('BUZON_SECRETO') },
+            body: JSON.stringify({ accion: 'migrar_zoho', email: p.email, auto: true, vuelta, carpeta_idx: d.carpeta_idx, start: d.start }),
+          }).catch((e) => console.error('migrar siguiente', e)));
+        }
+      }
+      return res;
     }
     if (p.accion === 'registrar') return await registrar(p);
     if (p.accion === 'baja') return await baja(p);

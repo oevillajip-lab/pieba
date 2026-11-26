@@ -2,7 +2,9 @@
 //  PIEBA Mail · Correo propio (sin Zoho)
 // ═══════════════════════════════════════════════════════════════════
 //  Una sola función para todo el correo:
-//   · Sin sesión: login, refresh, solicitar_pin, verificar_pin.
+//   · Sin sesión: login (contraseña o clave de un solo uso), refresh,
+//     crear_clave (primer ingreso).
+//   · Panel, solo superadmin: clave_temporal.
 //   · Con sesión (access_token de Supabase): carpetas, listar, buscar,
 //     detalle, adjuntos, descargar, actualizar, eliminar, vaciar, enviar,
 //     subir, contactos, contacto_guardar, contacto_borrar, registrar, baja,
@@ -94,10 +96,6 @@ async function sha256(s: string) {
   const h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)));
   return [...h].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
-const enmascarar = (email: string) => {
-  const [u, d] = email.split('@');
-  return `${u.slice(0, 1)}${'•'.repeat(Math.max(2, u.length - 2))}${u.slice(-1)}@${d}`;
-};
 async function dominios(): Promise<string[]> {
   const filas: { dominio: string }[] = await db('buzon_dominios', 'GET', '?select=dominio');
   return filas.map((f) => f.dominio);
@@ -151,20 +149,6 @@ async function resend(body: unknown) {
   if (!res.ok) throw new Error(`Resend ${res.status}: ${t.slice(0, 300)}`);
   return JSON.parse(t);
 }
-function plantillaPin(pin: string, nombre: string) {
-  return `<!DOCTYPE html><html><body style="margin:0;background:#07051e;font-family:Georgia,serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#07051e;padding:40px 16px;"><tr><td align="center">
-  <table width="460" cellpadding="0" cellspacing="0" style="max-width:460px;background:#0f0b32;border:1px solid rgba(201,169,110,.35);border-radius:6px;">
-  <tr><td style="padding:32px 32px 8px;text-align:center;color:#c9a96e;letter-spacing:3px;font-size:12px;">PIEBA MAIL</td></tr>
-  <tr><td style="padding:8px 32px;text-align:center;color:#fff;font-size:20px;">Tu código de ingreso</td></tr>
-  <tr><td style="padding:8px 32px 0;text-align:center;color:rgba(255,255,255,.7);font-family:Arial,sans-serif;font-size:14px;">
-    Hola${nombre ? ` ${escaparHtml(nombre)}` : ''}. Usá este código para crear tu contraseña:</td></tr>
-  <tr><td style="padding:24px 32px;text-align:center;"><span style="display:inline-block;padding:14px 22px;border:1px solid #c9a96e;border-radius:4px;color:#c9a96e;font-size:30px;letter-spacing:8px;font-family:'Courier New',monospace;">${pin}</span></td></tr>
-  <tr><td style="padding:0 32px 32px;text-align:center;color:rgba(255,255,255,.5);font-family:Arial,sans-serif;font-size:12px;">
-    Vence en 15 minutos. Si no lo pediste, ignorá este mensaje.</td></tr>
-  </table></td></tr></table></body></html>`;
-}
-
 // ─── Avisos (Firebase) ──────────────────────────────────────────────
 const b64 = (u: Uint8Array) => btoa(String.fromCharCode(...u));
 const unb64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
@@ -228,10 +212,15 @@ async function sinSesion(p: Record<string, unknown>) {
   switch (p.accion) {
     case 'login': {
       const b = await buzonActivo(email);
+      const password = String(p.password ?? '');
       if (!b) return json(401, { error: 'credenciales', mensaje: 'Correo o contraseña incorrectos.' });
-      const s = await sesionPorPassword(email, String(p.password ?? ''));
-      if (!s) return json(401, { error: 'credenciales', mensaje: 'Correo o contraseña incorrectos.' });
-      return json(200, { ...s, email, nombre: b.nombre });
+      const s = await sesionPorPassword(email, password);
+      if (s) return json(200, { ...s, email, nombre: b.nombre });
+      // ¿Es la clave de un solo uso que dio el administrador?
+      const t = await claveTemporal(email, password);
+      if (t === 'ok') return json(200, { requiere_cambio: true, email, nombre: b.nombre });
+      if (t === 'vencida') return json(401, { error: 'temporal_vencida', mensaje: 'Esa clave de acceso venció. Pedí una nueva al administrador.' });
+      return json(401, { error: 'credenciales', mensaje: 'Correo o contraseña incorrectos.' });
     }
     case 'refresh': {
       const r = await auth('/token?grant_type=refresh_token', 'POST', { refresh_token: String(p.refresh_token ?? '') });
@@ -240,48 +229,80 @@ async function sinSesion(p: Record<string, unknown>) {
       if (!(await buzonActivo(e))) return json(403, { error: 'cuenta_inactiva' });
       return json(200, { access_token: r.data.access_token, refresh_token: r.data.refresh_token, expires_in: r.data.expires_in, email: e });
     }
-    case 'solicitar_pin': {
-      const b = await buzonActivo(email);
-      // Misma respuesta exista o no la cuenta (no revelar cuáles existen).
-      if (!b || !b.correo_personal) return json(200, { enviado: true, destino: null });
-      const pin = String(crypto.getRandomValues(new Uint32Array(1))[0] % 100_000_000).padStart(8, '0');
-      await db('buzon_pines', 'POST', '?on_conflict=email', {
-        email, pin_hash: await sha256(`${pin}|${email}|${env('BUZON_SECRETO')}`),
-        expira_en: new Date(Date.now() + 15 * 60_000).toISOString(), intentos: 0, creado_en: new Date().toISOString(),
-      }, 'resolution=merge-duplicates,return=minimal');
-      const dominio = email.split('@')[1].replace(/^prueba\./, '');
-      await resend({
-        from: `PIEBA Mail <no-responder@${dominio}>`, to: [b.correo_personal],
-        subject: `Tu código de PIEBA Mail: ${pin}`, html: plantillaPin(pin, b.nombre),
-      });
-      return json(200, { enviado: true, destino: enmascarar(b.correo_personal) });
-    }
-    case 'verificar_pin': {
-      const pin = String(p.pin ?? '').replace(/\D/g, '');
+    // Primer ingreso: con la clave de un solo uso crea su contraseña.
+    case 'crear_clave': {
       const password = String(p.password ?? '');
       if (password.length < 8) return json(400, { error: 'password_corta', mensaje: 'La contraseña debe tener al menos 8 caracteres.' });
       const b = await buzonActivo(email);
-      const filas = b ? await db('buzon_pines', 'GET', `?email=eq.${enc(email)}`) : [];
-      const f = filas?.[0];
-      if (!f || new Date(f.expira_en).getTime() < Date.now() || f.intentos >= 5) {
-        return json(400, { error: 'pin_vencido', mensaje: 'El código venció. Pedí uno nuevo.' });
-      }
-      if (await sha256(`${pin}|${email}|${env('BUZON_SECRETO')}`) !== f.pin_hash) {
-        await db('buzon_pines', 'PATCH', `?email=eq.${enc(email)}`, { intentos: f.intentos + 1 }, 'return=minimal');
-        return json(400, { error: 'pin_incorrecto', mensaje: 'El código no es correcto.' });
-      }
-      // Crear la cuenta de inicio de sesión o cambiarle la contraseña.
+      if (!b) return json(401, { error: 'credenciales', mensaje: 'Correo o contraseña incorrectos.' });
+      const t = await claveTemporal(email, String(p.temporal ?? ''));
+      if (t !== 'ok') return json(401, { error: 'temporal_vencida', mensaje: 'La clave de acceso ya no es válida. Pedí una nueva al administrador.' });
+      if (password === String(p.temporal ?? '')) return json(400, { error: 'igual', mensaje: 'Elegí una contraseña distinta a la clave de acceso.' });
       const id = await rpc('buzon_user_id', { p_email: email });
       const r = id
         ? await auth(`/admin/users/${id}`, 'PUT', { password })
         : await auth('/admin/users', 'POST', { email, password, email_confirm: true });
       if (!r.ok) return json(500, { error: 'cuenta', mensaje: 'No se pudo guardar la contraseña.' });
       await db('buzon_pines', 'DELETE', `?email=eq.${enc(email)}`);
+      // Si tenía correos en Zoho, se copian solos en segundo plano.
+      // deno-lint-ignore no-explicit-any
+      (globalThis as any).EdgeRuntime?.waitUntil(fetch(`${env('SUPABASE_URL')}/functions/v1/mail-push`, {
+        method: 'POST',
+        headers: { apikey: env('SUPABASE_SERVICE_ROLE_KEY'), 'Content-Type': 'application/json', 'x-buzon-secreto': env('BUZON_SECRETO') },
+        body: JSON.stringify({ accion: 'migrar_zoho', email, auto: true }),
+      }).catch((e) => console.error('migrar', e)));
       const s = await sesionPorPassword(email, password);
-      return json(200, { ...s, email, nombre: b!.nombre });
+      return json(200, { ...s, email, nombre: b.nombre });
     }
   }
   return null;
+}
+
+// Clave de un solo uso: 8 caracteres fáciles de dictar (sin 0/O ni 1/I/L).
+const LETRAS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+function nuevaClaveTemporal() {
+  const r = crypto.getRandomValues(new Uint8Array(8));
+  const t = [...r].map((x) => LETRAS[x % LETRAS.length]).join('');
+  return `${t.slice(0, 4)}-${t.slice(4)}`;
+}
+const normalizarTemporal = (t: string) => t.toUpperCase().replace(/[^A-Z0-9]/g, '');
+async function hashTemporal(email: string, t: string) {
+  return sha256(`${normalizarTemporal(t)}|${email}|${env('BUZON_SECRETO')}`);
+}
+async function claveTemporal(email: string, t: string): Promise<'ok' | 'vencida' | 'no'> {
+  if (normalizarTemporal(t).length !== 8) return 'no';
+  const f = (await db('buzon_pines', 'GET', `?email=eq.${enc(email)}`))?.[0];
+  if (!f) return 'no';
+  if (f.intentos >= 10) return 'vencida';
+  if (await hashTemporal(email, t) !== f.pin_hash) {
+    await db('buzon_pines', 'PATCH', `?email=eq.${enc(email)}`, { intentos: f.intentos + 1 }, 'return=minimal');
+    return 'no';
+  }
+  return new Date(f.expira_en).getTime() < Date.now() ? 'vencida' : 'ok';
+}
+
+// ─── Panel (solo superadmin) ────────────────────────────────────────
+async function esSuperadmin(req: Request) {
+  const a = req.headers.get('Authorization') ?? '';
+  if (!a.startsWith('Bearer ')) return false;
+  const r = await fetch(`${env('SUPABASE_URL')}/rest/v1/rpc/es_superadmin`, {
+    method: 'POST', headers: { apikey: env('SUPABASE_ANON_KEY') || env('SUPABASE_SERVICE_ROLE_KEY'), Authorization: a, 'Content-Type': 'application/json' }, body: '{}',
+  });
+  return r.ok && (await r.json()) === true;
+}
+async function panel(p: Record<string, unknown>) {
+  const email = limpiarEmail(p.email);
+  if (p.accion === 'clave_temporal') {
+    const b = await db('buzones', 'GET', `?select=email&email=eq.${enc(email)}`);
+    if (!b?.length) return json(404, { error: 'no_existe', mensaje: 'Esa cuenta no existe.' });
+    const clave = nuevaClaveTemporal();
+    await db('buzon_pines', 'POST', '?on_conflict=email', {
+      email, pin_hash: await hashTemporal(email, clave),
+      expira_en: new Date(Date.now() + 7 * 24 * 3600_000).toISOString(), intentos: 0, creado_en: new Date().toISOString(),
+    }, 'resolution=merge-duplicates,return=minimal');
+    return json(200, { clave, vence: '7 días' });
+  }
+  return json(400, { error: 'accion_desconocida' });
 }
 
 // ─── Acciones con sesión ────────────────────────────────────────────
@@ -540,6 +561,10 @@ Deno.serve(async (req) => {
       const s = req.headers.get('x-buzon-secreto') ?? '';
       if (!env('BUZON_SECRETO') || s !== env('BUZON_SECRETO')) return json(401, { error: 'no_autorizado' });
       return await entrante(p);
+    }
+    if (p.accion === 'clave_temporal') {
+      if (!(await esSuperadmin(req))) return json(403, { error: 'solo_superadmin' });
+      return await panel(p);
     }
     const libre = await sinSesion(p);
     if (libre) return libre;

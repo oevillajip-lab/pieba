@@ -846,7 +846,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
       <div class="page-header">
         <div><div class="page-label">PIEBA Mail</div><h1 class="page-title">Cuentas de correo</h1></div>
       </div>
-      <p class="login-help" style="max-width:680px;">Creá aquí las direcciones de la iglesia. La persona abre PIEBA Mail, toca <b>Primer ingreso u olvidé mi contraseña</b>, recibe un código en su correo personal y crea su contraseña. Una cuenta desactivada deja de recibir correos y no puede entrar.</p>
+      <p class="login-help" style="max-width:680px;">Al crear una cuenta se genera una <b>clave de acceso de un solo uso</b>. Pasásela a la persona: entra a PIEBA Mail con su correo y esa clave, y la app le pide crear su propia contraseña. Si tenía correos en Zoho, se copian solos. Si alguien olvida su contraseña, generale una clave nueva. Una cuenta desactivada deja de recibir correos y no puede entrar.</p>
       <form class="user-add-row" onsubmit="event.preventDefault(); crearBuzon();">
         <div class="form-field" style="flex:1.6;margin:0;"><label for="bzLocal">Dirección</label>
           <div style="display:flex;align-items:center;gap:.4rem;">
@@ -855,12 +855,12 @@ body.con-aviso .toast { bottom: 6.5rem; }
           </div>
         </div>
         <div class="form-field" style="flex:1.1;margin:0;"><label for="bzNombre">Nombre completo</label><input type="text" id="bzNombre" placeholder="Nombre y apellido" required></div>
-        <div class="form-field" style="flex:1.3;margin:0;"><label for="bzPersonal">Correo personal (para el código)</label><input type="email" id="bzPersonal" placeholder="persona@gmail.com" required></div>
         <button type="submit" class="btn-add" id="btnCrearBuzon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
           Crear
         </button>
       </form>
+      <div id="bzClave"></div>
       <div class="items-list" id="list-pm-buzones">
         <div class="empty-state"><p>Cargando…</p></div>
       </div>
@@ -868,7 +868,7 @@ body.con-aviso .toast { bottom: 6.5rem; }
       <div class="page-header" style="margin-top:2.5rem;">
         <div><div class="page-label">Migración</div><h1 class="page-title" style="font-size:1.4rem;">Traer correos de Zoho</h1></div>
       </div>
-      <p class="login-help" style="max-width:680px;">Copia todos los correos (con adjuntos) de cada cuenta que alguna vez entró a la app con Zoho al buzón nuevo de la misma dirección. Se puede repetir sin duplicar. Primero creá el buzón arriba.</p>
+      <p class="login-help" style="max-width:680px;">La copia se hace sola cuando la persona entra por primera vez. Desde aquí podés repetirla (no duplica), por ejemplo para traer lo que llegó a Zoho antes del cambio.</p>
       <div class="items-list" id="list-pm-zoho">
         <div class="empty-state"><p>Cargando…</p></div>
       </div>
@@ -2211,7 +2211,7 @@ function renderUsuarios() {
           ${u.activo ? '<span class="item-tag activo">Activo</span>' : '<span class="item-tag pendiente">Pendiente</span>'}
           ${u.nombre ? escapeHtml(u.email) + ' · ' : ''}${u.activo
             ? (u.ultimo_ingreso ? 'Último ingreso: ' + formatDate(u.ultimo_ingreso) : 'Nunca ingresó')
-            : 'Todavía no creó su contraseña'}
+            : 'Todavía no entró'}
         </div>
       </div>
       ${yo ? '' : `<div class="item-actions"><button class="btn-icon danger" title="Quitar acceso" onclick="quitarUsuario('${escapeHtml(u.email)}')">${ICON_DEL}</button></div>`}
@@ -2437,16 +2437,15 @@ async function loadPmBuzones() {
   cont.innerHTML = lista.map(b => {
     const e = escapeHtml(b.email);
     const estado = !b.activo ? 'Desactivada'
-      : b.ultimo_ingreso ? `Último ingreso ${escapeHtml(fechaCorta(b.ultimo_ingreso))}` : 'Todavía no creó su contraseña';
+      : b.ultimo_ingreso ? `Último ingreso ${escapeHtml(fechaCorta(b.ultimo_ingreso))}` : 'Todavía no entró';
     return `
     <div class="item-card" style="${b.activo ? '' : 'opacity:.55;'}">
       <div class="item-info">
         <div class="item-title">${e}${b.nombre ? ` · ${escapeHtml(b.nombre)}` : ''}</div>
-        <div class="item-meta">${estado} · ${b.correos} correo${b.correos == 1 ? '' : 's'} · ${b.dispositivos} teléfono${b.dispositivos == 1 ? '' : 's'}${b.correo_personal ? ` · código a ${escapeHtml(b.correo_personal)}` : ''}</div>
+        <div class="item-meta">${estado} · ${b.correos} correo${b.correos == 1 ? '' : 's'} · ${b.dispositivos} teléfono${b.dispositivos == 1 ? '' : 's'}</div>
       </div>
       <div class="item-actions">
-        ${b.activo ? `<button class="btn-edit" style="padding:.5rem .8rem;" onclick="enviarCodigoBuzon('${e}')">Enviar código</button>` : ''}
-        <button class="btn-edit" style="padding:.5rem .8rem;" onclick="editarPersonalBuzon('${e}', '${escapeHtml(b.correo_personal || '')}')">Correo personal</button>
+        ${b.activo ? `<button class="btn-edit" style="padding:.5rem .8rem;" onclick="claveTemporalBuzon('${e}')">Clave de acceso</button>` : ''}
         <button class="btn-edit" style="padding:.5rem .8rem;${b.activo ? 'color:var(--danger);border-color:var(--danger);' : ''}" onclick="activarBuzon('${e}', ${!b.activo})">${b.activo ? 'Desactivar' : 'Activar'}</button>
       </div>
     </div>`;
@@ -2457,17 +2456,40 @@ window.crearBuzon = async () => {
   if (!/^[a-z0-9][a-z0-9._-]{0,62}$/.test(local)) { toast('La dirección solo puede tener letras, números, punto, guion y guion bajo.', 'error'); return; }
   const email = `${local}@${$('bzDominio').value}`;
   const nombre = $('bzNombre').value.trim();
-  const personal = $('bzPersonal').value.trim().toLowerCase();
-  if (personal.endsWith('@' + $('bzDominio').value)) { toast('El correo personal tiene que ser de afuera (Gmail, Hotmail, etc.).', 'error'); return; }
   const btn = $('btnCrearBuzon'); btn.disabled = true;
   try {
-    ok(await supabase.from('buzones').insert({ email, nombre, correo_personal: personal, creado_por: authEmail || null }));
-    $('bzLocal').value = ''; $('bzNombre').value = ''; $('bzPersonal').value = '';
-    toast(`Cuenta ${email} creada. Ya puede recibir correos.`);
+    ok(await supabase.from('buzones').insert({ email, nombre, creado_por: authEmail || null }));
+    $('bzLocal').value = ''; $('bzNombre').value = '';
+    await claveTemporalBuzon(email, true);
     await Promise.all([loadPmBuzones(), loadPmZoho()]);
   } catch (e) {
     toast(String(e.message || e).includes('duplicate') ? 'Esa dirección ya existe.' : 'Error: ' + mensajeError(e), 'error');
   } finally { btn.disabled = false; }
+};
+window.claveTemporalBuzon = async (email, nueva = false) => {
+  if (!nueva && !confirm(`¿Generar una clave de acceso nueva para ${email}? Su contraseña actual sigue funcionando hasta que la cambie.`)) return;
+  try {
+    const r = await invocar('buzon', { accion: 'clave_temporal', email });
+    $('bzClave').innerHTML = `
+      <div class="item-card" style="border-color:var(--gold);margin-bottom:1rem;">
+        <div class="item-info">
+          <div class="item-title">${nueva ? 'Cuenta creada' : 'Clave de acceso nueva'}</div>
+          <div class="item-meta" style="line-height:1.9;">Correo: <b>${escapeHtml(email)}</b><br>
+            Clave de acceso: <b style="font-family:'Courier New',monospace;font-size:1.15rem;letter-spacing:.12em;color:var(--gold);">${escapeHtml(r.clave)}</b><br>
+            Sirve una sola vez y vence en ${escapeHtml(r.vence)}. Al entrar, la app le pide crear su contraseña.</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" style="padding:.5rem .8rem;" onclick="copiarClave(this, '${escapeHtml(email)}', '${escapeHtml(r.clave)}')">Copiar</button>
+          <button class="btn-secondary" onclick="document.getElementById('bzClave').innerHTML=''">Cerrar</button>
+        </div>
+      </div>`;
+    $('bzClave').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (e) { toast('No se pudo generar la clave: ' + (e.message || e), 'error'); }
+};
+window.copiarClave = async (btn, email, clave) => {
+  const texto = `PIEBA Mail\nCorreo: ${email}\nClave de acceso: ${clave}\nAbrí la app, ingresá con estos datos y creá tu contraseña.`;
+  try { await navigator.clipboard.writeText(texto); btn.textContent = 'Copiado'; setTimeout(() => btn.textContent = 'Copiar', 2000); }
+  catch (_) { toast('No se pudo copiar; copialo a mano.', 'error'); }
 };
 window.activarBuzon = async (email, activo) => {
   if (!activo && !confirm(`¿Desactivar ${email}? Dejará de recibir correos y no podrá entrar a la app. Sus correos se conservan.`)) return;
@@ -2477,23 +2499,6 @@ window.activarBuzon = async (email, activo) => {
     await loadPmBuzones();
   } catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
 };
-window.editarPersonalBuzon = async (email, actual) => {
-  const nuevo = (prompt(`Correo personal de ${email} (ahí llega el código):`, actual) || '').trim().toLowerCase();
-  if (!nuevo || nuevo === actual) return;
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(nuevo)) { toast('Correo no válido', 'error'); return; }
-  try {
-    ok(await supabase.from('buzones').update({ correo_personal: nuevo }).eq('email', email));
-    toast('Correo personal actualizado');
-    await loadPmBuzones();
-  } catch (e) { toast('Error: ' + mensajeError(e), 'error'); }
-};
-window.enviarCodigoBuzon = async (email) => {
-  try {
-    const r = await invocar('buzon', { accion: 'solicitar_pin', email });
-    toast(`Código enviado${r?.destino ? ' a ' + r.destino : ''}. Vence en 15 minutos.`);
-  } catch (e) { toast('No se pudo enviar el código: ' + (e.message || e), 'error'); }
-};
-
 async function loadPmZoho() {
   const cont = $('list-pm-zoho');
   try {
