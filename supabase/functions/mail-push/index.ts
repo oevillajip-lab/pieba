@@ -660,7 +660,11 @@ Deno.serve(async (req) => {
     if (p.accion === 'migrar_zoho') {
       const interno = !!env('BUZON_SECRETO') && req.headers.get('x-buzon-secreto') === env('BUZON_SECRETO');
       if (!interno && !(await esSuperadminPanel(req))) return json(403, { error: 'solo_superadmin' });
-      const res = await migrarZoho(p);
+      let res: Response;
+      try { res = await migrarZoho(p); } catch (e) {
+        console.error('migrar_zoho', p.email, e);
+        return json(500, { error: 'migracion', mensaje: String(e instanceof Error ? e.message : e).slice(0, 300) });
+      }
       // Automática (primer ingreso): sigue sola, lote por lote, hasta terminar.
       if (interno && p.auto === true) {
         const d = await res.clone().json().catch(() => ({}));
