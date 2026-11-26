@@ -2,10 +2,12 @@
 //  PIEBA Mail · Avisos de la app y datos compartidos
 // ════════════════════════════════════════════════════════════════
 //  - Perfil, preferencias, plantillas, comunicados y estado (la app).
-//  - "revisar" (pg_cron, cada minuto): envía los comunicados programados.
+//  - "revisar" (pg_cron, cada minuto): anuncia la versión publicada en
+//    GitHub y envía los comunicados programados.
+//  - "publicar_version" (panel, superadmin): publica una candidata.
 //  Los avisos de correo nuevo los manda la función "buzon" al instante.
 //
-//  Secretos: FIREBASE_SERVICE_ACCOUNT, MAIL_CRON_SECRET.
+//  Secretos: FIREBASE_SERVICE_ACCOUNT, MAIL_CRON_SECRET, GH_RELEASES_TOKEN.
 //  SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY los pone Supabase solo.
 //  Al desplegar: desactivar "Verify JWT".
 // ════════════════════════════════════════════════════════════════
@@ -87,10 +89,100 @@ async function enviarPush(fcmToken: string, titulo: string, cuerpo: string, dato
   throw new Error(`FCM ${res.status}: ${txt.slice(0, 200)}`);
 }
 
-// ─── Cada minuto (pg_cron): comunicados programados ───────────
+
+// ─── Versiones de la app (fuente: GitHub, repositorio de descargas) ─────
+// Cada compilación queda como "candidata" (prerelease). Publicar = sacarle
+// la marca de candidata (desde GitHub Actions o desde el panel). Cada minuto
+// el servidor mira cuál es la última publicada y, si cambió, la anuncia.
+const REPO_DESCARGAS = 'nosoysuperman17-max/Apk_descargas';
+type Lanzamiento = { id: number; tag_name: string; name: string; body: string | null; prerelease: boolean; draft: boolean;
+  created_at: string; assets: { name: string; browser_download_url: string }[] };
+
+function ghHeaders(extra: Record<string, string> = {}) {
+  const t = env('GH_RELEASES_TOKEN');
+  return { Accept: 'application/vnd.github+json', 'User-Agent': 'pieba-mail', ...(t ? { Authorization: `Bearer ${t}` } : {}), ...extra };
+}
+function datosLanzamiento(r: Lanzamiento) {
+  const m = r.tag_name.match(/^pieba-mail-v(.+)-(\d+)$/);
+  const apk = r.assets?.find((a) => a.name === 'PIEBA-Mail.apk');
+  const cuerpo = r.body ?? '';
+  const sha = cuerpo.match(/sha256:\s*([0-9a-f]{64})/i)?.[1] ?? '';
+  if (!m || !apk || !sha) return null;
+  return {
+    version_code: Number(m[2]), version_nombre: m[1], url: apk.browser_download_url, sha256: sha,
+    notas: cuerpo.split(/\n\s*\n(?:sha256|obligatoria):/i)[0].trim(),
+    obligatoria: /^obligatoria:\s*s[ií]/im.test(cuerpo), tag: r.tag_name,
+  };
+}
+async function lanzamientos(): Promise<Lanzamiento[] | null> {
+  const etag = (await dbt('mail_config', 'GET', '?select=valor&clave=eq.version_etag'))?.[0]?.valor;
+  const r = await fetch(`https://api.github.com/repos/${REPO_DESCARGAS}/releases?per_page=40`,
+    { headers: ghHeaders(typeof etag === 'string' && etag ? { 'If-None-Match': etag } : {}) });
+  if (r.status === 304) return null; // nada nuevo (no gasta cupo de GitHub)
+  if (!r.ok) throw new Error(`GitHub ${r.status}`);
+  const nuevoEtag = r.headers.get('etag');
+  if (nuevoEtag) await dbt('mail_config', 'POST', '?on_conflict=clave', { clave: 'version_etag', valor: nuevoEtag }, 'resolution=merge-duplicates,return=minimal');
+  return await r.json();
+}
+/** Si en GitHub hay una versión publicada más nueva que la anunciada, la anuncia. */
+async function sincronizarVersion(avisar = true, forzar = false) {
+  if (forzar) await dbt('mail_config', 'DELETE', '?clave=eq.version_etag').catch(() => {});
+  const lista = await lanzamientos();
+  if (!lista) return { cambio: false };
+  const publicada = lista.filter((r) => !r.prerelease && !r.draft).map(datosLanzamiento).filter(Boolean)
+    .sort((a, b) => b!.version_code - a!.version_code)[0];
+  if (!publicada) return { cambio: false };
+  const actual = (await dbt('mail_config', 'GET', '?select=valor&clave=eq.version'))?.[0]?.valor as { version_code?: number } | undefined;
+  if ((actual?.version_code ?? 0) >= publicada.version_code) return { cambio: false };
+  const { tag: _t, ...valor } = publicada;
+  await dbt('mail_config', 'POST', '?on_conflict=clave', { clave: 'version', valor, actualizado_en: new Date().toISOString() }, 'resolution=merge-duplicates,return=minimal');
+  if (avisar) {
+    await dbt('mail_comunicados', 'POST', '', {
+      tipo: 'actualizacion', titulo: `Nueva versión de PIEBA Mail (${publicada.version_nombre})`,
+      contenido: `<p>${(publicada.notas || 'Hay una versión nueva disponible.').replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' } as Record<string, string>)[c])}</p><p>Abrí la app para actualizar.</p>`,
+      destino: 'version_vieja', version_code: publicada.version_code, creado_por: 'publicación',
+    }, 'return=minimal');
+  }
+  return { cambio: true, version: valor };
+}
+/** Publicar desde el panel: le saca la marca de candidata en GitHub y la anuncia. */
+async function publicarVersion(p: Record<string, unknown>) {
+  if (!env('GH_RELEASES_TOKEN')) return json(500, { error: 'sin_token', mensaje: 'Falta el secreto GH_RELEASES_TOKEN en Supabase.' });
+  const tag = String(p.tag ?? '');
+  const r = await fetch(`https://api.github.com/repos/${REPO_DESCARGAS}/releases/tags/${encodeURIComponent(tag)}`, { headers: ghHeaders() });
+  if (!r.ok) return json(404, { error: 'no_existe', mensaje: 'No se encontró esa versión en GitHub.' });
+  const rel: Lanzamiento = await r.json();
+  const d = datosLanzamiento(rel);
+  if (!d) return json(400, { error: 'invalida', mensaje: 'Esa compilación no tiene el APK o su firma.' });
+  const actual = (await dbt('mail_config', 'GET', '?select=valor&clave=eq.version'))?.[0]?.valor as { version_code?: number } | undefined;
+  if ((actual?.version_code ?? 0) >= d.version_code) return json(400, { error: 'vieja', mensaje: 'Ya hay publicada una versión igual o más nueva.' });
+  let cuerpo = (rel.body ?? '').replace(/\n\s*\nobligatoria:.*$/im, '');
+  if (p.obligatoria === true) cuerpo += '\n\nobligatoria: si';
+  const u = await fetch(`https://api.github.com/repos/${REPO_DESCARGAS}/releases/${rel.id}`, {
+    method: 'PATCH', headers: ghHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ prerelease: false, make_latest: 'true', name: `PIEBA Mail ${d.version_nombre} (${d.version_code})`, body: cuerpo }),
+  });
+  if (!u.ok) return json(502, { error: 'github', mensaje: `GitHub no dejó publicar (${u.status}).` });
+  const res = await sincronizarVersion(p.avisar !== false, true);
+  return json(200, { ok: true, ...res });
+}
+async function esSuperadminPanel(req: Request) {
+  const auth = req.headers.get('Authorization') ?? '';
+  if (!auth.startsWith('Bearer ')) return false;
+  const r = await fetch(`${env('SUPABASE_URL')}/rest/v1/rpc/es_superadmin`, {
+    method: 'POST',
+    headers: { apikey: env('SUPABASE_ANON_KEY') || env('SUPABASE_SERVICE_ROLE_KEY'), Authorization: auth, 'Content-Type': 'application/json' },
+    body: '{}',
+  });
+  return r.ok && (await r.json()) === true;
+}
+
+// ─── Cada minuto (pg_cron): versión publicada y comunicados ───
 async function revisar() {
+  // Primero la versión (así su aviso sale en esta misma vuelta).
+  const version = await sincronizarVersion().catch((e) => ({ error: String(e) }));
   const comunicados = await enviarComunicados().catch((e) => ({ error: String(e) }));
-  return json(200, { comunicados });
+  return json(200, { version, comunicados });
 }
 
 // ─── Datos de la app ───────────────────────────────────────────
@@ -287,6 +379,10 @@ Deno.serve(async (req) => {
   let p: Record<string, any>;
   try { p = await req.json(); } catch { return json(400, { error: 'invalid_json' }); }
   try {
+    if (p.accion === 'publicar_version') {
+      if (!(await esSuperadminPanel(req))) return json(403, { error: 'solo_superadmin' });
+      return await publicarVersion(p);
+    }
     if (p.accion === 'revisar') {
       if (!env('MAIL_CRON_SECRET') || req.headers.get('x-cron-secret') !== env('MAIL_CRON_SECRET')) return json(401, { error: 'no_autorizado' });
       return await revisar();
