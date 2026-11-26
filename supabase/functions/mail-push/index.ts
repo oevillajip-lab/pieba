@@ -318,13 +318,30 @@ function versionYPreferencias(p: Record<string, unknown>) {
 
 // Quién es (por su access token de Zoho). Cache corto para no consultar a Zoho en cada llamada.
 const cacheCuentas = new Map<string, { email: string; hasta: number }>();
+// Sesión del correo propio (Supabase): el token es un JWT.
+async function emailDeSesionPropia(token: string) {
+  const r = await fetch(`${env('SUPABASE_URL')}/auth/v1/user`, {
+    headers: { apikey: env('SUPABASE_SERVICE_ROLE_KEY'), Authorization: `Bearer ${token}` },
+  });
+  if (!r.ok) return null;
+  const email = String((await r.json()).email ?? '').toLowerCase();
+  const b = await dbt('buzones', 'GET', `?select=email&activo=eq.true&email=eq.${encodeURIComponent(email)}`);
+  return b?.length ? email : null;
+}
+
 async function quien(p: Record<string, unknown>) {
   const token = typeof p.access_token === 'string' ? p.access_token : '';
   if (!token) return null;
   const c = cacheCuentas.get(token);
   if (c && c.hasta > Date.now()) return c.email;
+  if (token.split('.').length === 3) {
+    const e = await emailDeSesionPropia(token);
+    if (!e) return null;
+    cacheCuentas.set(token, { email: e, hasta: Date.now() + 5 * 60_000 });
+    return e;
+  }
   const cuenta = await cuentaDelToken(token);
-  if (!cuenta || !cuenta.email.endsWith(`@${DOMINIO_PERMITIDO}`)) return null;
+  if (!cuenta || !cuenta.email.endsWith(DOMINIO_PERMITIDO)) return null;
   if (cacheCuentas.size > 500) cacheCuentas.clear();
   cacheCuentas.set(token, { email: cuenta.email, hasta: Date.now() + 5 * 60_000 });
   return cuenta.email;
@@ -378,6 +395,9 @@ async function accionApp(p: Record<string, unknown>) {
   switch (p.accion) {
     case 'perfil': {
       if (typeof p.fcm_token === 'string' && p.fcm_token) {
+        await dbt('buzon_dispositivos', 'PATCH', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}&email=eq.${encodeURIComponent(email)}`,
+          { ultimo_uso: new Date().toISOString(), ...versionYPreferencias({ version_code: p.version_code, version_nombre: p.version_nombre }) },
+          'return=minimal').catch(() => {});
         await db('PATCH', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}&email=eq.${encodeURIComponent(email)}`,
           { ultimo_uso: new Date().toISOString(), ...versionYPreferencias({ version_code: p.version_code, version_nombre: p.version_nombre }) },
           'return=minimal');
@@ -389,6 +409,8 @@ async function accionApp(p: Record<string, unknown>) {
       if (typeof p.fcm_token !== 'string' || !p.fcm_token) return json(400, { error: 'faltan_datos' });
       await db('PATCH', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}&email=eq.${encodeURIComponent(email)}`,
         versionYPreferencias(p), 'return=minimal');
+      await dbt('buzon_dispositivos', 'PATCH', `?fcm_token=eq.${encodeURIComponent(p.fcm_token)}&email=eq.${encodeURIComponent(email)}`,
+        versionYPreferencias(p), 'return=minimal').catch(() => {});
       return json(200, { ok: true });
     }
     case 'comunicados':
@@ -422,8 +444,12 @@ async function accionApp(p: Record<string, unknown>) {
     }
     case 'admin_estado': {
       if (!(await esAdminApp(email))) return json(403, { error: 'solo_admin' });
-      const dispositivos = await db('GET',
-        '?select=email,version_code,version_nombre,ultimo_uso,errores_seguidos,ultimo_error,avisos_correo,avisos_comunicados,actualizado_en&order=email.asc');
+      const dispositivos = [
+        ...((await db('GET',
+          '?select=email,version_code,version_nombre,ultimo_uso,errores_seguidos,ultimo_error,avisos_correo,avisos_comunicados,actualizado_en&order=email.asc')) ?? []),
+        ...((await dbt('buzon_dispositivos', 'GET',
+          '?select=email,version_code,version_nombre,ultimo_uso,avisos_correo,avisos_comunicados&order=email.asc').catch(() => [])) ?? []),
+      ];
       const pendientes = await dbt('mail_comunicados', 'GET', '?select=id&enviado_en=is.null&activo=eq.true');
       return json(200, {
         servidor: 'ok', hora: new Date().toISOString(),
@@ -446,7 +472,10 @@ async function enviarComunicados() {
 
   const dispositivos: { fcm_token: string; email: string; version_code: number | null;
     avisos_comunicados: boolean; avisos_actualizacion: boolean }[] =
-    await db('GET', '?select=fcm_token,email,version_code,avisos_comunicados,avisos_actualizacion');
+    [
+      ...((await db('GET', '?select=fcm_token,email,version_code,avisos_comunicados,avisos_actualizacion')) ?? []),
+      ...((await dbt('buzon_dispositivos', 'GET', '?select=fcm_token,email,version_code,avisos_comunicados,avisos_actualizacion').catch(() => [])) ?? []),
+    ];
 
   const resumen = [];
   for (const c of listos) {
@@ -460,8 +489,10 @@ async function enviarComunicados() {
       yaAvisados.add(d.fcm_token);
       try {
         const r = await enviarPush(d.fcm_token, c.titulo, cuerpo || 'Tocá para ver el comunicado', { tipo: 'comunicado', id: c.id }, CANAL_AVISOS);
-        if (r === 'token_invalido') await db('DELETE', `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}`);
-        else enviados++;
+        if (r === 'token_invalido') {
+          await db('DELETE', `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}`);
+          await dbt('buzon_dispositivos', 'DELETE', `?fcm_token=eq.${encodeURIComponent(d.fcm_token)}`).catch(() => {});
+        } else enviados++;
       } catch (e) { console.error('comunicado', c.id, e); }
     }
     await dbt('mail_comunicados', 'PATCH', `?id=eq.${c.id}`, { enviados }, 'return=minimal');
